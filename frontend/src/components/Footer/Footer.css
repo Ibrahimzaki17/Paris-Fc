@@ -1,0 +1,226 @@
+.footer-section {
+  background-color: #0f172a;
+
+  color: white;
+
+  padding: 60px 40px 20px;
+}
+
+
+.footer-column {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 40px;
+
+  max-width: 1200px;
+
+  margin: auto;
+}
+
+
+/* Club Information */
+
+.logo-and-name {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+
+.logo-and-name img {
+
+  width: 60px;
+
+  height: 60px;
+
+  object-fit: contain;
+}
+
+
+.logo-and-name h2 {
+
+  font-size: 1.8rem;
+}
+
+
+.club-motto p {
+
+  margin-top: 20px;
+
+  color: #cbd5e1;
+
+  font-size: 1.1rem;
+}
+
+
+
+/* Quick Links */
+
+.quick-links h2,
+.contact1-info h2,
+.socials h2 {
+
+  margin-bottom: 20px;
+
+  color: #fbbf24;
+}
+
+
+.nav {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+}
+
+
+.NavLink {
+
+  text-decoration: none;
+
+  color: white;
+
+  transition: color 0.3s ease;
+}
+
+
+.NavLink:hover {
+
+  color: #fbbf24;
+}
+
+
+
+/* Contact */
+
+.contact1-info p {
+
+  margin-bottom: 12px;
+
+  color: #cbd5e1;
+}
+
+
+
+/* Social Media */
+
+.socials {
+
+  text-align: center;
+
+  margin: 40px 0;
+}
+
+
+.socials svg {
+
+  font-size: 2rem;
+
+  margin: 0 12px;
+
+  cursor: pointer;
+
+  transition: transform 0.3s ease;
+}
+
+
+.socials svg:hover {
+
+  transform: translateY(-5px);
+
+}
+
+
+.facebook:hover {
+
+  color: #1877f2;
+}
+
+
+.instagram:hover {
+
+  color: #e4405f;
+}
+
+
+.twitter:hover {
+
+  color: #1da1f2;
+}
+.youtube:hover{
+    color: #e4405f;
+}
+.tiktok:hover {
+    color: rgba(0, 0, 0, 0.90);
+}
+
+
+/* Copyright */
+
+.copyright-section {
+
+  text-align: center;
+
+  color: #94a3b8;
+
+  margin-top: 20px;
+}
+
+
+hr {
+
+  border: none;
+
+  border-top: 1px solid #334155;
+
+}
+@media (max-width: 768px) {
+
+  .footer-section {
+
+    padding: 50px 20px 20px;
+
+  }
+
+
+  .footer-column {
+
+    flex-direction: column;
+
+    text-align: center;
+
+    align-items: center;
+
+  }
+
+
+  .logo-and-name {
+
+    justify-content: center;
+
+  }
+
+
+  .nav {
+
+    align-items: center;
+
+  }
+
+
+  .contact-info {
+
+    text-align: center;
+
+  }
+
+}

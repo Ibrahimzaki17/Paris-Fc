@@ -1,0 +1,154 @@
+.trophy-section {
+    padding: 80px 40px;
+
+    background-color: #f8fafc;
+
+    min-height: 100vh;
+}
+.trophy-title {
+    text-align: center;
+
+    margin-bottom: 50px;
+}
+
+.trophy-title h2 {
+    font-size: 2.5rem;
+
+    color: #0f172a;
+}
+.trophy-title h2::after{
+     content: "";
+    display: block;
+    width: 100%;
+    height: 4px;
+    text-align: center;
+    background-color: #fbbf24;
+    margin-top: 10px;
+}
+.achievements {
+    text-align: center;
+
+    max-width: 800px;
+
+    margin: 0 auto 70px;
+}
+
+.achievements h2 {
+    color: #dc2626;
+
+    margin-bottom: 15px;
+}
+
+.achievements p {
+    color: #64748b;
+
+    line-height: 1.7;
+}
+.achievements p::after{
+     content: "";
+    display: block;
+    width: 100%;
+    height: 4px;
+    text-align: center;
+    background-color: #fbbf24;
+    margin-top: 10px;
+}
+.league-titles-section,
+.cup-titles-section {
+    margin-bottom: 60px;
+}
+
+.league-titles-section span h2,
+.cup-titles-section span h2 {
+    color: #dc2626;
+
+    margin-bottom: 25px;
+
+    border-left: 5px solid #dc2626;
+
+    padding-left: 15px;
+}
+.trophy-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 25px;
+
+    background: white;
+
+    border-left: 6px solid #dc2626;
+
+    margin-bottom: 20px;
+
+    padding: 20px;
+
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.trophy-card img {
+    width: 140px;
+
+    height: 140px;
+
+    object-fit: cover;
+
+    flex-shrink: 0;
+}
+.details {
+    flex: 1;
+}
+
+.details h2 {
+    margin-bottom: 12px;
+
+    color: #0f172a;
+}
+
+.details p {
+    color: #64748b;
+
+    line-height: 1.6;
+}
+.trophy-card:hover {
+    transform: translateX(5px);
+
+    transition: 0.3s ease;
+}
+.league-titles-section::after{
+     content: "";
+    display: block;
+    width: 100%;
+    height: 4px;
+    text-align: center;
+    background-color: #fbbf24;
+    margin-top: 10px;
+}
+.cup-titles-section::after{
+    content: "";
+    display: block;
+    width: 100%;
+    height: 4px;
+    text-align: center;
+    background-color: #fbbf24;
+    margin-top: 10px;
+}
+@media (max-width: 768px) {
+
+    .trophy-section {
+        padding: 60px 20px;
+    }
+
+    .trophy-card {
+        flex-direction: column;
+
+        text-align: center;
+    }
+
+    .trophy-card img {
+        width: 100%;
+
+        max-width: 250px;
+
+        height: auto;
+    }
+}

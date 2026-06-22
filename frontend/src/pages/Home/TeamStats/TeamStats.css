@@ -1,0 +1,94 @@
+.team-stats-container {
+  padding: 80px 40px;
+
+  background-color: #0f172a;
+
+  color: white;
+
+  text-align: center;
+}
+
+
+.team-statistics-text h2 {
+  font-size: 2.2rem;
+
+  margin-bottom: 50px;
+
+  letter-spacing: 2px;
+}
+
+
+.statistics {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 30px;
+
+  flex-wrap: wrap;
+}
+.navlink {
+  text-decoration: none;
+}
+
+
+.stats-box {
+  width: 220px;
+
+  padding: 35px 20px;
+
+  background-color: #1e293b;
+
+  border-radius: 12px;
+
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.stats-box:hover {
+  transform: translateY(-10px);
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+
+.stats-box h1 {
+  font-size: 3rem;
+
+  color: #fbbf24;
+
+  margin-bottom: 10px;
+}
+
+
+.stats-box h2 {
+  font-size: 1.2rem;
+  color: white;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+
+  .team-stats-container {
+    padding: 60px 20px;
+  }
+
+
+  .team-statistics-text h2 {
+    font-size: 1.8rem;
+  }
+
+
+  .statistics {
+    flex-direction: column;
+  }
+
+
+  .stats-box {
+    width: 100%;
+    max-width: 300px;
+  }
+
+}  
