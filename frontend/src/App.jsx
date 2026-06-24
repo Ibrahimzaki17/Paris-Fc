@@ -12,6 +12,7 @@ import Login from './pages/Login/Login';
 import { useLocation } from 'react-router';
 import PlayerDashboard from './pages/PlayerDashboardPage/PlayerDashboard';
 import CoachDashboard from './pages/CoachDashboard/CoachDashboard';
+import AdminDashboard from './pages/Admin/AdminDashboard';
 
 function App() {
 
@@ -21,8 +22,7 @@ function App() {
     <>
  
 
-    <PlayerDashboard />
-    <CoachDashboard />
+   <AdminDashboard />
    
     </>
   );
@@ -42,4 +42,7 @@ export default App
       <Route path='/login' element={<Login />} />
     </Routes>
     {location.pathname !== '/login' && <Footer />}
+
+        <PlayerDashboard />
+    <CoachDashboard />
  */
