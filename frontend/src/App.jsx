@@ -10,6 +10,8 @@ import Contacts from './pages/Contacts/Contacts';
 import Coach from './pages/Coach/Coach';
 import Login from './pages/Login/Login';
 import { useLocation } from 'react-router';
+import PlayerDashboard from './pages/PlayerDashboardPage/PlayerDashboard';
+import CoachDashboard from './pages/CoachDashboard/CoachDashboard';
 
 function App() {
 
@@ -17,8 +19,19 @@ function App() {
 
   return(
     <>
-    
-    {location.pathname !== '/login' && <Header />}
+ 
+
+    <PlayerDashboard />
+    <CoachDashboard />
+   
+    </>
+  );
+}
+
+export default App
+
+/**
+ *     {location.pathname !== '/login' && <Header />}
     <Routes>
       <Route index element={<HomePage />} />
       <Route path='/about' element={<AboutPage />} />
@@ -29,9 +42,4 @@ function App() {
       <Route path='/login' element={<Login />} />
     </Routes>
     {location.pathname !== '/login' && <Footer />}
-   
-    </>
-  );
-}
-
-export default App
+ */

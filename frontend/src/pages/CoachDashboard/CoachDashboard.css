@@ -1,0 +1,444 @@
+.coachDashboard-section {
+  padding: 100px 40px 40px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+/* Burger Button */
+
+.coachDashboard-section > button {
+  background: #0f172a;
+  color: white;
+
+  border: none;
+
+  padding: 12px;
+
+  cursor: pointer;
+
+  margin-bottom: 30px;
+}
+
+.burger {
+  font-size: 1.3rem;
+}
+
+/* Welcome Title */
+
+.coachDashboard-section > span h2 {
+  color: #dc2626;
+
+  margin-bottom: 30px;
+
+  font-size: 2rem;
+}
+
+/* Players Section */
+
+.players-section {
+  margin-bottom: 40px;
+}
+
+.stats1-box {
+  width: 220px;
+
+  background: white;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+
+  border-left: 5px solid #dc2626;
+}
+
+.navlink {
+  text-decoration: none;
+
+  color: #0f172a;
+
+  display: block;
+
+  text-align: center;
+
+  padding: 30px;
+}
+
+.navlink h1 {
+  font-size: 2.5rem;
+
+  margin-bottom: 10px;
+}
+
+.navlink h2 {
+  font-size: 1.2rem;
+}
+
+/* Training Schedule */
+
+.training-schedule {
+  background: white;
+
+  padding: 30px;
+
+  margin-bottom: 40px;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.training-schedule h2 {
+  color: #0f172a;
+
+  margin-bottom: 20px;
+}
+
+.schedule-card {
+  margin-bottom: 20px;
+}
+
+.schedule-card p {
+  padding: 15px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.schedule-actions {
+  margin-top: 20px;
+}
+
+.schedule-actions button {
+  background: #dc2626;
+
+  color: white;
+
+  border: none;
+
+  padding: 12px 20px;
+
+  cursor: pointer;
+}
+
+.schedule-actions button:hover {
+  background: #b91c1c;
+}
+
+/* Matches */
+
+.match-section {
+  background: white;
+
+  padding: 30px;
+
+  margin-bottom: 40px;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.matches-card {
+  border-left: 5px solid #fbbf24;
+
+  padding-left: 20px;
+
+  margin-bottom: 25px;
+}
+
+.teams {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 15px;
+
+  flex-wrap: wrap;
+}
+
+.teams img {
+  width: 40px;
+  height: 40px;
+
+  object-fit: cover;
+}
+
+.teams p {
+  font-weight: bold;
+
+  color: #dc2626;
+}
+
+.match-date,
+.match-type {
+  text-align: center;
+
+  margin-top: 15px;
+}
+
+.match-actions {
+  display: flex;
+
+  gap: 15px;
+}
+
+.match-actions button {
+  background: #0f172a;
+
+  color: white;
+
+  border: none;
+
+  padding: 12px 20px;
+
+  cursor: pointer;
+}
+
+.match-actions button:hover {
+  background: #1e293b;
+}
+
+/* Announcements */
+
+.announcement-section {
+  background: white;
+
+  padding: 30px;
+
+  margin-bottom: 40px;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.form2-group form {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.form2-group label {
+  margin-top: 15px;
+  margin-bottom: 8px;
+
+  font-weight: 600;
+
+  color: #334155;
+}
+
+.form2-group input,
+.form2-group textarea {
+  padding: 12px;
+
+  border: 1px solid #cbd5e1;
+
+  outline: none;
+
+  font-size: 1rem;
+}
+
+.form2-group textarea {
+  min-height: 150px;
+
+  resize: vertical;
+}
+
+.form2-group input:focus,
+.form2-group textarea:focus {
+  border-color: #dc2626;
+}
+
+.post-btn {
+  margin-top: 20px;
+
+  background: #dc2626;
+
+  color: white;
+
+  border: none;
+
+  padding: 12px;
+
+  cursor: pointer;
+}
+
+.post-btn:hover {
+  background: #b91c1c;
+}
+
+/* Reports */
+
+.reports-section {
+  background: white;
+
+  padding: 30px;
+
+  margin-bottom: 40px;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.reports-titles ul {
+  list-style: none;
+
+  display: flex;
+
+  gap: 20px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 30px;
+}
+
+.reports-titles a {
+  text-decoration: none;
+
+  color: #0f172a;
+
+  font-weight: 600;
+}
+
+.reports-titles a:hover {
+  color: #dc2626;
+}
+
+.player-performance-report,
+.attendance-report,
+.match-analysis {
+  background: #f8fafc;
+
+  padding: 20px;
+
+  margin-bottom: 20px;
+
+  border-left: 5px solid #fbbf24;
+}
+
+.player-performance-report ul {
+  margin-left: 20px;
+
+  margin-bottom: 15px;
+}
+
+.player-performance-report h3 {
+  color: #0f172a;
+
+  margin-bottom: 10px;
+}
+
+/* Profile */
+
+.profile-section {
+  margin-bottom: 40px;
+}
+
+.headcoach-section span h2 {
+  color: #0f172a;
+
+  margin-bottom: 20px;
+}
+
+.head-coach-card {
+  background: white;
+
+  display: flex;
+
+  gap: 25px;
+
+  align-items: center;
+
+  padding: 25px;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.head-coach-card img {
+  width: 180px;
+  height: 180px;
+
+  object-fit: cover;
+}
+
+.details h2 {
+  color: #0f172a;
+
+  margin-bottom: 10px;
+}
+
+.details p {
+  margin-bottom: 10px;
+
+  color: #475569;
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+  .coachDashboard-section {
+    padding: 90px 20px 20px;
+  }
+
+  .head-coach-card {
+    flex-direction: column;
+
+    text-align: center;
+  }
+
+  .head-coach-card img {
+    width: 140px;
+    height: 140px;
+  }
+
+  .match-actions {
+    flex-direction: column;
+  }
+
+  .reports-titles ul {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stats1-box {
+    width: 100%;
+  }
+}
+
+/* coach stats */
+.coach-stats {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+
+  gap: 20px;
+
+  margin: 30px 0 40px;
+}
+
+.coach-stats div {
+  background: white;
+
+  padding: 25px 20px;
+
+  text-align: center;
+
+  font-size: 1.1rem;
+  font-weight: 600;
+
+  color: #0f172a;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+  border-left: 5px solid #dc2626;
+}
+
+.coach-stats div:hover {
+  border-left-color: #fbbf24;
+}
+.coach-stats h2 {
+  font-size: 2rem;
+
+  color: #dc2626;
+
+  margin-bottom: 10px;
+}
+
+.coach-stats p {
+  color: #475569;
+
+  font-size: 1rem;
+}
