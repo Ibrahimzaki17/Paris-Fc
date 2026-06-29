@@ -20,9 +20,9 @@ function App() {
 
   return(
     <>
- 
+ <AdminDashboard />
+ <CoachDashboard />
 
-   <AdminDashboard />
    
     </>
   );
@@ -44,5 +44,5 @@ export default App
     {location.pathname !== '/login' && <Footer />}
 
         <PlayerDashboard />
-    <CoachDashboard />
+       
  */

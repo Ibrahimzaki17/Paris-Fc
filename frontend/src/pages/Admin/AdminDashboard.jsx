@@ -94,30 +94,30 @@ function AdminDashboard() {
   //edit coach
   const [editCoach, setEditCoach] = useState(false);
   const [coachData, setCoachData] = useState({
-    name: '',
-    role: '',
-    email: '',
-  })
+    name: "",
+    role: "",
+    email: "",
+  });
 
   const openEditCoach = () => {
     setEditCoach(true);
     setCoachData({
-        name: 'Ibrahim zaki',
-        role: 'Head Coach',
-        email: 'ibrahim@gmail.com'
-    })
-  }
+      name: "Ibrahim zaki",
+      role: "Head Coach",
+      email: "ibrahim@gmail.com",
+    });
+  };
 
   const closeEditCoach = () => {
-    setEditCoach(false)
-  }
+    setEditCoach(false);
+  };
 
-  const handleCoachChange = () => {
-        setEditCoach({
+  const handleCoachChange = (e) => {
+    setCoachData({
       ...coachData,
       [e.target.name]: e.target.value,
     });
-  }
+  };
 
   //delete coach
   const [deleteCoach, setDeleteCoach] = useState(false);
@@ -128,6 +128,63 @@ function AdminDashboard() {
 
   const closeDeleteCoach = () => {
     setDeleteCoach(false);
+  };
+
+  //add match
+  const [addMatch, setAddMatch] = useState(false);
+
+  const openAddMatch = () => {
+    setAddMatch(true);
+  };
+
+  const closeAddMatch = () => {
+    setAddMatch(false);
+  };
+
+  //delete match
+  const [deleteMatch, setDeleteMatch] = useState(false);
+
+  const openDeleteMatch = () => {
+    setDeleteMatch(true);
+  };
+
+  const closeDeleteMatch = () => {
+    setDeleteMatch(false);
+  };
+
+  //edit match
+  const [editMatch, setEditMatch] = useState(false);
+
+  const [matchData, setMatchData] = useState({
+    homeTeamImg: "",
+    homeTeamName: "",
+    awayTeamImg: "",
+    awayTeamName: "",
+    date: "",
+    matchType: "",
+  });
+
+  const openEditMatch = () => {
+    setEditMatch(true);
+    setMatchData({
+      homeTeamImg: "images/parisfc.png",
+      homeTeamName: "Paris Fc",
+      awayTeamImg: "images/parisfc.png",
+      awayTeamName: "Eagles Fc",
+      date: "2026-06-21",
+      matchType: "League Match",
+    });
+  };
+
+  const closeEditMatch = () => {
+    setEditMatch(false);
+  };
+
+  const handleMatchChange = (e) => {
+    setMatchData({
+      ...matchData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   return (
@@ -194,7 +251,7 @@ function AdminDashboard() {
                 <div className="image-preview">
                   <img src="images/messi.jpeg" />
                 </div>
-                
+
                 <input type="file" accept="images/*" />
 
                 <div className="action-btns">
@@ -324,37 +381,39 @@ function AdminDashboard() {
           <h2>COACH MANAGEMENT</h2>
         </span>
 
-       {addCoach && (
-        <div className="delete-overlay">
+        {addCoach && (
+          <div className="delete-overlay">
             <div className="add-coach">
-                <form >
-                    <label>Name</label>
-                    <input type="text" placeholder="Enter coach name" />
-                    <label>Role</label>
-                    <select >
-                        <option>Head Coach</option>
-                        <option>Assitant Coach</option>
-                    </select>
-                    <label>Email</label>
-                    <input type="email" placeholder="Enter email " />
-                    <label>Image</label>
-                    <div className="image-preview">
+              <form>
+                <label>Name</label>
+                <input type="text" placeholder="Enter coach name" />
+                <label>Role</label>
+                <select>
+                  <option>Head Coach</option>
+                  <option>Assitant Coach</option>
+                </select>
+                <label>Email</label>
+                <input type="email" placeholder="Enter email " />
+                <label>Image</label>
+                <div className="image-preview">
                   <img src="images/messi.jpeg" />
                 </div>
-                    <input type="file" accept="images/*" />
-                    <div className="action-btns">
-                        <button type="submit">Add New Coach</button>
-                        <button type="button" onClick={closeAddCoach}>Cancel</button>
-                    </div>
-                </form>
+                <input type="file" accept="images/*" />
+                <div className="action-btns">
+                  <button type="submit">Add New Coach</button>
+                  <button type="button" onClick={closeAddCoach}>
+                    Cancel
+                  </button>
+                </div>
+              </form>
             </div>
-        </div>
-       )}
+          </div>
+        )}
 
-       {editCoach && (
-        <div className="edit-overlay">
-          <div className="edit-popup">
-             <h2>Edit Coach</h2>
+        {editCoach && (
+          <div className="edit-overlay">
+            <div className="edit-popup">
+              <h2>Edit Coach</h2>
 
               <form>
                 <label>Name</label>
@@ -379,7 +438,6 @@ function AdminDashboard() {
                   onChange={handleCoachChange}
                 />
 
-
                 <div className="action-btns">
                   <button type="submit">Save Changes</button>
 
@@ -388,13 +446,12 @@ function AdminDashboard() {
                   </button>
                 </div>
               </form>
-         
+            </div>
           </div>
-        </div>
-       )}
+        )}
 
-       {deleteCoach && (
-        <div className="delete-overlay">
+        {deleteCoach && (
+          <div className="delete-overlay">
             <div className="confirmation-message">
               <h2>Are you sure you want to delete Coach Ibrahim</h2>
             </div>
@@ -403,11 +460,10 @@ function AdminDashboard() {
               <button onClick={closeDeleteCoach}>Cancel</button>
             </div>
           </div>
-       )}
+        )}
 
         <div className="action-btns">
           <button onClick={openAddCoach}>Add Coach</button>
-          
         </div>
         <div className="coach-list-table">
           <table border="1">
@@ -423,10 +479,10 @@ function AdminDashboard() {
                 <td>Head Coach</td>
                 <td>ibrahimzaki@gmail.com</td>
                 <td>
-                    <div className="action-btns">
-                        <button onClick={openEditCoach}>Edit Coach</button>
-                        <button onClick={openDeleteCoach}>Delete Coach</button>
-                    </div>
+                  <div className="action-btns">
+                    <button onClick={openEditCoach}>Edit Coach</button>
+                    <button onClick={openDeleteCoach}>Delete Coach</button>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -434,10 +490,10 @@ function AdminDashboard() {
                 <td>Assistant Coach</td>
                 <td>ibrahimzaki@gmail.com</td>
                 <td>
-                    <div className="action-btns">
-                        <button onClick={openEditCoach}>Edit Coach</button>
-                        <button onClick={openDeleteCoach}>Delete Coach</button>
-                    </div>
+                  <div className="action-btns">
+                    <button onClick={openEditCoach}>Edit Coach</button>
+                    <button onClick={openDeleteCoach}>Delete Coach</button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -448,10 +504,109 @@ function AdminDashboard() {
         <span>
           <h2>MATCH MANAGEMENT</h2>
         </span>
+
+        {addMatch && (
+          <div className="delete-overlay">
+            <div className="add-coach">
+              <form>
+                <label>Home Team Image</label>
+                <input type="file" accept="images/*" />
+                <div className="image-preview">
+                  <img src="images/messi.jpeg" />
+                </div>
+                <label>Home Team Name</label>
+                <input type="text" placeholder="Enter Home Team Name" />
+                <label>Away Team Image</label>
+                <input type="file" accept="images/*" />
+                <div className="image-preview">
+                  <img src="images/messi.jpeg" />
+                </div>
+                <label>Home Team Name</label>
+                <input type="text" placeholder="Enter Away Team Name" />
+                <label>Date</label>
+                <input type="date" />
+                <label>Match Type</label>
+                <input type="text" placeholder="Enter Match Type" />
+
+                <div className="action-btns">
+                  <button>Add New Match</button>
+                  <button onClick={closeAddMatch}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {editMatch && (
+          <div className="edit-overlay">
+            <div className="edit-popup">
+              <h2>Edit Coach</h2>
+              <form>
+                <label>Home Team Image</label>
+                <input type="file" onChange={handleMatchChange}/>
+                <div className="image-preview">
+                  <img
+                    src={matchData.homeTeamImg}
+                  />
+                </div>
+                <label>Home Team Name</label>
+                <input
+                  type="text"
+                  name="homeTeamName"
+                  value={matchData.homeTeamName}
+                  onChange={handleMatchChange}
+                />
+                <label>Away Team Image</label>
+                <input type="file" onChange={handleMatchChange}/>
+                <div className="image-preview">
+                  <img
+                    src={matchData.awayTeamImg}
+                    
+                  />
+                </div>
+                <label>Home Team Name</label>
+                <input
+                  type="text"
+                  name="awayTeamName"
+                  value={matchData.awayTeamName}
+                  onChange={handleMatchChange}
+                />
+                <label>Date</label>
+                <input
+                  type="date"
+                  name="date"
+                  value={matchData.date}
+                  onChange={handleMatchChange}
+                />
+                <label>Match Type</label>
+                <input
+                  type="text"
+                  name="matchType"
+                  value={matchData.matchType}
+                  onChange={handleMatchChange}
+                />
+                <div className="action-btns">
+                  <button>Save Changes</button>
+                  <button onClick={closeEditMatch}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {deleteMatch && (
+          <div className="delete-overlay">
+            <div className="confirmation-message">
+              <h2>Are you sure you want to delete This Match</h2>
+            </div>
+            <div className="action-btns">
+              <button>Delete</button>
+              <button onClick={closeDeleteMatch}>Cancel</button>
+            </div>
+          </div>
+        )}
         <div className="action-btns">
-          <button>Add Match</button>
-          <button>Edit Match</button>
-          <button>Delete Match</button>
+          <button onClick={openAddMatch}>Add Match</button>
         </div>
         <div className="upcoming-matches">
           <div className="matches-card">
@@ -468,6 +623,10 @@ function AdminDashboard() {
             <div className="match-type">
               <h2>League Match</h2>
             </div>
+          </div>
+          <div className="action-btns">
+            <button onClick={openEditMatch}>Edit Match</button>
+            <button onClick={openDeleteMatch}>Delete Match</button>
           </div>
         </div>
       </div>
@@ -548,10 +707,17 @@ function AdminDashboard() {
               <tr>
                 <th>Player Accounts</th>
                 <th>Email</th>
+                <th>Actions</th>
               </tr>
               <tr>
                 <td>Ibrahim zaki</td>
                 <td>Ibrahim@gmail.com</td>
+                <td>
+                    <div className="action-btns">
+                        <button>Edit</button>
+                        <button>Delete</button>
+                    </div>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -562,10 +728,17 @@ function AdminDashboard() {
               <tr>
                 <th>Coaches Accounts</th>
                 <th>Email</th>
+                <th>Actions</th>
               </tr>
               <tr>
                 <td>Ibrahim zaki</td>
                 <td>Ibrahim@gmail.com</td>
+                <td>
+                    <div className="action-btns">
+                        <button>Edit</button>
+                        <button>Delete</button>
+                    </div>
+                </td>
               </tr>
             </tbody>
           </table>

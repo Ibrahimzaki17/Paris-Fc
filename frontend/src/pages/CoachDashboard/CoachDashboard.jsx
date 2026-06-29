@@ -14,6 +14,74 @@ function CoachDashboard() {
     setShowSideBar3(false);
   };
 
+  //update schedule
+  const [training, setTraining] = useState(false);
+
+  const openTraining = () => {
+    setTraining(true);
+  };
+
+  const closeTraining = () => {
+    setTraining(false);
+  };
+
+    //add match
+  const [addMatch, setAddMatch] = useState(false);
+
+  const openAddMatch = () => {
+    setAddMatch(true);
+  };
+
+  const closeAddMatch = () => {
+    setAddMatch(false);
+  };
+
+  //delete match
+  const [deleteMatch, setDeleteMatch] = useState(false);
+
+  const openDeleteMatch = () => {
+    setDeleteMatch(true);
+  };
+
+  const closeDeleteMatch = () => {
+    setDeleteMatch(false);
+  };
+
+  //edit match
+  const [editMatch, setEditMatch] = useState(false);
+
+  const [matchData, setMatchData] = useState({
+    homeTeamImg: "",
+    homeTeamName: "",
+    awayTeamImg: "",
+    awayTeamName: "",
+    date: "",
+    matchType: "",
+  });
+
+  const openEditMatch = () => {
+    setEditMatch(true);
+    setMatchData({
+      homeTeamImg: "images/parisfc.png",
+      homeTeamName: "Paris Fc",
+      awayTeamImg: "images/parisfc.png",
+      awayTeamName: "Eagles Fc",
+      date: "2026-06-21",
+      matchType: "League Match",
+    });
+  };
+
+  const closeEditMatch = () => {
+    setEditMatch(false);
+  };
+
+  const handleMatchChange = (e) => {
+    setMatchData({
+      ...matchData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   return (
     <div className="coachDashboard-section">
       <button onClick={openSideBar3}>
@@ -53,6 +121,28 @@ function CoachDashboard() {
         </div>
       </div>
       <div className="training-schedule">
+
+      {training && (
+        <div className="delete-overlay">
+            <div className="add-coach">
+                <h2>Update Schedule</h2>
+                <form >
+                    <label>Day</label>
+                    <input type="text" />
+                    <label>Time</label>
+                    <input type="time" />
+                    <label>Date</label>
+                    <input type="date" />
+
+                    <div className="action-btns">
+                       <button>Update New Schedule</button>
+                       <button onClick={closeTraining}>Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+      )}
+
         <div className="section-heading">
           <h2>Training Schedule</h2>
         </div>
@@ -62,10 +152,100 @@ function CoachDashboard() {
           <p>Monday 4pm</p>
         </div>
         <div className="schedule-actions">
-          <button>Update Schedule</button>
+          <button onClick={openTraining}>Update Schedule</button>
         </div>
       </div>
       <div className="match-section">
+
+             {addMatch && (
+          <div className="delete-overlay">
+            <div className="add-coach">
+              <form>
+                <label>Home Team Image</label>
+                <input type="file" accept="images/*" />
+                <div className="image-preview">
+                  <img src="images/messi.jpeg" />
+                </div>
+                <label>Home Team Name</label>
+                <input type="text" placeholder="Enter Home Team Name" />
+                <label>Away Team Image</label>
+                <input type="file" accept="images/*" />
+                <div className="image-preview">
+                  <img src="images/messi.jpeg" />
+                </div>
+                <label>Home Team Name</label>
+                <input type="text" placeholder="Enter Away Team Name" />
+                <label>Date</label>
+                <input type="date" />
+                <label>Match Type</label>
+                <input type="text" placeholder="Enter Match Type" />
+
+                <div className="action-btns">
+                  <button>Add New Match</button>
+                  <button onClick={closeAddMatch}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {editMatch && (
+          <div className="edit-overlay">
+            <div className="edit-popup">
+              <h2>Edit Coach</h2>
+              <form>
+                <label>Home Team Image</label>
+                <input type="file" onChange={handleMatchChange}/>
+                <div className="image-preview">
+                  <img
+                    src={matchData.homeTeamImg}
+                  />
+                </div>
+                <label>Home Team Name</label>
+                <input
+                  type="text"
+                  name="homeTeamName"
+                  value={matchData.homeTeamName}
+                  onChange={handleMatchChange}
+                />
+                <label>Away Team Image</label>
+                <input type="file" onChange={handleMatchChange}/>
+                <div className="image-preview">
+                  <img
+                    src={matchData.awayTeamImg}
+                    
+                  />
+                </div>
+                <label>Home Team Name</label>
+                <input
+                  type="text"
+                  name="awayTeamName"
+                  value={matchData.awayTeamName}
+                  onChange={handleMatchChange}
+                />
+                <label>Date</label>
+                <input
+                  type="date"
+                  name="date"
+                  value={matchData.date}
+                  onChange={handleMatchChange}
+                />
+                <label>Match Type</label>
+                <input
+                  type="text"
+                  name="matchType"
+                  value={matchData.matchType}
+                  onChange={handleMatchChange}
+                />
+                <div className="action-btns">
+                  <button>Save Changes</button>
+                  <button onClick={closeEditMatch}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         <div className="matches-card">
           <div className="teams">
             <img src="images/parisfc.png" />
@@ -82,8 +262,8 @@ function CoachDashboard() {
           </div>
         </div>
         <div className="match-actions">
-          <button>Add Match</button>
-          <button>Edit Match</button>
+          <button onClick={openAddMatch}>Add Match</button>
+          <button onClick={openEditMatch}>Edit Match</button>
         </div>
       </div>
       <div className="announcement-section">
