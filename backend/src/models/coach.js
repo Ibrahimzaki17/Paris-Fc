@@ -8,11 +8,6 @@ const coachSchema = new mongoose.Schema(
             required: true,
             unique: true
         },
-        fullname: {
-            type: String,
-            required: true,
-            trim: true
-        },
         position: {
             type: String,
             required: true,

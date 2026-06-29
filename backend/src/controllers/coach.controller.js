@@ -1,0 +1,380 @@
+import User from "../models/user.js";
+import Coach from "../models/coach.js";
+import jwt from 'jsonwebtoken';
+import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
+
+const generateToken = (id) => {
+    return jwt.sign({id}, process.env.JWT_SECRET, {
+        expiresIn: "7d"
+    });
+}
+
+//create coach = Add coach button
+const createCoach = async (req, res) => {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const {
+      fullname,
+      email,
+      position,
+      age,
+      phone,
+      image,
+    } = req.body;
+
+    // Validation
+    if (
+      !fullname ||
+      !email ||
+      !position ||
+      !age ||
+      !phone 
+    ) {
+      await session.abortTransaction();
+      session.endSession();
+
+      return res.status(400).json({
+        message: "All fields must be filled",
+      });
+    }
+
+    // Check if user already exists
+    const existing = await User.findOne({
+      email: email.toLowerCase(),
+    }).session(session);
+
+    if (existing) {
+      await session.abortTransaction();
+      session.endSession();
+
+      return res.status(400).json({
+        message: "User already exists",
+      });
+    }
+
+    // Temporary password
+    const defaultPassword = "paris12345";
+
+    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+
+    // Create User
+    const user = await User.create(
+      [
+        {
+          fullname,
+          email: email.toLowerCase(),
+          password: hashedPassword,
+          role: "coach",
+        },
+      ],
+      { session }
+    );
+
+    // Create coach
+    const coach = await Coach.create(
+      [
+        {
+          user: user[0]._id,
+          position,
+          age,
+          phone,
+          image,
+        },
+      ],
+      { session }
+    );
+
+    // Everything succeeded
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json({
+      message: "Coach created successfully",
+
+      temporaryPassword: defaultPassword,
+
+      user: {
+        id: user[0]._id,
+        fullname: user[0].fullname,
+        email: user[0].email,
+        role: user[0].role,
+      },
+
+      coach: {
+        id: coach[0]._id,
+        position: coach[0].position,
+        age: coach[0].age,
+        phone: coach[0].phone,
+        image: coach[0].image,
+      },
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+//get coach = login page
+const loginUser = async (req,res) => {
+    try {
+        const {email, password} = req.body;
+
+        //validation
+        if(!email || !password) {
+            return res.status(400).json({
+                message: "email and password are required"
+            })
+        }
+        
+        //check if user already exists
+        const user = await User.findOne({
+            email: email.toLowerCase()
+        }).select("+password");
+
+        if(!user) {
+            return res.status(404).json({
+                message: "user not found"
+            })
+        }
+
+        //if user exists compare passwords
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(!isMatch) {
+            return res.status(401).json({
+                message: "incorrect password"
+            })
+        }
+
+        //update login status
+        user.loggedIn = true;
+        await user.save();
+
+        const token = generateToken(user._id);
+
+        res.status(202).json({
+            message: `Welcome ${user.fullname}`,
+            token,
+            user: {
+                id: user._id,
+                fullname: user.fullname,
+                email: user.email,
+                role: user.role
+            }
+        })
+
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error"
+        })
+    }
+}
+
+//update coach = edit coach button
+const editCoach = async (req, res) => {
+    try {
+        //get the id
+        const {id} = req.params;
+
+        //find the coach
+        const coach = await Coach.findById(id);
+
+        if(!coach) {
+            return res.status(404).json({
+                message: "coach not found"
+            })
+        }
+
+        const user = await User.findById(coach.user);
+
+        if (!user) {
+             return res.status(404).json({
+                 message: "User not found"
+             });
+        
+        
+        }
+
+        user.fullname = req.body.fullname || user.fullname;
+        user.email = req.body.email || user.email;
+
+        await user.save();
+
+        coach.position = req.body.position || coach.position;
+        coach.age = req.body.age || coach.age;
+        coach.phone = req.body.phone || coach.phone;
+        coach.image = req.body.image || coach.image;
+
+        await coach.save();
+
+        res.status(200).json({
+            message: "coach updated successfully",
+            user,
+            coach
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+//delete coach = delete coach button
+const deleteCoach = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        //find coach
+        const coach = await Coach.findById(id);
+        
+        if(!coach) {
+            return res.status(404).json({
+                message: "coach not found"
+            })
+        }
+
+        //delete
+        await coach.deleteOne();
+
+        await User.findByIdAndDelete(coach.user);
+
+        res.status(200).json({
+            message: "coach deleted succesfully"
+        })
+
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+//get all coaches
+const getAllCoaches = async (req, res) => {
+    try {
+        //find all coachs & populate
+        const coaches = await Coach.find()
+          .populate("user", "fullname email role")
+
+        //formatted
+        const formattedCoaches = coaches.map(coach => ({
+            id: coach._id,
+            fullname: coach.user.fullname,
+            email: coach.user.email,
+            role: coach.user.role,
+            position: coach.position,
+            age: coach.age,
+            phone: coach.phone,
+            image: coach.image
+        }))
+
+        if(coaches.length === 0) {
+            res.status(200).json({
+                message: "All coaches retrieved succesfully",
+                coachs: []            
+            })
+        }
+
+        res.status(200).json({
+            message: "All the coaches",
+            count: formattedCoaches.length,
+            formattedCoaches
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+//get one coach
+const getCoach = async (req, res) => {
+    try {
+        //get id
+        const {id} = req.params
+
+        //find coach
+        const coach = await Coach.findById(id)
+          .populate("user", "fullname email");
+
+        if(!coach) {
+            return res.status(404).json({
+                message: "coach not found"
+            })
+        }
+
+        // Format the response
+        const formattedCoach = {
+            id: coach._id,
+            fullname: coach.user.fullname,
+            email: coach.user.email,
+            role: coach.user.role,
+            position: coach.position,
+            age: coach.age,
+            phone: coach.phone,
+            image: coach.image
+        };
+
+        // Return coach
+        res.status(200).json({
+            message: "coach retrieved successfully",
+            coach: formattedCoach
+        });
+
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+//serach coach
+const searchCoaches = async (req, res) => {
+    try {
+
+        const { search } = req.query;
+
+        // Get all coachs and populate user details
+        const coachs = await Coach.find()
+            .populate("user", "fullname email role");
+
+        // Filter coachs
+        const filteredcoachs = coachs.filter((coach) =>
+            coach.user.fullname
+                .toLowerCase()
+                .includes(search.toLowerCase())
+        );
+
+        if (filteredcoachs.length === 0) {
+            return res.status(404).json({
+                message: "No coachs found"
+            });
+        }
+
+        res.status(200).json({
+            message: "coachs found",
+            coachs: filteredcoachs
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
+export  {
+    createCoach, loginUser, editCoach, deleteCoach, getAllCoaches, getCoach, searchCoaches
+}
