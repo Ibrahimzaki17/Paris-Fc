@@ -25,11 +25,13 @@ const matchSchema = new mongoose.Schema(
     competition: {
       type: String,
       required: true,
+      enum: ["league", "friendly", "cup"],
+      default: "Friendly"
     },
 
     status: {
       type: String,
-      enum: ["Upcoming", "Completed", "Postponed"],
+      enum: ["upcoming", "completed", "postponed"],
       default: "Upcoming",
     },
 
@@ -43,12 +45,15 @@ const matchSchema = new mongoose.Schema(
       default: 0,
     },
 
-    image: {
+    homeImage: {
+      type: String,
+    },
+    awayImage: {
       type: String,
     },
     result: {
       type: String,
-      enum: ["Win", "Draw", "Loss"],
+      enum: ["win", "draw", "loss", "pending"],
       default: null,
     },
   },
