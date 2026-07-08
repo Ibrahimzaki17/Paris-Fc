@@ -20,6 +20,19 @@ function App() {
 
   return(
     <>
+       {location.pathname !== '/login' && <Header />}
+    <Routes>
+      <Route index element={<HomePage />} />
+      <Route path='/about' element={<AboutPage />} />
+      <Route path='/players' element={<PlayersPage />} />
+      <Route path='/trophies' element={<Trophies />} />
+      <Route path='/contact' element={<Contacts />} />
+      <Route path='/coach' element={<Coach />} />
+      <Route path='/login' element={<Login />} />
+    </Routes>
+    {location.pathname !== '/login' && <Footer />}
+
+        <PlayerDashboard />
  <AdminDashboard />
  <CoachDashboard />
 

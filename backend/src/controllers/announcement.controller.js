@@ -1,14 +1,16 @@
 import Announcement from "../models/announcements.js";
 import mongoose from "mongoose";
 import User from "../models/user.js";
+import fs from "fs";
+import path from "path";
 
 //create annoucement
 const createAnnoucement = async (req, res) => {
     try {
-        const {title,message,image} = req.body
+        const {title,message} = req.body
 
         //basic validation
-        if(!title || !message || !image) {
+        if(!title || !message ) {
             return res.status(400).json({
                 message: "All fields must filled"
             });
@@ -26,6 +28,8 @@ const createAnnoucement = async (req, res) => {
         };
 
         const author = req.user._id;
+
+        const image = req.file ? req.file.filename : "" ;
 
         const announcement = await Announcement.create({
             title,
@@ -70,7 +74,23 @@ const editAnnouncement = async (req, res) => {
 
         announcement.title = req.body.title || announcement.title;
         announcement.message = req.body.message || announcement.message;
-        announcement.image = req.body.image || announcement.image;
+     // If a new image was uploaded
+        if (req.file) {
+
+            // Delete the old image (if there is one)
+            if (announcement.image) {
+
+                const oldImagePath = path.join("uploads", announcement.image);
+
+                if (fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                }
+
+            }
+
+            // Save the new image filename
+            announcement.image = req.file.filename;
+        }
 
 
         await announcement.save();
@@ -99,6 +119,17 @@ const deleteAnnoucement = async (req, res) => {
                 message: "Annoucement not found"
             });
         };
+
+        if (announcement.image) {
+
+            const imagePath = path.join("uploads", announcement.image);
+
+            if (fs.existsSync(imagePath)) {
+
+                fs.unlinkSync(imagePath);
+
+            }
+        }
 
         //delete
         await announcement.deleteOne();

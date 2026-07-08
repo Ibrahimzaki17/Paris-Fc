@@ -1,8 +1,11 @@
 import User from "../models/user.js";
 import Coach from "../models/coach.js";
 import jwt from 'jsonwebtoken';
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import mongoose from "mongoose";
+import Player from "../models/player.js";
+import fs from "fs";
+import path from "path";
 
 const generateToken = (id) => {
     return jwt.sign({id}, process.env.JWT_SECRET, {
@@ -23,8 +26,9 @@ const createCoach = async (req, res) => {
       position,
       age,
       phone,
-      image,
     } = req.body;
+
+    const image = req.file ? req.file.filename : "";
 
     // Validation
     if (
@@ -211,7 +215,23 @@ const editCoach = async (req, res) => {
         coach.position = req.body.position || coach.position;
         coach.age = req.body.age || coach.age;
         coach.phone = req.body.phone || coach.phone;
-        coach.image = req.body.image || coach.image;
+     // If a new image was uploaded
+        if (req.file) {
+
+            // Delete the old image (if there is one)
+            if (coach.image) {
+
+                const oldImagePath = path.join("uploads", coach.image);
+
+                if (fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                }
+
+            }
+
+            // Save the new image filename
+            coach.image = req.file.filename;
+        }
 
         await coach.save();
 
@@ -240,6 +260,17 @@ const deleteCoach = async (req, res) => {
             return res.status(404).json({
                 message: "coach not found"
             })
+        }
+
+        if (coach.image) {
+
+            const imagePath = path.join("uploads", coach.image);
+
+            if (fs.existsSync(imagePath)) {
+
+                fs.unlinkSync(imagePath);
+
+            }
         }
 
         //delete

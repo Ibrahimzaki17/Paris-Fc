@@ -1,17 +1,28 @@
 import { Router } from "express";
 import { protect, authorize } from "../middleware/auth.middleware.js";
 import { createMatch, getAllMatches, deleteMatch, editMatch } from "../controllers/match.controller.js";
+import upload from "../middleware/upload.middleware.js";
 
 const router = Router();
 
 //create Match
-router.route('/matches').post(protect, authorize("admin", "coach"), createMatch);
+router.route('/matches').post(protect, authorize("admin", "coach"),upload.fields([
+        { name:"homeImage", maxCount:1 },
+        { name:"awayImage", maxCount:1 }
+    ]), 
+    createMatch
+);
 //get all matches
 router.route('/matches').get(protect, authorize("admin", "coach"), getAllMatches);
 //delete match
 router.route('/matches/:id').delete(protect, authorize("admin", "coach"), deleteMatch);
 //edit match
-router.route('/matches/:id').put(protect, authorize("admin", "coach"), editMatch);
+router.route('/matches/:id').put(protect, authorize("admin", "coach"),upload.fields([
+        { name:"homeImage", maxCount:1 },
+        { name:"awayImage", maxCount:1 }
+    ]), 
+    editMatch
+);
 
 export default router
 

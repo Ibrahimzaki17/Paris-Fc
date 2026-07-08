@@ -1,8 +1,10 @@
 import User from "../models/user.js";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import Player from "../models/player.js";
 import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
 
 const generateToken = (id) => {
     return jwt.sign({id}, process.env.JWT_SECRET, {
@@ -24,8 +26,11 @@ const createPlayer = async (req, res) => {
       age,
       phone,
       jerseyNumber,
-      image,
     } = req.body;
+
+    const image = req.file
+        ? req.file.filename
+        : "";
 
     // Validation
     if (
@@ -216,7 +221,23 @@ const editPlayer = async (req, res) => {
         player.age = req.body.age || player.age;
         player.phone = req.body.phone || player.phone;
         player.jerseyNumber = req.body.jerseyNumber || player.jerseyNumber;
-        player.image = req.body.image || player.image;
+     // If a new image was uploaded
+        if (req.file) {
+
+            // Delete the old image (if there is one)
+            if (player.image) {
+
+                const oldImagePath = path.join("uploads", player.image);
+
+                if (fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                }
+
+            }
+
+            // Save the new image filename
+            player.image = req.file.filename;
+        }
 
         await player.save();
 
@@ -245,6 +266,17 @@ const deletePlayer = async (req, res) => {
             return res.status(404).json({
                 message: "Player not found"
             })
+        }
+
+        if (player.image) {
+
+            const imagePath = path.join("uploads", player.image);
+
+            if (fs.existsSync(imagePath)) {
+
+                fs.unlinkSync(imagePath);
+
+            }
         }
 
         //delete
@@ -385,3 +417,24 @@ const searchPlayers = async (req, res) => {
 export {
     createPlayer, loginUser, deletePlayer, editPlayer, getAllPlayers, getPlayer, searchPlayers
 }
+
+
+/**
+ * A rule I personally follow
+
+Whenever I'm writing an update controller, I mentally divide it into seven sections:
+
+1. Get ID
+
+2. Find document
+
+3. Validation / Business logic
+
+4. Update text fields
+
+5. Handle uploaded files
+
+6. Save
+
+7. Return response
+ */
