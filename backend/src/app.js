@@ -9,12 +9,14 @@ app.use(cors());
 app.use("/uploads", express.static(path.resolve("uploads")));
 
 //routes import
+import authRouter from './routes/auth.route.js';
 import playerRouter from './routes/player.route.js';
 import coachRouter from './routes/coach.route.js';
 import matchRouter from './routes/match.route.js';
 import announcementRouter from './routes/announcement.route.js';
 
 //routes application
+app.use('/api/auth', authRouter);
 app.use('/api', playerRouter);
 app.use('/api', coachRouter);
 app.use('/api', matchRouter);

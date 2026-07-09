@@ -1,17 +1,10 @@
 import User from "../models/user.js";
 import Coach from "../models/coach.js";
-import jwt from 'jsonwebtoken';
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import Player from "../models/player.js";
 import fs from "fs";
 import path from "path";
-
-const generateToken = (id) => {
-    return jwt.sign({id}, process.env.JWT_SECRET, {
-        expiresIn: "7d"
-    });
-}
 
 //create coach = Add coach button
 const createCoach = async (req, res) => {
@@ -125,62 +118,6 @@ const createCoach = async (req, res) => {
     });
   }
 };
-
-//get coach = login page
-const loginUser = async (req,res) => {
-    try {
-        const {email, password} = req.body;
-
-        //validation
-        if(!email || !password) {
-            return res.status(400).json({
-                message: "email and password are required"
-            })
-        }
-        
-        //check if user already exists
-        const user = await User.findOne({
-            email: email.toLowerCase()
-        }).select("+password");
-
-        if(!user) {
-            return res.status(404).json({
-                message: "user not found"
-            })
-        }
-
-        //if user exists compare passwords
-        const isMatch = await bcrypt.compare(password, user.password);
-        if(!isMatch) {
-            return res.status(401).json({
-                message: "incorrect password"
-            })
-        }
-
-        //update login status
-        user.loggedIn = true;
-        await user.save();
-
-        const token = generateToken(user._id);
-
-        res.status(202).json({
-            message: `Welcome ${user.fullname}`,
-            token,
-            user: {
-                id: user._id,
-                fullname: user.fullname,
-                email: user.email,
-                role: user.role
-            }
-        })
-
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Internal server error"
-        })
-    }
-}
 
 //update coach = edit coach button
 const editCoach = async (req, res) => {
@@ -407,5 +344,5 @@ const searchCoaches = async (req, res) => {
 };
 
 export  {
-    createCoach, loginUser, editCoach, deleteCoach, getAllCoaches, getCoach, searchCoaches
+    createCoach, editCoach, deleteCoach, getAllCoaches, getCoach, searchCoaches
 }
