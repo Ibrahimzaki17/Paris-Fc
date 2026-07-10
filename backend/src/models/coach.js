@@ -15,6 +15,9 @@ const coachSchema = new mongoose.Schema(
                 "head-coach", "assistant-coach"
             ]
         },
+        positionOrder: {
+            type: Number
+        },
         age: {
             type: Number,
             required: true

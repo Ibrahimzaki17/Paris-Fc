@@ -71,12 +71,20 @@ const createCoach = async (req, res) => {
       { session }
     );
 
+    const positionOrderMap = {
+        "head-coach": 1,
+        "assistant-coach": 2
+    };
+
+    const positionOrder = positionOrderMap[position];
+
     // Create coach
     const coach = await Coach.create(
       [
         {
           user: user[0]._id,
           position,
+          positionOrder,
           age,
           phone,
           image,
