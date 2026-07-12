@@ -13,14 +13,22 @@ import { useLocation } from 'react-router';
 import PlayerDashboard from './pages/PlayerDashboardPage/PlayerDashboard';
 import CoachDashboard from './pages/CoachDashboard/CoachDashboard';
 import AdminDashboard from './pages/Admin/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
 
   const location = useLocation();
+  const dashboardRoutes = [
+    "/admin-dashboard",
+    "/coach-dashboard",
+    "/player-dashboard"
+  ];
+
+  const isDashboard = dashboardRoutes.includes(location.pathname);
 
   return(
     <>
-       {location.pathname !== '/login' && <Header />}
+    {!isDashboard && location.pathname !== "/login" && <Header />}
     <Routes>
       <Route index element={<HomePage />} />
       <Route path='/about' element={<AboutPage />} />
@@ -29,33 +37,30 @@ function App() {
       <Route path='/contact' element={<Contacts />} />
       <Route path='/coach' element={<Coach />} />
       <Route path='/login' element={<Login />} />
+
+      <Route path='/player-dashboard' element={
+          <ProtectedRoute role="player">
+            <PlayerDashboard />
+          </ProtectedRoute>
+          } 
+        />
+      <Route path='/coach-dashboard' element={
+          <ProtectedRoute role="coach">
+            <CoachDashboard />
+          </ProtectedRoute>
+          } 
+        />
+      <Route path='/admin-dashboard' element={
+          <ProtectedRoute role="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+          } 
+        />
     </Routes>
-    {location.pathname !== '/login' && <Footer />}
-
-        <PlayerDashboard />
- <AdminDashboard />
- <CoachDashboard />
-
+    {!isDashboard && location.pathname !== "/login" && <Footer />}
    
     </>
   );
 }
 
 export default App
-
-/**
- *     {location.pathname !== '/login' && <Header />}
-    <Routes>
-      <Route index element={<HomePage />} />
-      <Route path='/about' element={<AboutPage />} />
-      <Route path='/players' element={<PlayersPage />} />
-      <Route path='/trophies' element={<Trophies />} />
-      <Route path='/contact' element={<Contacts />} />
-      <Route path='/coach' element={<Coach />} />
-      <Route path='/login' element={<Login />} />
-    </Routes>
-    {location.pathname !== '/login' && <Footer />}
-
-        <PlayerDashboard />
-       
- */
