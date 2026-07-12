@@ -7,10 +7,7 @@ import path from "path";
 
 //create player = Add player button
 const createPlayer = async (req, res) => {
-  const session = await mongoose.startSession();
-
   try {
-    session.startTransaction();
 
     const {
       fullname,
@@ -24,8 +21,9 @@ const createPlayer = async (req, res) => {
     const image = req.file
         ? req.file.filename
         : "";
-
+        
     // Validation
+    /*
     if (
       !fullname ||
       !email ||
@@ -41,6 +39,11 @@ const createPlayer = async (req, res) => {
         message: "All fields must be filled",
       });
     }
+      */
+
+    //start transaction
+    let session = await mongoose.startSession();
+    session.startTransaction();
 
     // Check if user already exists
     const existing = await User.findOne({

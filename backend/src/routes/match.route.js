@@ -2,14 +2,25 @@ import { Router } from "express";
 import { protect, authorize } from "../middleware/auth.middleware.js";
 import { createMatch, getAllMatches, deleteMatch, editMatch } from "../controllers/match.controller.js";
 import upload from "../middleware/upload.middleware.js";
+import validateRequiredFields from "../middleware/validation.middleware.js";
 
 const router = Router();
 
 //create Match
-router.route('/matches').post(protect, authorize("admin", "coach"),upload.fields([
+router.route('/matches').post(
+    protect,
+    authorize("admin", "coach"),
+    upload.fields([
         { name:"homeImage", maxCount:1 },
         { name:"awayImage", maxCount:1 }
     ]), 
+    validateRequiredFields([
+        "homeTeam",
+        "awayTeam",
+        "matchDate",
+        "venue",
+        "competition"
+    ]),
     createMatch
 );
 //get all matches
@@ -25,6 +36,7 @@ router.route('/matches/:id').put(protect, authorize("admin", "coach"),upload.fie
 );
 
 export default router
+
 
 /**
 

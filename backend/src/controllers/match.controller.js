@@ -17,13 +17,6 @@ const createMatch = async (req, res) => {
       result,
     } = req.body;
 
-    //basic validation
-    if (!homeTeam || !awayTeam || !matchDate || !venue || !competition) {
-      return res.status(400).json({
-        message: "All fields must be filled",
-      });
-    }
-
     if (homeTeam === awayTeam) {
       return res.status(400).json({
         message: "A team cannot play against itself.",

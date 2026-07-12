@@ -9,13 +9,6 @@ const createAnnoucement = async (req, res) => {
     try {
         const {title,message} = req.body
 
-        //basic validation
-        if(!title || !message ) {
-            return res.status(400).json({
-                message: "All fields must filled"
-            });
-        };
-
         const existingAnnouncement = await Announcement.findOne({
             title,
             message
@@ -39,7 +32,7 @@ const createAnnoucement = async (req, res) => {
         });
 
         res.status(201).json({
-            message: "Annoucement craeted succesfully",
+            message: "Annoucement created succesfully",
             announcement: {
                 id: announcement._id,
                 title: announcement.title,

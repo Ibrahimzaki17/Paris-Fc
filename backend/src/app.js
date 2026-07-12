@@ -3,6 +3,9 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
+
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -29,6 +32,12 @@ app.use('/api', matchRouter);
 app.use('/api', announcementRouter);
 app.use('/api', dashboardRouter);
 app.use('/api/public', publicRouter)
+
+app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec)
+);
 
 //http://localhost:5000/api/players
 

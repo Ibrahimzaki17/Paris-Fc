@@ -5,11 +5,47 @@ import Announcement from "../models/announcements.js";
 
 const getPublicPlayers = async (req, res) => {
     try {
+
+        //pagination
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        //search and filter
+        const search = req.query.search || "";
+        const position = req.query.position 
+                       ? req.query.position.toUpperCase()
+                       : "";
+
+        //build query
+        const query = {};
+
+        //search by position
+        if(search) {
+            query.position = {
+                $regex: search,
+                $options: "i"
+            }
+        }
+
+        //exact filter
+        if(position) {
+            query.position = position;
+        }
+
+        //count total players
+        const totalPlayers = await Player.countDocuments(query);
+
+        //calculate total pages
+        const totalPages = Math.ceil(totalPlayers / limit);
         
         //get all players
-        const players = await Player.find()
+        const players = await Player.find(query)
           .populate("user", "fullname")
           .sort({ jerseyNumber: 1 })
+          .skip(skip)
+          .limit(limit);
+
          
         const formattedPlayers = players.map(player => ({
             id: player._id,
@@ -22,6 +58,10 @@ const getPublicPlayers = async (req, res) => {
         }));
         
         res.status(200).json({
+            currentPage: page,
+            totalPages,
+            totalPlayers,
+            playersPerPage: limit,
             players: formattedPlayers
         })
 
@@ -35,11 +75,42 @@ const getPublicPlayers = async (req, res) => {
 //get coaches
 const getPublicCoaches = async (req, res) => {
     try {
+
+        //pagination
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const search = req.query.search || "";
+        const position = req.query.position || "";
+
+        const query = {};
+
+        if(search) {
+            query.position = {
+                $regex: search,
+                $options: "i"
+            }
+        }
+
+        if(position) {
+            query.position = {
+                $regex: `^${position}$`,
+                $options: "i"
+            }
+        }
+
+
+        const totalCoaches = await Coach.countDocuments(query);
+
+        const totalPages = Math.ceil(totalCoaches / limit);
         
         //get all coaches
-        const coaches = await Coach.find()
+        const coaches = await Coach.find(query)
           .populate("user", "fullname")
-          .sort({ positionOrder: 1 });
+          .sort({ positionOrder: 1 })
+          .skip(skip)
+          .limit(limit)
 
         //format players
         const formattedCoaches = coaches.map(coach => ({
@@ -52,6 +123,10 @@ const getPublicCoaches = async (req, res) => {
         }));
         
         res.status(200).json({
+            currentPage: page,
+            totalPages,
+            totalCoaches,
+            coachesPerPage: limit,
             coaches: formattedCoaches
         })
 
@@ -65,12 +140,75 @@ const getPublicCoaches = async (req, res) => {
 //get matches
 const getPublicMatches = async (req, res) => {
     try {
+
+        //pagination
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const search = req.query.search || "";
+        const homeTeam = req.query.homeTeam || "";
+        const awayTeam = req.query.awayTeam || "";
+        const competition = req.query.competition || "";
+
+        const query = {
+            status: "upcoming"
+        };
+
+        if (search) {
+            query.$or = [
+                {
+                    homeTeam: {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    awayTeam: {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    competition: {
+                        $regex: search,
+                        $options: "i"
+                    }
+                }
+            ];
+        }
+
+        if(homeTeam) {
+            query.homeTeam = {
+                $regex: `^${homeTeam}$`,
+                $options: "i"
+            }
+        }
+
+        if(awayTeam) {
+            query.awayTeam = {
+                $regex: `^${awayTeam}$`,
+                $options: "i"
+            }
+        }
+
+        if(competition) {
+            query.competition = {
+                $regex: `^${competition}$`,
+                $options: "i"
+            }
+        }
+
+        const totalMacthes = await Match.countDocuments(query);
+
+        const totalPages = Math.ceil(totalMacthes / limit);
         
         //get matches
-        const matches = await Match.find({
-            status: "upcoming"
-        })
+        const matches = await Match.find(query)
           .sort({ matchDate: 1 })
+          .skip(skip)
+          .limit(limit)
+          
 
         //format matches
         const formattedMatches = matches.map(match => ({
@@ -82,14 +220,18 @@ const getPublicMatches = async (req, res) => {
             competition: match.competition,
             status: match.status,
             homeImage: match.homeImage
-                  ? `${req.protocol}://${req.get("host")}/uploads/${homeImage.image}`
+                  ? `${req.protocol}://${req.get("host")}/uploads/${match.homeImage}`
                   : null ,
             awayImage: match.awayImage
-                  ? `${req.protocol}://${req.get("host")}/uploads/${awayImage.image}`
+                  ? `${req.protocol}://${req.get("host")}/uploads/${match.awayImage}`
                   : null ,
         }));
 
         res.status(200).json({
+            currentPage: page,
+            totalPages,
+            totalMacthes,
+            matchesPerPage: limit,
             matches: formattedMatches
         })
 
@@ -103,9 +245,40 @@ const getPublicMatches = async (req, res) => {
 //get announcements
 const getPublicAnnouncements = async (req, res) => {
     try {
-        const announcements = await Announcement.find()
+
+        //pagination
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const search = req.query.search || "";
+        const title = req.query.title || "";
+
+        const query = {};
+
+        if(search) {
+            query.title = {
+                $regex: search,
+                $options: "i"
+            }
+        }
+
+        if(title) {
+            query.title = {
+                $regex: `^${title}$`,
+                $options: "i"
+            }
+        }
+
+        const totalAnnouncements = await Announcement.countDocuments(query);
+
+        const totalPages = Math.ceil(totalAnnouncements / limit);
+
+        const announcements = await Announcement.find(query)
            .populate("author", "fullname role")
            .sort({ createdAt: -1 })
+           .skip(skip)
+           .limit(limit)
 
         const formattedAnnouncements = announcements.map(announcement => ({
             id: announcement._id,
@@ -127,6 +300,10 @@ const getPublicAnnouncements = async (req, res) => {
         }
 
         res.status(200).json({
+            currentPage: page,
+            totalPages,
+            totalAnnouncements,
+            announcementsPerPage: limit,
             announcements: formattedAnnouncements
         })
 

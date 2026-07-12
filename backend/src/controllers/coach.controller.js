@@ -8,10 +8,7 @@ import path from "path";
 
 //create coach = Add coach button
 const createCoach = async (req, res) => {
-  const session = await mongoose.startSession();
-
   try {
-    session.startTransaction();
 
     const {
       fullname,
@@ -22,7 +19,7 @@ const createCoach = async (req, res) => {
     } = req.body;
 
     const image = req.file ? req.file.filename : "";
-
+    /*
     // Validation
     if (
       !fullname ||
@@ -38,6 +35,10 @@ const createCoach = async (req, res) => {
         message: "All fields must be filled",
       });
     }
+      */
+
+    let session = await mongoose.startSession();
+    session.startTransaction();
 
     // Check if user already exists
     const existing = await User.findOne({
