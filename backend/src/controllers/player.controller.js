@@ -7,6 +7,7 @@ import path from "path";
 
 //create player = Add player button
 const createPlayer = async (req, res) => {
+  let session;  
   try {
 
     const {
@@ -42,7 +43,7 @@ const createPlayer = async (req, res) => {
       */
 
     //start transaction
-    let session = await mongoose.startSession();
+    session = await mongoose.startSession();
     session.startTransaction();
 
     // Check if user already exists
@@ -118,8 +119,11 @@ const createPlayer = async (req, res) => {
       },
     });
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
+    if(session) {
+       await session.abortTransaction();
+       session.endSession(); 
+    }
+    
 
     res.status(500).json({
       message: error.message,

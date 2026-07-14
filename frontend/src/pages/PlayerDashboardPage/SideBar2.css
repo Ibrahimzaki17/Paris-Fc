@@ -16,6 +16,8 @@
   box-shadow: 4px 0 15px rgba(0,0,0,0.3);
 
   animation: slideInLeft 0.3s ease;
+
+ overflow-y: auto;
 }
 @keyframes slideInLeft {
   from {

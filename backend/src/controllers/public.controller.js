@@ -41,7 +41,7 @@ const getPublicPlayers = async (req, res) => {
         
         //get all players
         const players = await Player.find(query)
-          .populate("user", "fullname")
+          .populate("user", "fullname email")
           .sort({ jerseyNumber: 1 })
           .skip(skip)
           .limit(limit);
@@ -52,6 +52,7 @@ const getPublicPlayers = async (req, res) => {
             fullname: player.user.fullname,
             position: player.position,
             jerseyNumber: player.jerseyNumber,
+            email: player.user.email,
             image: player.image 
                   ? `${req.protocol}://${req.get("host")}/uploads/${player.image}`
                   : null 
@@ -107,7 +108,7 @@ const getPublicCoaches = async (req, res) => {
         
         //get all coaches
         const coaches = await Coach.find(query)
-          .populate("user", "fullname")
+          .populate("user", "fullname email")
           .sort({ positionOrder: 1 })
           .skip(skip)
           .limit(limit)
@@ -117,6 +118,7 @@ const getPublicCoaches = async (req, res) => {
             id: coach._id,
             fullname: coach.user.fullname,
             position: coach.position,
+            email: coach.user.email,
             image: coach.image
                  ? `${req.protocol}://${req.get("host")}/uploads/${coach.image}`
                  : null 

@@ -19,9 +19,9 @@ const playerSchema = new mongoose.Schema(
         "RB",
         "CB",
         "LB",
-        "CDM",
+        "DM",
         "CM",
-        "CAM",
+        "AM",
         "RW",
         "LW",
         "ST"

@@ -12,7 +12,7 @@ import Login from './pages/Login/Login';
 import { useLocation } from 'react-router';
 import PlayerDashboard from './pages/PlayerDashboardPage/PlayerDashboard';
 import CoachDashboard from './pages/CoachDashboard/CoachDashboard';
-import AdminDashboard from './pages/Admin/AdminDashboard';
+import {AdminDashboard} from './pages/Admin/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {

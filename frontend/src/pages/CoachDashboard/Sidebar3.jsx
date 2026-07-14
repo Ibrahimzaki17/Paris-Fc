@@ -3,6 +3,13 @@ import { FaTimes } from 'react-icons/fa';
 
 function Sidebar3({closeSideBar3}) {
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        navigate("/login");
+    };
+
     return(
       <div className='sidebar-section'>
       
@@ -18,7 +25,9 @@ function Sidebar3({closeSideBar3}) {
                       <li><a href="#announcements">Announcements</a></li>
                       <li><a href="#reports">Reports</a></li>
                       <li><a href="#profile">Profile</a></li>
-                      <li><a href="#logout">Logout</a></li>
+                      <li><a href="#logout">
+                         <button onClick={handleLogout}>Logout</button>
+                        </a></li>
                   </ul>
               </div>
             </div>
