@@ -157,7 +157,7 @@ const editPlayer = async (req, res) => {
         }
 
         user.fullname = req.body.fullname || user.fullname;
-        user.email = req.body.email || user.email;
+        // user.email = req.body.email || user.email;
 
         await user.save();
 

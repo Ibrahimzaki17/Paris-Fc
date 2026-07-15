@@ -38,8 +38,7 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
+  const fetchDashboardData = async () => {
       try {
         setLoading(true); //AdminDashboard opens -> loading = true
         
@@ -55,6 +54,8 @@ function AdminDashboard() {
         setLoading(false)
       }
     };
+
+  useEffect(() => {
     fetchDashboardData();
   }, []);
 
@@ -90,13 +91,13 @@ function AdminDashboard() {
           dashboardData={dashboardData} 
       />
 
-      <PlayerManagement />
+      <PlayerManagement fetchDashboardData={fetchDashboardData} />
 
-      <CoachManagement />
+      <CoachManagement fetchDashboardData={fetchDashboardData} />
 
-      <MatchManagement />
+      <MatchManagement fetchDashboardData={fetchDashboardData} />
 
-      <AnnouncementsManagement />
+      <AnnouncementsManagement fetchDashboardData={fetchDashboardData} />
 
       <div className="user-accounts">
         <span>

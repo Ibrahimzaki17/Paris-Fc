@@ -1,56 +1,16 @@
 import api from "../../../api/axios";
 import { useState, useEffect } from "react";
 
-function CoachManagement() {
+function CoachManagement({fetchDashboardData}) {
   //add coach
   const [addCoach, setAddCoach] = useState(false);
 
-  const openAddCoach = () => {
-    setAddCoach(true);
-  };
-
-  const closeAddCoach = () => {
-    setAddCoach(false);
-  };
-
   //edit coach
   const [editCoach, setEditCoach] = useState(false);
-  const [coachData, setCoachData] = useState({
-    name: "",
-    position: "",
-    email: "",
-  });
-
-  const openEditCoach = () => {
-    setEditCoach(true);
-    setCoachData({
-      name: "Ibrahim zaki",
-      position: "Head Coach",
-      email: "ibrahim@gmail.com",
-    });
-  };
-
-  const closeEditCoach = () => {
-    setEditCoach(false);
-  };
-
-  const handleCoachChange = (e) => {
-    setCoachData({
-      ...coachData,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   //delete coach
   const [deleteCoach, setDeleteCoach] = useState(false);
 
-  const openDeleteCoach = () => {
-    setDeleteCoach(true);
-  };
-
-  const closeDeleteCoach = () => {
-    setDeleteCoach(false);
-  };
 
   /***********************CONNECTING TO THE BACKEND************************* */
   // displaying coaches
@@ -69,9 +29,15 @@ function CoachManagement() {
 
   const [selectedImage, setSelectedImage] = useState(null);
 
+  //deleting states
+  const [coachToDelete, setCoachToDelete] = useState(null);
+
   //errors
   const [formError, setFormError] = useState('');
   const [validationErrors, setValidationErrors] = useState([]);
+
+  //success message
+  const [formSuccess, setFormSuccess] = useState("");
 
   
   //displaying coach api
@@ -110,6 +76,10 @@ function CoachManagement() {
     });
   }; 
 
+  const openAddCoach = () => {
+    setAddCoach(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError('');
@@ -127,33 +97,162 @@ function CoachManagement() {
       //post request
       const response = await api.post('/coaches', formData);
       //success message
-      alert(response.data.message || 'Coach created successfylly');
+      setFormError('');
+      setFormSuccess(response.data.message || 'Coach created successfylly');
 
-      setAddCoach(false);
-      setCoachForm({
-        fullname: '',
-        position: '',
-        email: '',
-        age: '',
-        phone: ''
-      })
-      setSelectedImage(null);
+      setTimeout(() => {
+        setAddCoach(false);
+        setCoachForm({
+          fullname: '',
+          position: '',
+          email: '',
+          age: '',
+          phone: ''
+        })
+        setSelectedImage(null);
+        setFormSuccess('');
+        setFormError('');
 
-      fetchCoaches();
+        fetchCoaches();
+        fetchDashboardData();
+      }, 1500);
 
     } catch (error) {
         const data = error.response?.data;
 
         if (data?.errors) {
+          setFormSuccess('');
             setValidationErrors(data.errors);
             setFormError("");
         } else {
+          setFormSuccess('');
             setValidationErrors([]);
             setFormError(data?.message || "Something went wrong.");
         }
     }
     
   }
+
+  const closeAddCoach = () => {
+    setAddCoach(false);
+    setFormSuccess('');
+    setFormError('');
+    setCoachForm({
+          fullname: '',
+          position: '',
+          email: '',
+          age: '',
+          phone: ''
+    })
+  };
+
+  //edit coach
+  const openEditCoach = (coach) => {
+    setCoachForm({
+          id: coach.id,
+          fullname: coach.fullname,
+          position: coach.position,
+          phone: coach.phone,
+        });
+    setEditCoach(true);    
+  };
+
+  //edit coach function
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    setFormError('');
+
+    const formData = new FormData();
+    formData.append('fullname', coachForm.fullname);
+    formData.append('position', coachForm.position);
+    formData.append('phone', coachForm.phone)
+
+    console.log(coachForm.id);
+    
+
+    try {
+      const response = await api.put(`/coaches/${coachForm.id}`, formData);
+      setFormError('');
+      setFormSuccess(response.data.message || "Coach updated successfully");
+
+      setTimeout(() => {
+        setEditCoach(false);
+        setCoachForm({
+              fullname: '',
+              position: '',
+              phone: ''
+        });
+        setFormSuccess('')
+
+        fetchCoaches();
+      }, 1500);
+
+    } catch (error) {
+      const data = error.response?.data;
+      if (data?.errors) {
+        // Validation middleware errors
+        setFormError(data.errors[0].message);
+      } else {
+        // Other errors like "User already exists"
+        setFormError(data?.message || "Something went wrong.");
+      }
+    }
+    
+  }
+
+  const closeEditCoach = () => {
+    setEditCoach(false);
+    setFormSuccess('');
+    setFormError('');
+    setCoachForm({
+          fullname: '',
+          position: '',
+          phone: ''
+    })
+  };
+
+  //delete coach function
+  const openDeleteCoach = (coach) => {
+    setCoachToDelete({
+          id: coach.id,
+          fullname: coach.fullname,
+          position: coach.position,
+          email: coach.email,
+          age: coach.age,
+          phone: coach.phone,
+    })
+    setDeleteCoach(true);
+  };
+
+  //delete coach function
+  const handleDeleteCoach = async () => {
+    try {
+      const response = await api.delete(`/coaches/${coachToDelete.id}`);
+      setFormError('')
+      setFormSuccess(response.data.message || 'Coach deleted succesfully');
+
+      setTimeout(() => {
+        setDeleteCoach(false);
+        setCoachToDelete(null);
+
+        setFormSuccess('');
+
+        fetchCoaches();
+        fetchDashboardData();
+      }, 1500);
+    } catch (error) {
+      const data = error.response?.data;
+      setFormError(data?.message || "Something went wrong.");
+    }
+  };
+
+  const closeDeleteCoach = () => {
+    setDeleteCoach(false);
+    setFormError('');
+    setFormSuccess('');
+    setCoachToDelete(null);
+  };
+
 
   return (
     <div className="coach-management">
@@ -258,6 +357,8 @@ function CoachManagement() {
                 </p>
               )}
 
+              {formSuccess && (<p className="success">{formSuccess}</p>)}
+
               <div className="action-btns">
                 <button type="submit">Add New Coach</button>
                 <button type="button" onClick={closeAddCoach}>
@@ -274,30 +375,41 @@ function CoachManagement() {
           <div className="edit-popup">
             <h2>Edit Coach</h2>
 
-            <form>
+            <form onSubmit={handleEditSubmit}>
               <label>Name</label>
               <input
                 type="text"
-                name="name"
-                value={coachData.name}
-                onChange={handleCoachChange}
+                name="fullname"
+                value={coachForm.fullname}
+                onChange={handleChange1}
               />
+              
               <label>Role</label>
+              <select 
+                  type="text" 
+                  placeholder="Enter role"
+                  name="position"
+                  value={coachForm.position}
+                  onChange={handleChange1}
+              >
+                <option value="head-coach">Head Coach</option>
+                <option value="assistant-coach">Assitant Coach</option>
+              </select>
+
+              <label>Contact</label>
               <input
                 type="text"
-                name="role"
-                value={coachData.role}
-                onChange={handleCoachChange}
-              />
-              <label>Email</label>
-              <input
-                type="text"
-                name="email"
-                value={coachData.email}
-                onChange={handleCoachChange}
+                name="phone"
+                value={coachForm.phone}
+                onChange={handleChange1}
               />
 
               <div className="action-btns">
+
+                {formSuccess && <p className="success">{formSuccess}</p>}
+
+                {formError && <p className="form-error">{formError}</p>}
+
                 <button type="submit">Save Changes</button>
 
                 <button type="button" onClick={closeEditCoach}>
@@ -312,11 +424,14 @@ function CoachManagement() {
       {deleteCoach && (
         <div className="delete-overlay">
           <div className="confirmation-message">
-            <h2>Are you sure you want to delete Coach Ibrahim</h2>
+            <h2>Are you sure you want to delete {`${coachForm.fullname}`}</h2>
           </div>
           <div className="action-btns">
-            <button>Delete</button>
+            <button onClick={handleDeleteCoach}>Delete</button>
             <button onClick={closeDeleteCoach}>Cancel</button>
+          </div>
+          <div>
+            {formSuccess && (<p className="success-delete-message">{formSuccess}</p>)}
           </div>
         </div>
       )}
@@ -344,8 +459,8 @@ function CoachManagement() {
                   <td>{coach.phone}</td>
                   <td>
                     <div className="action-btns">
-                      <button onClick={openEditCoach}>Edit Coach</button>
-                      <button onClick={openDeleteCoach}>Delete Coach</button>
+                      <button onClick={() =>  openEditCoach(coach)}>Edit Coach</button>
+                      <button onClick={() => openDeleteCoach(coach)}>Delete Coach</button>
                     </div>
                   </td>
                 </tr>

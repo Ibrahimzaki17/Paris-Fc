@@ -154,12 +154,12 @@ const editCoach = async (req, res) => {
         }
 
         user.fullname = req.body.fullname || user.fullname;
-        user.email = req.body.email || user.email;
+        // user.email = req.body.email || user.email;
 
         await user.save();
 
         coach.position = req.body.position || coach.position;
-        coach.age = req.body.age || coach.age;
+        // coach.age = req.body.age || coach.age;
         coach.phone = req.body.phone || coach.phone;
      // If a new image was uploaded
         if (req.file) {

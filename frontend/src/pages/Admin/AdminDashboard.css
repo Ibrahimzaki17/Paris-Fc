@@ -18,6 +18,19 @@
     font-size: 14px;
     font-weight: 500;
 }
+.success{
+  color: green;
+  font-size: 14px;
+  margin-top:  10px;
+  font-weight: 500;
+}
+.success-delete-message{
+  background: #f8fafc;
+  color: green;
+  font-size: 14px;
+  margin-top:  10px;
+  font-weight: 500;
+}
 
 /* Title */
 
@@ -439,6 +452,7 @@ tr:nth-child(even) {
 }
 
 .add-player input,
+.edit-popup select,
 .add-player select {
   padding: 12px;
 
