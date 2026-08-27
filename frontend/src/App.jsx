@@ -12,53 +12,80 @@ import Login from './pages/Login/Login';
 import { useLocation } from 'react-router';
 import PlayerDashboard from './pages/PlayerDashboardPage/PlayerDashboard';
 import CoachDashboard from './pages/CoachDashboard/CoachDashboard';
-import {AdminDashboard} from './pages/Admin/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import { AdminLayout } from './pages/Admin/AdminLayout';
+import PlayerManagement from './pages/Admin/AdminPages/PlayerManagement'
+import CoachManagement from './pages/Admin/AdminPages/CoachManagement';
+import MatchManagement from './pages/Admin/AdminPages/MatchManagement';
+import AnnouncementsManagement from './pages/Admin/AdminPages/AnnouncementsManagement';
+import AdminProfile from './pages/Admin/AdminPages/AdminProfile';
+
 
 function App() {
 
   const location = useLocation();
-  const dashboardRoutes = [
-    "/admin-dashboard",
-    "/coach-dashboard",
-    "/player-dashboard"
-  ];
+  const isDashboard =
+  location.pathname.startsWith("/admin-dashboard") ||
+  location.pathname.startsWith("/coach-dashboard") ||
+  location.pathname.startsWith("/player-dashboard");
 
-  const isDashboard = dashboardRoutes.includes(location.pathname);
-
-  return(
+  return (
     <>
-    {!isDashboard && location.pathname !== "/login" && <Header />}
-    <Routes>
-      <Route index element={<HomePage />} />
-      <Route path='/about' element={<AboutPage />} />
-      <Route path='/players' element={<PlayersPage />} />
-      <Route path='/trophies' element={<Trophies />} />
-      <Route path='/contact' element={<Contacts />} />
-      <Route path='/coach' element={<Coach />} />
-      <Route path='/login' element={<Login />} />
+      {!isDashboard && location.pathname !== "/login" && <Header />}
+      <Routes>
+        <Route index element={<HomePage />} />
+        <Route path='/about' element={<AboutPage />} />
+        <Route path='/players' element={<PlayersPage />} />
+        <Route path='/trophies' element={<Trophies />} />
+        <Route path='/contact' element={<Contacts />} />
+        <Route path='/coach' element={<Coach />} />
+        <Route path='/login' element={<Login />} />
 
-      <Route path='/player-dashboard' element={
+        <Route path='/player-dashboard' element={
           <ProtectedRoute role="player">
             <PlayerDashboard />
           </ProtectedRoute>
-          } 
+        }
         />
-      <Route path='/coach-dashboard' element={
+        <Route path='/coach-dashboard' element={
           <ProtectedRoute role="coach">
             <CoachDashboard />
           </ProtectedRoute>
-          } 
+        }
         />
-      <Route path='/admin-dashboard' element={
-          <ProtectedRoute role="admin">
-            <AdminDashboard />
-          </ProtectedRoute>
-          } 
-        />
-    </Routes>
-    {!isDashboard && location.pathname !== "/login" && <Footer />}
-   
+        <Route
+          path="/admin-dashboard"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          
+          <Route
+            path="players"
+            element={ <PlayerManagement /> }
+          />
+          <Route
+            path="coaches"
+            element={ <CoachManagement /> }
+          />
+          <Route
+            path="matches"
+            element={ <MatchManagement /> }
+          />
+          <Route
+            path="announcements"
+            element={ <AnnouncementsManagement /> }
+          />
+          <Route
+            path="profile"
+            element={ <AdminProfile /> }
+          />
+        </Route>
+      </Routes>
+      {!isDashboard && location.pathname !== "/login" && <Footer />}
+
     </>
   );
 }

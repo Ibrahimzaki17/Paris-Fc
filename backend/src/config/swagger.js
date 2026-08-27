@@ -1,7 +1,7 @@
 import swaggerJsdoc from "swagger-jsdoc";
 
 const options = {
-    definition: {
+    definition: { 
         openapi: "3.0.0",
 
         info: {
@@ -23,7 +23,7 @@ const options = {
                     scheme: "bearer",
                     bearerFormat: "JWT"
                 }
-            }
+            } 
         }
     },
 

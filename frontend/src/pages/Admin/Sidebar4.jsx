@@ -1,4 +1,5 @@
 import { FaTimes } from "react-icons/fa";
+import { NavLink } from "react-router";
 
 function Sidebar4({closeSideBar4}) {
   return (
@@ -7,34 +8,34 @@ function Sidebar4({closeSideBar4}) {
         <FaTimes className="X" />
       </button>
       <div className="navigation">
-        <ul>
-          <li>
-            <a href="#overview">Overview</a>
-          </li>
-          <li>
-            <a href="#players">Players</a>
-          </li>
-          <li>
-            <a href="#coaches">Coaches</a>
-          </li>
-          <li>
-            <a href="#matches">Matches</a>
-          </li>
-          <li>
-            <a href="#announcements">Announcements</a>
-          </li>
-          <li>
-            <a href="#accounts">Accounts</a>
-          </li>
-          <li>
-            <a href="#content">Website Content</a>
-          </li>
-          <li>
-            <a href="#profile">Profile</a>
-          </li>
-        </ul>
+        <nav  className="nav"> 
+          <NavLink className="NavLink" to="dashboard">
+            Dashboard
+          </NavLink>
+          <NavLink
+            className={({ isActive }) => {
+              isActive ? "NavLink active" : "NavLink";
+            }}
+            to="players"
+          >
+            Players
+          </NavLink>
+          <NavLink className="NavLink" to="coaches">
+            Coaches
+          </NavLink>
+          <NavLink className="NavLink" to="matches">
+            Matches
+          </NavLink>
+          <NavLink className="NavLink" to="announcements">
+            Announcements
+          </NavLink>
+           <NavLink className="NavLink" to="profile">
+            Profile
+          </NavLink>
+        </nav>
       </div>
-    </div>
+      </div>
+    
   );
 }
 
