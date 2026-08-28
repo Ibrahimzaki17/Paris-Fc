@@ -99,7 +99,7 @@ function AdminProfile() {
             
 
             <div className="admin-profile">
-                <img src="../../images/messi.jpeg" alt="admin pic" />
+                <img src="/images/messi.jpeg" alt="admin pic" />
                 <h2>Ibrahim zaki</h2>
                 <h2>admin@parisfc.com</h2>
                 <h2>0722851097</h2>

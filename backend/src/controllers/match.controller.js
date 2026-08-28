@@ -6,6 +6,7 @@ import path from "path";
 //create match
 const createMatch = async (req, res) => {
   try {
+    
     const {
       homeTeam,
       awayTeam,
@@ -51,11 +52,11 @@ const createMatch = async (req, res) => {
       });
     }
 
-    const homeImage = req.files.homeImage
+    const homeImage = req.files?.homeImage
       ? req.files.homeImage[0].filename
       : "";
 
-    const awayImage = req.files.awayImage
+    const awayImage = req.files?.awayImage
       ? req.files.awayImage[0].filename
       : "";
 
@@ -101,8 +102,74 @@ const createMatch = async (req, res) => {
 //get all matches
 const getAllMatches = async (req, res) => {
   try {
+
+  //pagination
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const search = req.query.search || "";
+    const homeTeam = req.query.homeTeam || "";
+    const awayTeam = req.query.awayTeam || "";
+    const competition = req.query.competition || "";
+
+    const query = {
+        status: "upcoming"
+    };
+
+    if (search) {
+        query.$or = [
+            {
+                homeTeam: {
+                    $regex: search,
+                    $options: "i"
+                }
+            },
+            {
+                awayTeam: {
+                    $regex: search,
+                    $options: "i"
+                }
+            },
+            {
+                competition: {
+                    $regex: search,
+                    $options: "i"
+                }
+            }
+        ];
+    }
+
+    if(homeTeam) {
+        query.homeTeam = {
+            $regex: `^${homeTeam}$`,
+            $options: "i"
+        }
+    }
+
+    if(awayTeam) {
+        query.awayTeam = {
+            $regex: `^${awayTeam}$`,
+            $options: "i"
+        }
+    }
+
+    if(competition) {
+        query.competition = {
+            $regex: `^${competition}$`,
+            $options: "i"
+        }
+    }
+
+    const totalMatches = await Match.countDocuments(query);
+
+    const totalPages = Math.ceil(totalMatches / limit);
+
     //find all matches and populate
-    const matches = await Match.find();
+    const matches = await Match.find(query)
+       .sort({ matchDate: 1 })
+       .skip(skip)
+       .limit(limit)
 
     //formatted
     const formattedMatches = matches.map((match) => ({
@@ -115,22 +182,29 @@ const getAllMatches = async (req, res) => {
       status: match.status,
       homeScore: match.homeScore,
       awayScore: match.awayScore,
-      homeImage: match.homeImage,
-      awayImage: match.awayImage,
+      homeImage: match.homeImage
+                  ? `${req.protocol}://${req.get("host")}/uploads/${match.homeImage}`
+                  : null ,
+      awayImage: match.awayImage
+                  ? `${req.protocol}://${req.get("host")}/uploads/${match.awayImage}`
+                  : null ,
       result: match.result,
     }));
 
-    if (matches.length === 0) {
-      res.status(200).json({
-        message: "All Matches retrieved succesfully",
-        matches,
-      });
-    }
+    // if (matches.length === 0) {
+    //   res.status(200).json({
+    //     message: "All Matches retrieved succesfully",
+    //     matches,
+    //   });
+    // }
 
     res.status(200).json({
+      currentPage: page,
+      totalPages,
+      totalMatches,
+      matchesPerPage: limit,
       message: "All Matches",
-      count: formattedMatches.length,
-      formattedMatches,
+      matches: formattedMatches
     });
   } catch (error) {
     res.status(500).json({

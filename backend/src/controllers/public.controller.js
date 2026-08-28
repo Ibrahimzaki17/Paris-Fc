@@ -201,9 +201,9 @@ const getPublicMatches = async (req, res) => {
             }
         }
 
-        const totalMacthes = await Match.countDocuments(query);
+        const totalMatches = await Match.countDocuments(query);
 
-        const totalPages = Math.ceil(totalMacthes / limit);
+        const totalPages = Math.ceil(totalMatches / limit);
         
         //get matches
         const matches = await Match.find(query)
@@ -232,7 +232,7 @@ const getPublicMatches = async (req, res) => {
         res.status(200).json({
             currentPage: page,
             totalPages,
-            totalMacthes,
+            totalMatches,
             matchesPerPage: limit,
             matches: formattedMatches
         })

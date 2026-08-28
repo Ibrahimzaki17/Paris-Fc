@@ -25,7 +25,7 @@ const matchSchema = new mongoose.Schema(
     competition: {
       type: String,
       required: true,
-      enum: ["league", "friendly", "cup"],
+      enum: ["League", "Friendly", "Cup"],
       default: "Friendly"
     },
 
