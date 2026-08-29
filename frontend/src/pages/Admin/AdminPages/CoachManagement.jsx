@@ -31,6 +31,7 @@ function CoachManagement() {
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   //deleting states
   const [coachToDelete, setCoachToDelete] = useState(null);
@@ -94,7 +95,10 @@ function CoachManagement() {
     formData.append('age', coachForm.age);
     formData.append('phone', coachForm.phone)
 
-    formData.append('image', selectedImage);
+    if(selectedImage) {
+      formData.append('image', selectedImage);
+    }
+    
 
     try {
       //post request
@@ -147,6 +151,8 @@ function CoachManagement() {
           age: '',
           phone: ''
     })
+    setSelectedImage(null);
+    setImagePreview(null);
   };
 
   //edit coach
@@ -156,8 +162,11 @@ function CoachManagement() {
           fullname: coach.fullname,
           position: coach.position,
           phone: coach.phone,
-        });
-    setEditCoach(true);    
+        });   
+    setSelectedImage(null);
+    setImagePreview(coach.image) 
+
+    setEditCoach(true);
   };
 
   //edit coach function
@@ -170,7 +179,9 @@ function CoachManagement() {
     formData.append('position', coachForm.position);
     formData.append('phone', coachForm.phone)
 
-    console.log(coachForm.id);
+    if(selectedImage) {
+      formData.append("image", selectedImage);
+    }
     
 
     try {
@@ -212,6 +223,8 @@ function CoachManagement() {
           position: '',
           phone: ''
     })
+    setSelectedImage(null);
+    setImagePreview(null)
   };
 
   //delete coach function
@@ -290,8 +303,8 @@ function CoachManagement() {
                   value={coachForm.position}
                   onChange={handleChange1}
               >
-                <option value="head-coach">Head Coach</option>
-                <option value="assistant-coach">Assitant Coach</option>
+                <option value="Head Coach">Head Coach</option>
+                <option value="Assistant Coach">Assistant Coach</option>
               </select>
               {validationErrors.find(err => err.field === "position") && (
                     <p className="form-error">
@@ -343,24 +356,35 @@ function CoachManagement() {
 
               <label>Image</label>
               <div className="image-preview">
-                <img src={selectedImage} />
+                {imagePreview && (
+                  <img src={imagePreview} alt="coach image" />
+                )}
               </div>
               <input 
                   type="file" 
                   accept="images/*" 
                   name="image"
                   onChange={(e) => {
-                    setSelectedImage(e.target.files[0]);
+                    const file = e.target.files[0];
+
+                    if(file) {
+                      setSelectedImage(file);
+                      setImagePreview(URL.createObjectURL(file));
+                    }
                   }}
                   />
 
-              {formError && (
+                  <div>
+                     {formError && (
                 <p className="form-error">
                   {formError}
                 </p>
               )}
 
               {formSuccess && (<p className="success">{formSuccess}</p>)}
+                  </div>
+
+              
 
               <div className="action-btns">
                 <button type="submit">Add New Coach</button>
@@ -395,8 +419,8 @@ function CoachManagement() {
                   value={coachForm.position}
                   onChange={handleChange1}
               >
-                <option value="head-coach">Head Coach</option>
-                <option value="assistant-coach">Assitant Coach</option>
+                <option value="Head Coach">Head Coach</option>
+                <option value="Assistant Coach">Assitant Coach</option>
               </select>
 
               <label>Contact</label>
@@ -406,6 +430,26 @@ function CoachManagement() {
                 value={coachForm.phone}
                 onChange={handleChange1}
               />
+
+              <label>Image</label>
+              <div className="image-preview">
+                {imagePreview && (
+                  <img src={imagePreview} alt="coach image" />
+                )}
+              </div>
+              <input 
+                  type="file" 
+                  accept="images/*" 
+                  name="image"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+
+                    if(file) {
+                      setSelectedImage(file);
+                      setImagePreview(URL.createObjectURL(file));
+                    }
+                  }}
+                  />
 
               <div className="action-btns">
 

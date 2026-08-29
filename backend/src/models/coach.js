@@ -12,7 +12,7 @@ const coachSchema = new mongoose.Schema(
             type: String,
             required: true,
             enum: [
-                "head-coach", "assistant-coach"
+                "Head Coach", "Assistant Coach"
             ]
         },
         positionOrder: {

@@ -5,7 +5,7 @@ import { useOutletContext } from "react-router";
 
 function MatchManagement() {
   const {fetchDashboardData} = useOutletContext();
-  
+
   //add match
   const [addMatch, setAddMatch] = useState(false);
 
@@ -228,7 +228,6 @@ function MatchManagement() {
         setFormSuccess("");
 
         fetchMatches();
-        fetchDashboardData();
       }, 1500);
 
 

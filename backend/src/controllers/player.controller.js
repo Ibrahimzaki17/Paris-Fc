@@ -257,7 +257,9 @@ const getAllPlayers = async (req, res) => {
             age: player.age,
             phone: player.phone,
             jerseyNumber: player.jerseyNumber,
-            image: player.image
+            image: player.image 
+                   ? `${req.protocol}://${req.get("host")}/uploads/${player.image}`
+                   : null
         }))
 
         if(players.length === 0) {

@@ -15,16 +15,16 @@ const playerSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: [
-        "GK",
-        "RB",
-        "CB",
-        "LB",
-        "DM",
-        "CM",
-        "AM",
-        "RW",
-        "LW",
-        "ST"
+        "GoalKeeper",
+        "Right Back",
+        "Center Back",
+        "Left Back",
+        "Defensive Midfield",
+        "Center Midfield",
+        "Attacking Midfield",
+        "Right Wing",
+        "Left Wing",
+        "Striker"
       ]
     },
 

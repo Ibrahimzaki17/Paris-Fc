@@ -4,6 +4,7 @@ import { useOutletContext } from "react-router";
 
 function PlayerManagement( ) {
   const {fetchDashboardData} = useOutletContext();
+
   //add players pop up overlay
   const [addPlayer, setAddPlayer] = useState(false);
 
@@ -30,6 +31,7 @@ function PlayerManagement( ) {
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   //deleteting states
   const [playerToDelete, setPlayerToDelete] = useState(null);
@@ -137,7 +139,6 @@ function PlayerManagement( ) {
   };
 
   const closeAddPlayer = () => {
-    setAddPlayer(false);
     setFormSuccess("");
     setFormError("");
     setPlayerForm({
@@ -148,6 +149,10 @@ function PlayerManagement( ) {
       age: "",
       phone: "",
     });
+    setSelectedImage(null);
+    setImagePreview(null);
+
+    setAddPlayer(false);
   };
 
   //edit player
@@ -161,6 +166,9 @@ function PlayerManagement( ) {
       age: player.age,
       phone: player.phone,
     });
+    setSelectedImage(null);
+    setImagePreview(player.image);
+
     setEditPlayer(true);
   };
   //edit player function
@@ -175,6 +183,10 @@ function PlayerManagement( ) {
     formData.append("jerseyNumber", playerForm.jerseyNumber);
     formData.append("age", playerForm.age);
     formData.append("phone", playerForm.phone);
+
+    if(selectedImage) {
+      formData.append("image", selectedImage);
+    }
 
     try {
       const response = await api.put(`/players/${playerForm.id}`, formData);
@@ -220,6 +232,8 @@ function PlayerManagement( ) {
       age: "",
       phone: "",
     });
+    setSelectedImage(null);
+    setImagePreview(null)
   };
 
   //delete player
@@ -333,16 +347,16 @@ function PlayerManagement( ) {
                 value={playerForm.position}
                 onChange={handleChange1}
               >
-                <option value="GK">GoalKeeper</option>
-                <option value="CB">Center Back</option>
-                <option value="RB">Right Back</option>
-                <option value="LB">Left Back</option>
-                <option value="DM">Defensive Midfield</option>
-                <option value="CM">Center Midfield</option>
-                <option value="AM">Attacking Midfield</option>
-                <option value="RW">Right Wing</option>
-                <option value="LW">Left Wing</option>
-                <option value="ST">Striker</option>
+                <option value="GoalKeeper">GoalKeeper</option>
+                <option value="Center Back">Center Back</option>
+                <option value="Right Back">Right Back</option>
+                <option value="Left Back">Left Back</option>
+                <option value="Defensive Midfield">Defensive Midfield</option>
+                <option value="Center Midfield">Center Midfield</option>
+                <option value="Attacking Midfield">Attacking Midfield</option>
+                <option value="Right Wing">Right Wing</option>
+                <option value="Left Wing">Left Wing</option>
+                <option value="Striker">Striker</option>
               </select>
               {validationErrors.find((err) => err.field === "position") && (
                 <p className="form-error">
@@ -386,7 +400,9 @@ function PlayerManagement( ) {
 
               <label>Image</label>
               <div className="image-preview">
-                <img src={selectedImage} />
+                {imagePreview && (
+                  <img src={imagePreview} alt="player image" />
+                )}
               </div>
 
               <input
@@ -394,7 +410,12 @@ function PlayerManagement( ) {
                 accept="images/*"
                 name="image"
                 onChange={(e) => {
-                  setSelectedImage(e.target.files[0]);
+                  const file = e.target.files[0];
+
+                  if(file) {
+                    setSelectedImage(file);
+                    setImagePreview(URL.createObjectURL(file));
+                  }
                 }}
               />
 
@@ -434,16 +455,16 @@ function PlayerManagement( ) {
                 value={playerForm.position}
                 onChange={handleChange1}
               >
-                <option value="GK">GoalKeeper</option>
-                <option value="CB">Center Back</option>
-                <option value="RB">Right Back</option>
-                <option value="LB">Left Back</option>
-                <option value="DM">Defensive Midfield</option>
-                <option value="CM">Center Midfield</option>
-                <option value="AM">Attacking Midfield</option>
-                <option value="RW">Right Wing</option>
-                <option value="LW">Left Wing</option>
-                <option value="ST">Striker</option>
+                <option value="GoalKeeper">GoalKeeper</option>
+                <option value="Center Back">Center Back</option>
+                <option value="Right Back">Right Back</option>
+                <option value="Left Back">Left Back</option>
+                <option value="Defensive Midfield">Defensive Midfield</option>
+                <option value="Center Midfield">Center Midfield</option>
+                <option value="Attacking Midfield">Attacking Midfield</option>
+                <option value="Right Wing">Right Wing</option>
+                <option value="Left Wing">Left Wing</option>
+                <option value="Striker">Striker</option>
               </select>
 
               <label>Jersey Number</label>
@@ -469,11 +490,35 @@ function PlayerManagement( ) {
                 value={playerForm.phone}
                 onChange={handleChange1}
               />
+              <label>Image</label>
+              <div className="image-preview">
+                {imagePreview && (
+                  <img src={imagePreview} alt="player image" />
+                )}
+              </div>
 
-              <div className="action-btns">
-                {formSuccess && <p className="success">{formSuccess}</p>}
+              <input
+                type="file"
+                accept="images/*"
+                name="image"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+
+                  if(file) {
+                    setSelectedImage(file);
+                    setImagePreview(URL.createObjectURL(file));
+                  }
+                }}
+              />
+
+              <div>
+                 {formSuccess && <p className="success">{formSuccess}</p>}
 
                 {formError && <p className="form-error">{formError}</p>}
+              </div>
+
+              <div className="action-btns">
+               
                 <button type="submit">Save Changes</button>
 
                 <button type="button" onClick={closeEditPlayer}>

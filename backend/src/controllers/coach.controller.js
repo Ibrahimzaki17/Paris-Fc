@@ -252,7 +252,9 @@ const getAllCoaches = async (req, res) => {
             position: coach.position,
             age: coach.age,
             phone: coach.phone,
-            image: coach.image
+            image: coach.image 
+                  ? `${req.protocol}://${req.get("host")}/uploads/${coach.image}`
+                  : null
         }))
 
         if(coaches.length === 0) {
