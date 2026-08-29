@@ -48,9 +48,6 @@ function AdminHeader() {
       </div>
 
       <div className="right-section">
-        <NavLink className="NavLink" to="/login">
-          Login
-        </NavLink>
 
         <div className="burger-btn">
           <button onClick={openSideBar4}>

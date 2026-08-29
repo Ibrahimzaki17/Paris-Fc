@@ -202,7 +202,7 @@ function PlayerManagement({ fetchDashboardData }) {
         // Other errors like "User already exists"
         setFormError(data?.message || "Something went wrong.");
       }
-      setFormError("");
+      
     }
   };
 

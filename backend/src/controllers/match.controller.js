@@ -6,7 +6,7 @@ import path from "path";
 //create match
 const createMatch = async (req, res) => {
   try {
-    
+
     const {
       homeTeam,
       awayTeam,
@@ -103,7 +103,7 @@ const createMatch = async (req, res) => {
 const getAllMatches = async (req, res) => {
   try {
 
-  //pagination
+    //pagination
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
@@ -114,51 +114,51 @@ const getAllMatches = async (req, res) => {
     const competition = req.query.competition || "";
 
     const query = {
-        status: "upcoming"
+      status: "upcoming"
     };
 
     if (search) {
-        query.$or = [
-            {
-                homeTeam: {
-                    $regex: search,
-                    $options: "i"
-                }
-            },
-            {
-                awayTeam: {
-                    $regex: search,
-                    $options: "i"
-                }
-            },
-            {
-                competition: {
-                    $regex: search,
-                    $options: "i"
-                }
-            }
-        ];
+      query.$or = [
+        {
+          homeTeam: {
+            $regex: search,
+            $options: "i"
+          }
+        },
+        {
+          awayTeam: {
+            $regex: search,
+            $options: "i"
+          }
+        },
+        {
+          competition: {
+            $regex: search,
+            $options: "i"
+          }
+        }
+      ];
     }
 
-    if(homeTeam) {
-        query.homeTeam = {
-            $regex: `^${homeTeam}$`,
-            $options: "i"
-        }
+    if (homeTeam) {
+      query.homeTeam = {
+        $regex: `^${homeTeam}$`,
+        $options: "i"
+      }
     }
 
-    if(awayTeam) {
-        query.awayTeam = {
-            $regex: `^${awayTeam}$`,
-            $options: "i"
-        }
+    if (awayTeam) {
+      query.awayTeam = {
+        $regex: `^${awayTeam}$`,
+        $options: "i"
+      }
     }
 
-    if(competition) {
-        query.competition = {
-            $regex: `^${competition}$`,
-            $options: "i"
-        }
+    if (competition) {
+      query.competition = {
+        $regex: `^${competition}$`,
+        $options: "i"
+      }
     }
 
     const totalMatches = await Match.countDocuments(query);
@@ -167,9 +167,9 @@ const getAllMatches = async (req, res) => {
 
     //find all matches and populate
     const matches = await Match.find(query)
-       .sort({ matchDate: 1 })
-       .skip(skip)
-       .limit(limit)
+      .sort({ matchDate: 1 })
+      .skip(skip)
+      .limit(limit)
 
     //formatted
     const formattedMatches = matches.map((match) => ({
@@ -183,11 +183,11 @@ const getAllMatches = async (req, res) => {
       homeScore: match.homeScore,
       awayScore: match.awayScore,
       homeImage: match.homeImage
-                  ? `${req.protocol}://${req.get("host")}/uploads/${match.homeImage}`
-                  : null ,
+        ? `${req.protocol}://${req.get("host")}/uploads/${match.homeImage}`
+        : null,
       awayImage: match.awayImage
-                  ? `${req.protocol}://${req.get("host")}/uploads/${match.awayImage}`
-                  : null ,
+        ? `${req.protocol}://${req.get("host")}/uploads/${match.awayImage}`
+        : null,
       result: match.result,
     }));
 
@@ -226,25 +226,25 @@ const deleteMatch = async (req, res) => {
         message: "Match not found",
       });
     }
-    
-        // Delete home image
+
+    // Delete home image
     if (match.homeImage) {
 
-        const homeImagePath = path.join("uploads", match.homeImage);
+      const homeImagePath = path.join("uploads", match.homeImage);
 
-        if (fs.existsSync(homeImagePath)) {
-            fs.unlinkSync(homeImagePath);
-        }
+      if (fs.existsSync(homeImagePath)) {
+        fs.unlinkSync(homeImagePath);
+      }
     }
 
     // Delete away image
     if (match.awayImage) {
 
-        const awayImagePath = path.join("uploads", match.awayImage);
+      const awayImagePath = path.join("uploads", match.awayImage);
 
-        if (fs.existsSync(awayImagePath)) {
-            fs.unlinkSync(awayImagePath);
-        }
+      if (fs.existsSync(awayImagePath)) {
+        fs.unlinkSync(awayImagePath);
+      }
     }
 
     //delete
@@ -264,6 +264,8 @@ const deleteMatch = async (req, res) => {
 const editMatch = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const { homeTeam, awayTeam, matchDate, competition, venue } = req.body;
 
     //find the match
     const match = await Match.findById(id);
@@ -291,6 +293,7 @@ const editMatch = async (req, res) => {
 
     //check if match exists
     const existingMatch = await Match.findOne({
+      _id: { $ne: id },
       matchDate: {
         $gte: startDay,
         $lte: endDay,
@@ -331,20 +334,29 @@ const editMatch = async (req, res) => {
     match.matchDate = req.body.matchDate || match.matchDate;
     match.homeScore = req.body.homeScore || match.homeScore;
     match.awayScore = req.body.awayScore || match.awayScore;
+
     //homeImage
     if (req.files?.homeImage) {
-      const oldHomeImage = path.join("uploads", match.homeImage);
-      if (fs.existsSync(oldHomeImage)) {
-        fs.unlinkSync(oldHomeImage);
+      if (match.homeImage) {
+        const oldHomeImage = path.join("uploads", match.homeImage);
+
+        if (fs.existsSync(oldHomeImage)) {
+          fs.unlinkSync(oldHomeImage);
+        }
       }
+
       match.homeImage = req.files.homeImage[0].filename;
     }
     //awayImage
     if (req.files?.awayImage) {
-      const oldAwayImage = path.join("uploads", match.awayImage);
-      if (fs.existsSync(oldAwayImage)) {
-        fs.unlinkSync(oldAwayImage);
+      if (match.awayImage) {
+        const oldAwayImage = path.join("uploads", match.awayImage);
+
+        if (fs.existsSync(oldAwayImage)) {
+          fs.unlinkSync(oldAwayImage);
+        }
       }
+
       match.awayImage = req.files.awayImage[0].filename;
     }
 
@@ -364,3 +376,36 @@ const editMatch = async (req, res) => {
 };
 
 export { createMatch, getAllMatches, deleteMatch, editMatch };
+
+/*
+let oldHomeImage = null;
+let oldAwayImage = null;
+
+if (req.files?.homeImage) {
+  oldHomeImage = match.homeImage;
+  match.homeImage = req.files.homeImage[0].filename;
+}
+
+if (req.files?.awayImage) {
+  oldAwayImage = match.awayImage;
+  match.awayImage = req.files.awayImage[0].filename;
+}
+
+await match.save();
+
+if (oldHomeImage) {
+  const oldHomePath = path.join("uploads", oldHomeImage);
+
+  if (fs.existsSync(oldHomePath)) {
+    fs.unlinkSync(oldHomePath);
+  }
+}
+
+if (oldAwayImage) {
+  const oldAwayPath = path.join("uploads", oldAwayImage);
+
+  if (fs.existsSync(oldAwayPath)) {
+    fs.unlinkSync(oldAwayPath);
+  }
+}
+*/

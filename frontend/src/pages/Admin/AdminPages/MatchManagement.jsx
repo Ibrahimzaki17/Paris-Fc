@@ -12,11 +12,6 @@ function MatchManagement() {
   //delete match
   const [deleteMatch, setDeleteMatch] = useState(false);
 
-
-
-
-  //delete match
-
   const openDeleteMatch = () => {
     setDeleteMatch(true);
   };
@@ -25,32 +20,8 @@ function MatchManagement() {
     setDeleteMatch(false);
   };
 
-  //edit match
 
-  const [matchData, setMatchData] = useState({
-    homeTeamImg: "",
-    homeTeamName: "",
-    awayTeamImg: "",
-    awayTeamName: "",
-    date: "",
-    matchType: "",
-  });
 
-  const openEditMatch = () => {
-    setEditMatch(true);
-    setMatchData({
-      homeTeamImg: "images/parisfc.png",
-      homeTeamName: "Paris Fc",
-      awayTeamImg: "images/parisfc.png",
-      awayTeamName: "Eagles Fc",
-      date: "2026-06-21",
-      matchType: "League Match",
-    });
-  };
-
-  const closeEditMatch = () => {
-    setEditMatch(false);
-  };
 
   /**********************CONNECTING TO THE BACKEND************************* */
   //displaying matches states
@@ -60,11 +31,11 @@ function MatchManagement() {
 
   //adding macthes states
   const [matchForm, setMatchForm] = useState({
-      homeTeam: "",
-      awayTeam: "",
-      matchDate: "",
-      competition: "",
-      venue: ""
+    homeTeam: "",
+    awayTeam: "",
+    matchDate: "",
+    competition: "",
+    venue: ""
   })
 
   //images
@@ -82,31 +53,31 @@ function MatchManagement() {
 
   //Fetching match api
   const fetchMatches = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/public/matches');
-            
-            setMatches(response.data.matches)
-        } catch (error) {
-            setError("Failed to load")
-            console.error(error);
-            
-        } finally {
-            setLoading(false)
-        }
+    try {
+      setLoading(true);
+      const response = await api.get('/public/matches');
 
-        
+      setMatches(response.data.matches)
+    } catch (error) {
+      setError("Failed to load")
+      console.error(error);
+
+    } finally {
+      setLoading(false)
+    }
+
+
   }
 
   useEffect(() => {
     fetchMatches();
   }, []);
 
-    if(loading) {
+  if (loading) {
     return <div className="spinner">Loading...</div>
   }
 
-  if(error) {
+  if (error) {
     return <div className="error-message">{error}</div>
   }
 
@@ -116,7 +87,7 @@ function MatchManagement() {
       [e.target.name]: e.target.value,
     });
   };
-  
+
   //add match 
   function openAddMatch() {
     setAddMatch(true);
@@ -132,17 +103,17 @@ function MatchManagement() {
     formData.append("matchDate", matchForm.matchDate);
     formData.append("competition", matchForm.competition);
     formData.append("venue", matchForm.venue);
-    if(homeImage) {
-        formData.append("homeImage", homeImage);
+    if (homeImage) {
+      formData.append("homeImage", homeImage);
     }
-    if(awayImage) {
-        formData.append("awayImage", awayImage);
+    if (awayImage) {
+      formData.append("awayImage", awayImage);
     }
 
-    console.log("HOME IMAGE:", homeImage);
-    console.log("AWAY IMAGE:", awayImage);
-    console.log("FORM DATA:", [...formData.entries()]);
-    
+    // console.log("HOME IMAGE:", homeImage);
+    // console.log("AWAY IMAGE:", awayImage);
+    // console.log("FORM DATA:", [...formData.entries()]);
+
 
     try {
       //post request
@@ -193,16 +164,108 @@ function MatchManagement() {
     setValidationErrors([]);
     setFormSuccess("");
     setMatchForm({
+      homeTeam: "",
+      awayTeam: "",
+      matchDate: "",
+      competition: "",
+      venue: ""
+    })
+    setHomeImage(null);
+    setAwayImage(null);
+    setHomeImagePreview(null);
+    setAwayImagePreview(null);
+  };
+
+  /**************EDIT MATCH********** */
+  const openEditMatch = (match) => {
+    setMatchForm({
+      id: match.id,
+      homeTeam: match.homeTeam,
+      awayTeam: match.awayTeam,
+      matchDate: match.matchDate.split("T")[0],
+      competition: match.competition,
+      venue: match.venue,
+    })
+    //show existing images
+    setHomeImage(null);
+    setAwayImage(null);
+
+    setHomeImagePreview(match.homeImage);
+    setAwayImagePreview(match.awayImage);
+
+    setEditMatch(true);
+  };
+
+  //edit match function
+  const handleEditMatch = async (e) => {
+    e.preventDefault();
+
+    //prepare multipart data for file uploads
+    const formData = new FormData();
+    formData.append("homeTeam", matchForm.homeTeam);
+    formData.append("awayTeam", matchForm.awayTeam);
+    formData.append("matchDate", matchForm.matchDate);
+    formData.append("competition", matchForm.competition);
+    formData.append("venue", matchForm.venue);
+
+    if (homeImage) {
+      formData.append("homeImage", homeImage);
+    }
+
+    if (awayImage) {
+      formData.append("awayImage", awayImage);
+    }
+
+    try {
+      const response = await api.put(`/matches/${matchForm.id}`, formData);
+      setFormError("");
+      setFormSuccess(response.data.message || "Match updated succesfully");
+
+      setTimeout(() => {
+        setEditMatch(false);
+        setMatchForm({
           homeTeam: "",
           awayTeam: "",
           matchDate: "",
           competition: "",
           venue: ""
-    })  
+        })
+        setFormSuccess("");
+
+        fetchMatches();
+      }, 1500);
+
+
+    } catch (error) {
+      const data = error.response?.data;
+      if (data?.errors) {
+        // Validation middleware errors
+        setFormError(data.errors[0].message);
+      } else {
+        // Other errors like "User already exists"
+        setFormError(data?.message || "Something went wrong.");
+      }
+
+    }
+
+  }
+
+  const closeEditMatch = () => {
+    setEditMatch(false);
+    setFormError("");
+    setFormSuccess("");
+    setMatchForm({
+      homeTeam: "",
+      awayTeam: "",
+      matchDate: "",
+      competition: "",
+      venue: ""
+    })
+
     setHomeImage(null);
     setAwayImage(null);
     setHomeImagePreview(null);
-    setAwayImagePreview(null);
+    setAwayImagePreview(null)
   };
 
   return (
@@ -215,16 +278,16 @@ function MatchManagement() {
         <div className="delete-overlay">
           <div className="add-coach">
             <form onSubmit={handleSubmit}>
-               {/* Home Team Name and Image */}
-               <label>Home Team Name</label>
-              <input 
-                    type="text" 
-                    placeholder="Enter Home Team Name" 
-                    name="homeTeam"
-                    value={matchForm.homeTeam}
-                    onChange={handleMatchChange}
-                    />
-                    {validationErrors.find((err) => err.field === "homeTeam") && (
+              {/* Home Team Name and Image */}
+              <label>Home Team Name</label>
+              <input
+                type="text"
+                placeholder="Enter Home Team Name"
+                name="homeTeam"
+                value={matchForm.homeTeam}
+                onChange={handleMatchChange}
+              />
+              {validationErrors.find((err) => err.field === "homeTeam") && (
                 <p className="form-error">
                   {
                     validationErrors.find((err) => err.field === "homeTeam")
@@ -234,36 +297,36 @@ function MatchManagement() {
               )}
 
               <label>Home Team Image</label>
-              <input 
-                   type="file"
-                    accept="images/*" 
-                    name="homeImage"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
+              <input
+                type="file"
+                accept="images/*"
+                name="homeImage"
+                onChange={(e) => {
+                  const file = e.target.files[0];
 
-                      if(file) {
-                        setHomeImage(file);
-                        setHomeImagePreview(URL.createObjectURL(file));
-                      }
-                    }}
-                    />
+                  if (file) {
+                    setHomeImage(file);
+                    setHomeImagePreview(URL.createObjectURL(file));
+                  }
+                }}
+              />
               <div className="image-preview">
                 {homeImagePreview && (
                   <img src={homeImagePreview} alt="away image preview" />
                 )}
               </div>
 
-              
+
               {/* Away team name and image */}
               <label>Away Team Name</label>
-              <input 
-                    type="text" 
-                    placeholder="Enter away Team Name" 
-                    name="awayTeam"
-                    value={matchForm.awayTeam}
-                    onChange={handleMatchChange}
-                    />
-                    {validationErrors.find((err) => err.field === "awayTeam") && (
+              <input
+                type="text"
+                placeholder="Enter away Team Name"
+                name="awayTeam"
+                value={matchForm.awayTeam}
+                onChange={handleMatchChange}
+              />
+              {validationErrors.find((err) => err.field === "awayTeam") && (
                 <p className="form-error">
                   {
                     validationErrors.find((err) => err.field === "awayTeam")
@@ -273,35 +336,35 @@ function MatchManagement() {
               )}
 
               <label>Away Team Image</label>
-              <input 
-                   type="file"
-                    accept="images/*" 
-                    name="awayImage"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
+              <input
+                type="file"
+                accept="images/*"
+                name="awayImage"
+                onChange={(e) => {
+                  const file = e.target.files[0];
 
-                      if(file) {
-                        setAwayImage(file);
-                        setAwayImagePreview(URL.createObjectURL(file));
-                      }
-                    }}
-                    />
+                  if (file) {
+                    setAwayImage(file);
+                    setAwayImagePreview(URL.createObjectURL(file));
+                  }
+                }}
+              />
               <div className="image-preview">
                 {awayImagePreview && (
                   <img src={awayImagePreview} alt="home image preview" />
                 )}
               </div>
 
-              
+
               {/* Date */}
               <label>Date</label>
-              <input 
-                     type="date"
-                     name="matchDate"
-                     value={matchForm.matchDate}
-                     onChange={handleMatchChange}
-                     />
-                     {validationErrors.find((err) => err.field === "matchDate") && (
+              <input
+                type="date"
+                name="matchDate"
+                value={matchForm.matchDate}
+                onChange={handleMatchChange}
+              />
+              {validationErrors.find((err) => err.field === "matchDate") && (
                 <p className="form-error">
                   {
                     validationErrors.find((err) => err.field === "matchDate")
@@ -309,21 +372,21 @@ function MatchManagement() {
                   }
                 </p>
               )}
- 
+
               {/* Competition */}
               <label>Match Type</label>
-              <select 
-                      type="text" 
-                      placeholder="Enter Match Type"
-                      name="competition"
-                      value={matchForm.competition}
-                      onChange={handleMatchChange}
-                      >
-                        <option value="League">League</option>
-                        <option value="Friendly">Friendly</option>
-                        <option value="Cup">Cup</option>
+              <select
+                type="text"
+                placeholder="Enter Match Type"
+                name="competition"
+                value={matchForm.competition}
+                onChange={handleMatchChange}
+              >
+                <option value="League">League</option>
+                <option value="Friendly">Friendly</option>
+                <option value="Cup">Cup</option>
               </select>
-                      {validationErrors.find((err) => err.field === "competition") && (
+              {validationErrors.find((err) => err.field === "competition") && (
                 <p className="form-error">
                   {
                     validationErrors.find((err) => err.field === "competition")
@@ -334,27 +397,27 @@ function MatchManagement() {
 
               {/* Venue */}
               <label>Venue</label>
-              <input 
-                      type="text" 
-                      placeholder="Enter venue "
-                      name="venue"
-                      value={matchForm.venue}
-                      onChange={handleMatchChange}
-                      />   
-                      {validationErrors.find((err) => err.field === "venue") && (
-                        <p className="form-error">
-                          {
-                            validationErrors.find((err) => err.field === "venue")
-                              .message
-                          }
-                        </p>
-                      )}     
-               
-              <div>
-               {formSuccess && <p className="success">{formSuccess}</p>}
+              <input
+                type="text"
+                placeholder="Enter venue "
+                name="venue"
+                value={matchForm.venue}
+                onChange={handleMatchChange}
+              />
+              {validationErrors.find((err) => err.field === "venue") && (
+                <p className="form-error">
+                  {
+                    validationErrors.find((err) => err.field === "venue")
+                      .message
+                  }
+                </p>
+              )}
 
-               {formError && <p className="form-error">{formError}</p>} 
-              </div> 
+              <div>
+                {formSuccess && <p className="success">{formSuccess}</p>}
+
+                {formError && <p className="form-error">{formError}</p>}
+              </div>
 
               <div className="action-btns">
                 <button type="submit">Add New Match</button>
@@ -368,49 +431,94 @@ function MatchManagement() {
       {editMatch && (
         <div className="edit-overlay">
           <div className="edit-popup">
-            <h2>Edit Coach</h2>
-            <form>
-              <label>Home Team Image</label>
-              <input type="file" onChange={handleMatchChange} />
-              <div className="image-preview">
-                <img src={matchData.homeTeamImg} />
-              </div>
+            <h2>Edit Match</h2>
+            <form onSubmit={handleEditMatch}>
               <label>Home Team Name</label>
               <input
                 type="text"
-                name="homeTeamName"
-                value={matchData.homeTeamName}
+                name="homeTeam"
+                value={matchForm.homeTeam}
+                onChange={handleMatchChange}
+              />
+              <label>Home Team Image</label>
+              <input
+                type="file"
+                accept="images/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+
+                  if (file) {
+                    setHomeImage(file);
+                    setHomeImagePreview(URL.createObjectURL(file));
+                  }
+                }}
+
+              />
+              <div className="image-preview">
+                {homeImagePreview && (
+                  <img src={homeImagePreview} alt="home image" />
+                )}
+              </div>
+              <label>Away Team Name</label>
+              <input
+                type="text"
+                name="awayTeam"
+                value={matchForm.awayTeam}
                 onChange={handleMatchChange}
               />
               <label>Away Team Image</label>
-              <input type="file" onChange={handleMatchChange} />
-              <div className="image-preview">
-                <img src={matchData.awayTeamImg} />
-              </div>
-              <label>Home Team Name</label>
               <input
-                type="text"
-                name="awayTeamName"
-                value={matchData.awayTeamName}
-                onChange={handleMatchChange}
+                type="file"
+                accept="images/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+
+                  if (file) {
+                    setAwayImage(file);
+                    setAwayImagePreview(URL.createObjectURL(file));
+                  }
+                }}
+
               />
+              <div className="image-preview">
+                {awayImagePreview && (
+                  <img src={awayImagePreview} alt="away image" />
+                )}
+              </div>
+
               <label>Date</label>
               <input
                 type="date"
-                name="date"
-                value={matchData.date}
+                name="matchDate"
+                value={matchForm.matchDate}
                 onChange={handleMatchChange}
               />
               <label>Match Type</label>
+              <select
+                type="text"
+                name="competition"
+                value={matchForm.competition}
+                onChange={handleMatchChange}
+              >
+                <option value="Friendly">Friendly</option>
+                <option value="League">League</option>
+                <option value="Cup">Cup</option>
+              </select>
+              <label>Venue</label>
               <input
                 type="text"
-                name="matchType"
-                value={matchData.matchType}
+                name="venue"
+                value={matchForm.venue}
                 onChange={handleMatchChange}
               />
+              <div>
+                {formSuccess && <p className="success">{formSuccess}</p>}
+
+                {formError && <p className="form-error">{formError}</p>}
+              </div>
               <div className="action-btns">
-                <button>Save Changes</button>
-                <button onClick={closeEditMatch}>Cancel</button>
+                <button type="submit">Save Changes</button>
+                <button type="button" onClick={closeEditMatch}>Cancel</button>
               </div>
             </form>
           </div>
@@ -435,14 +543,14 @@ function MatchManagement() {
       <div className="upcoming-matches">
 
         {matches.map(match => {
-          return(
+          return (
             <div key={match.id} className="matches-card">
               <div className="teams">
-                <img src={`${match.homeImage}`} alt="homeimage"/>
+                <img src={`${match.homeImage}`} alt="homeimage" />
                 <h2>{match.homeTeam}</h2>
                 <p>VS</p>
                 <h2>{match.awayTeam}</h2>
-                <img src={`${match.awayImage}`}/>
+                <img src={`${match.awayImage}`} />
               </div>
               <div className="match-date">
                 <h2>{formatMatchDate(match.matchDate)}</h2>
@@ -454,15 +562,15 @@ function MatchManagement() {
                 <h2>{match.venue}</h2>
               </div>
               <div className="action-btns">
-          <button onClick={openEditMatch}>Edit Match</button>
-          <button onClick={openDeleteMatch}>Delete Match</button>
-        </div>
+                <button onClick={() => openEditMatch(match)}>Edit Match</button>
+                <button onClick={openDeleteMatch}>Delete Match</button>
+              </div>
             </div>
-            
+
           );
         })}
 
-       
+
 
         {/* <div className="matches-card">
           <div className="teams">
@@ -480,10 +588,7 @@ function MatchManagement() {
           </div>
         </div> */}
 
-        <div className="action-btns">
-          <button onClick={openEditMatch}>Edit Match</button>
-          <button onClick={openDeleteMatch}>Delete Match</button>
-        </div>
+
       </div>
     </div>
   );
