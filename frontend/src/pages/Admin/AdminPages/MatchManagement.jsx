@@ -2,6 +2,7 @@ import api from "../../../api/axios";
 import { useState, useEffect } from "react";
 import formatMatchDate from "../../../formatDate";
 
+
 function MatchManagement() {
   //add match
   const [addMatch, setAddMatch] = useState(false);
@@ -12,15 +13,7 @@ function MatchManagement() {
   //delete match
   const [deleteMatch, setDeleteMatch] = useState(false);
 
-  const openDeleteMatch = () => {
-    setDeleteMatch(true);
-  };
-
-  const closeDeleteMatch = () => {
-    setDeleteMatch(false);
-  };
-
-
+  const [matchToDelete, setMatchToDelete] = useState(null);
 
 
   /**********************CONNECTING TO THE BACKEND************************* */
@@ -88,7 +81,7 @@ function MatchManagement() {
     });
   };
 
-  //add match 
+  /*******************ADD MATCH******************** */
   function openAddMatch() {
     setAddMatch(true);
   }
@@ -266,6 +259,49 @@ function MatchManagement() {
     setAwayImage(null);
     setHomeImagePreview(null);
     setAwayImagePreview(null)
+  };
+
+  /***************DELETE MATCH*********** */
+  const openDeleteMatch = (match) => {
+    setMatchToDelete({
+      id: match.id,
+      homeTeam: match.homeTeam,
+      awayTeam: match.awayTeam,
+      matchDate: match.matchDate.split("T")[0],
+      competition: match.competition,
+      venue: match.venue,
+    })
+
+    setDeleteMatch(true);
+  };
+
+  //delete match function
+  const handleDeleteMatch = async () => {
+    try {
+      const response = await api.delete(`/matches/${matchToDelete.id}`);
+      setFormError("");
+      setFormSuccess(response.data.message || "Match deleted succesfully");
+
+      setTimeout(() => {
+        setDeleteMatch(false);
+        setMatchToDelete(null);
+
+        setFormError("");
+        setFormSuccess("");
+
+        fetchMatches();
+      }, 1500);
+    } catch (error) {
+      const data = error.response?.data;
+      setFormError(data?.message || "Something went wrong.");
+    }
+  }
+
+  const closeDeleteMatch = () => {
+    setDeleteMatch(false);
+    setMatchToDelete(null);
+    setFormError("");
+    setFormSuccess("");
   };
 
   return (
@@ -529,9 +565,17 @@ function MatchManagement() {
         <div className="delete-overlay">
           <div className="confirmation-message">
             <h2>Are you sure you want to delete This Match</h2>
+            <p>
+        {matchToDelete.homeTeam} VS {matchToDelete.awayTeam}
+      </p>
+          </div>
+          <div>
+            {formSuccess && (
+              <p className="success-delete-message">{formSuccess}</p>
+            )}
           </div>
           <div className="action-btns">
-            <button>Delete</button>
+            <button onClick={handleDeleteMatch}>Delete</button>
             <button onClick={closeDeleteMatch}>Cancel</button>
           </div>
         </div>
@@ -563,7 +607,7 @@ function MatchManagement() {
               </div>
               <div className="action-btns">
                 <button onClick={() => openEditMatch(match)}>Edit Match</button>
-                <button onClick={openDeleteMatch}>Delete Match</button>
+                <button onClick={() => openDeleteMatch(match)}>Delete Match</button>
               </div>
             </div>
 
