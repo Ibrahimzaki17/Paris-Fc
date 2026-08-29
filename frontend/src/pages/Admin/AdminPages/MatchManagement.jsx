@@ -1,9 +1,11 @@
 import api from "../../../api/axios";
 import { useState, useEffect } from "react";
 import formatMatchDate from "../../../formatDate";
-
+import { useOutletContext } from "react-router";
 
 function MatchManagement() {
+  const {fetchDashboardData} = useOutletContext();
+  
   //add match
   const [addMatch, setAddMatch] = useState(false);
 
@@ -129,7 +131,7 @@ function MatchManagement() {
         setFormError("");
 
         fetchMatches();
-        //comeback for fecthdashboard data
+        fetchDashboardData();
       }, 1500);
 
 
@@ -226,6 +228,7 @@ function MatchManagement() {
         setFormSuccess("");
 
         fetchMatches();
+        fetchDashboardData();
       }, 1500);
 
 
@@ -290,6 +293,7 @@ function MatchManagement() {
         setFormSuccess("");
 
         fetchMatches();
+        fetchDashboardData();
       }, 1500);
     } catch (error) {
       const data = error.response?.data;

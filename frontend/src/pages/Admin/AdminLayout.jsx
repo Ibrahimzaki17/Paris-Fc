@@ -67,7 +67,7 @@ function AdminLayout() {
           dashboardData={dashboardData} 
       />
       
-      <Outlet />
+      <Outlet context={{ fetchDashboardData }} />
       
     </div>
   );

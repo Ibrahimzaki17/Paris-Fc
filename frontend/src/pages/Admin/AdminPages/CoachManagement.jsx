@@ -1,7 +1,10 @@
 import api from "../../../api/axios";
 import { useState, useEffect } from "react";
+import { useOutletContext } from "react-router";
 
-function CoachManagement({fetchDashboardData}) {
+function CoachManagement() {
+  const {fetchDashboardData} = useOutletContext();
+
   //add coach
   const [addCoach, setAddCoach] = useState(false);
 

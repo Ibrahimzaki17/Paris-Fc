@@ -1,7 +1,9 @@
 import api from "../../../api/axios";
 import { useState, useEffect } from "react";
+import { useOutletContext } from "react-router";
 
-function PlayerManagement({ fetchDashboardData }) {
+function PlayerManagement( ) {
+  const {fetchDashboardData} = useOutletContext();
   //add players pop up overlay
   const [addPlayer, setAddPlayer] = useState(false);
 
