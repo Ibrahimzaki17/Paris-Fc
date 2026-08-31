@@ -16,7 +16,7 @@ function AdminHeader() {
   return (
     <header className="header">
       <div className="leftside-section">
-        <NavLink className="NavLink" to="/">
+        <NavLink className="NavLink" >
           <img src="/images/parisfc.png" className="logo" />
           <h2>Paris Fc</h2>
         </NavLink>
