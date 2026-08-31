@@ -3,6 +3,11 @@ import "./SideBar.css";
 import { FaTimes } from "react-icons/fa";
 
 function SideBar({ closeSideBar }) {
+
+  const handleNavigation = () => {
+    closeSideBar();
+  }
+
   return (
     <div className="side-bar-component">
       <button className="close-btn" onClick={closeSideBar}>
@@ -13,27 +18,25 @@ function SideBar({ closeSideBar }) {
           <NavLink
             className="NavLink"
             to="/"
+            onClick={handleNavigation}
           >
             Home
           </NavLink>
-          <NavLink className="NavLink" to="/about">
+          <NavLink className="NavLink" to="/about" onClick={handleNavigation}>
             About
           </NavLink>
-          <NavLink className="NavLink" to="/trophies">
+          <NavLink className="NavLink" to="/trophies" onClick={handleNavigation}>
             Trophies
           </NavLink>
-          <NavLink className="NavLink" to="/contact">
+          <NavLink className="NavLink" to="/contact" onClick={handleNavigation}>
             Contact
           </NavLink>
-         
-        </nav>
-      </div>
-      <hr />
-      <div className="bottom-section">
-        <nav className="Team-navigation">
-          <NavLink to="/players">Players</NavLink>
-          <NavLink to="/coach">Coach</NavLink>
-          <NavLink to="/admin">Admin</NavLink>
+          <NavLink to="/players" className="NavLink" onClick={handleNavigation}>
+            Players
+          </NavLink>
+          <NavLink to="/coach" className="NavLink" onClick={handleNavigation}>
+            Coach
+          </NavLink>
         </nav>
       </div>
     </div>

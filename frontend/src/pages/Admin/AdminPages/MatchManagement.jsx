@@ -24,6 +24,11 @@ function MatchManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  //pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalMatches, setTotalMatches] = useState(0);
+
   //adding macthes states
   const [matchForm, setMatchForm] = useState({
     homeTeam: "",
@@ -47,12 +52,16 @@ function MatchManagement() {
   const [validationErrors, setValidationErrors] = useState([]);
 
   //Fetching match api
-  const fetchMatches = async () => {
+  const fetchMatches = async (page = currentPage) => {
     try {
       setLoading(true);
-      const response = await api.get('/public/matches');
+      const response = await api.get(`/matches?page=${page}&limit=5`);
 
-      setMatches(response.data.matches)
+      setMatches(response.data.matches);
+      setCurrentPage(response.data.currentPage);
+      setTotalPages(response.data.totalPages)
+      setTotalMatches(response.data.totalMatches)
+
     } catch (error) {
       setError("Failed to load")
       console.error(error);
@@ -121,7 +130,7 @@ function MatchManagement() {
         setAddMatch(false);
         setMatchForm({
           homeTeam: "",
-          awayImage: "",
+          awayTeam: "",
           matchDate: "",
           competition: "",
           venue: ""
@@ -278,27 +287,48 @@ function MatchManagement() {
   };
 
   //delete match function
-  const handleDeleteMatch = async () => {
-    try {
-      const response = await api.delete(`/matches/${matchToDelete.id}`);
+const handleDeleteMatch = async () => {
+  try {
+    const response = await api.delete(`/matches/${matchToDelete.id}`);
+
+    setFormError("");
+    setFormSuccess(
+      response.data.message || "Match deleted successfully"
+    );
+
+    setTimeout(async () => {
+      setDeleteMatch(false);
+      setMatchToDelete(null);
+
       setFormError("");
-      setFormSuccess(response.data.message || "Match deleted succesfully");
+      setFormSuccess("");
 
-      setTimeout(() => {
-        setDeleteMatch(false);
-        setMatchToDelete(null);
+      // Calculate how many matches remain
+      const remainingMatches =
+        totalMatches - 1;
 
-        setFormError("");
-        setFormSuccess("");
+      // Calculate the last available page
+      const newTotalPages =
+        Math.ceil(remainingMatches / 5);
 
-        fetchMatches();
-        fetchDashboardData();
-      }, 1500);
-    } catch (error) {
-      const data = error.response?.data;
-      setFormError(data?.message || "Something went wrong.");
-    }
+      // If current page no longer exists,
+      // move to the previous page
+      const pageToFetch =
+        currentPage > newTotalPages
+          ? newTotalPages
+          : currentPage;
+
+      await fetchMatches(pageToFetch);
+
+      fetchDashboardData();
+
+    }, 1500);
+
+  } catch (error) {
+    const data = error.response?.data;
+    setFormError(data?.message || "Something went wrong.");
   }
+};
 
   const closeDeleteMatch = () => {
     setDeleteMatch(false);
@@ -458,9 +488,9 @@ function MatchManagement() {
                 {formError && <p className="form-error">{formError}</p>}
               </div>
 
-              <div className="action-btns">
+              <div className="pagination">
                 <button type="submit">Add New Match</button>
-                <button type="button" onClick={closeAddMatch}>Cancel</button>
+                <button type="button" onClick={closeAddMatch} >Cancel</button>
               </div>
             </form>
           </div>
@@ -608,7 +638,7 @@ function MatchManagement() {
               <div className="match-type">
                 <h2>{match.venue}</h2>
               </div>
-              <div className="action-btns">
+              <div className="pagination">
                 <button onClick={() => openEditMatch(match)}>Edit Match</button>
                 <button onClick={() => openDeleteMatch(match)}>Delete Match</button>
               </div>
@@ -617,24 +647,17 @@ function MatchManagement() {
           );
         })}
 
-
-
-        {/* <div className="matches-card">
-          <div className="teams">
-            <img src="/images/parisfc.png" />
-            <h2>Paris Fc</h2>
-            <p>VS</p>
-            <h2>Eagles Fc</h2>
-            <img src="/images/paris.jpg" />
-          </div>
-          <div className="match-date">
-            <h2>25 July 2026</h2>
-          </div>
-          <div className="match-type">
-            <h2>League Match</h2>
-          </div>
-        </div> */}
-
+        <div className="pagination">
+          <button onClick={() => fetchMatches(currentPage - 1)} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button onClick={() => fetchMatches(currentPage + 1)} disabled={currentPage === totalPages}>
+            Next
+          </button>
+        </div>
 
       </div>
     </div>

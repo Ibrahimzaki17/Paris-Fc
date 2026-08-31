@@ -298,7 +298,7 @@ function AnnouncementsManagement() {
               </div>
               <div className="news-content">
                 <div className="news-content-title">
-                  <p>{announcement.title}</p>
+                  <h3><u>{announcement.title}</u></h3>
                 </div>
                 <div className="news-content-description">
                   <p>{announcement.message}</p>
@@ -316,23 +316,6 @@ function AnnouncementsManagement() {
             </div>
           );
         })}
-
-        <div className="news-cards">
-          <div className="news-image">
-            <img src="images/stadium.avif" />
-          </div>
-          <div className="news-content">
-            <div className="news-content-title">
-              <p>Training Session Begins</p>
-            </div>
-            <div className="news-content-description">
-              <p>The team prepares for the upcoming season.</p>
-            </div>
-            <div className="news-content-date">
-              <p>25 June 2026</p>
-            </div>
-          </div>
-        </div>
 
       </div>
     </div>

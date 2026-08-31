@@ -1,7 +1,12 @@
 import { FaTimes } from "react-icons/fa";
-import { NavLink } from "react-router";
+import { Link, NavLink } from "react-router";
 
 function Sidebar4({closeSideBar4}) {
+
+  const handleNavigatin = () => {
+    closeSideBar4();
+  }
+
   return (
     <div className="sidebar-section">
       <button onClick={closeSideBar4}>
@@ -10,23 +15,24 @@ function Sidebar4({closeSideBar4}) {
       <div className="navigation">
         <nav  className="nav"> 
           <NavLink
-            className={({ isActive }) => {
-              isActive ? "NavLink active" : "NavLink";
-            }}
+            className={({ isActive }) => 
+              isActive ? "NavLink active" : "NavLink"
+            }
             to="players"
+            onClick={handleNavigatin}
           >
             Players
           </NavLink>
-          <NavLink className="NavLink" to="coaches">
+          <NavLink className="NavLink" to="coaches" onClick={handleNavigatin}>
             Coaches
           </NavLink>
-          <NavLink className="NavLink" to="matches">
+          <NavLink className="NavLink" to="matches" onClick={handleNavigatin}>
             Matches
           </NavLink>
-          <NavLink className="NavLink" to="announcements">
+          <NavLink className="NavLink" to="announcements" onClick={handleNavigatin}>
             Announcements
           </NavLink>
-           <NavLink className="NavLink" to="profile">
+           <NavLink className="NavLink" to="profile" onClick={handleNavigatin}>
             Profile
           </NavLink>
         </nav>

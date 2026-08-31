@@ -25,9 +25,9 @@ function Header() {
       <div className="middle-section">
         <nav>
           <NavLink
-            className={({ isActive }) => {
-              isActive ? "NavLink active" : "NavLink";
-            }}
+            className={({ isActive }) => 
+              isActive ? "NavLink active" : "NavLink"
+            }
             to="/"
           >
             Home
