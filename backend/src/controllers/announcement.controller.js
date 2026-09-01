@@ -142,29 +142,69 @@ const deleteAnnoucement = async (req, res) => {
 //get all announcements
 const getAllAnnouncements = async (req, res) => {
     try {
-        const announcements = await Announcement.find()
-           .populate("author", "fullname role");
+
+        //pagination
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const search = req.query.search || "";
+        const title = req.query.title || "";
+
+        const query = {};
+
+        if(search) {
+            query.title = {
+                $regex: search,
+                $options: "i"
+            }
+        }
+
+        if(title) {
+            query.title = {
+                $regex: `^${title}$`,
+                $options: "i"
+            }
+        }
+
+        const totalAnnouncements = await Announcement.countDocuments(query);
+
+        const totalPages = Math.ceil(totalAnnouncements / limit);
+
+        const announcements = await Announcement.find(query)
+           .populate("author", "fullname role")
+           .sort({ createdAt: -1 })
+           .skip(skip)
+           .limit(limit)
 
         const formattedAnnouncements = announcements.map(announcement => ({
             id: announcement._id,
             title: announcement.title,
             message: announcement.message,
-            image: announcement.image,
+            image: announcement.image
+                 ? `${req.protocol}://${req.get("host")}/uploads/${announcement.image}`
+                 : null ,
             author: announcement.author.fullname,
-            role: announcement.author.role
+            role: announcement.author.role,
+            createdAt: announcement.createdAt
         }));
 
-        if(announcements.length === 0) {
-            return res.status(200).json({
-                message: "All annoucements retrieved succesfully",
-                announcements: []
-            })
-        }
+        // if(announcements.length === 0) {
+        //     return res.status(200).json({
+        //         message: "All annoucements retrieved succesfully",
+        //         announcements: []
+        //     })
+        // }
 
         res.status(200).json({
             message: "All Annoucements",
+            currentPage: page,
+            totalPages,
+            totalAnnouncements,
+            announcementsPerPage: limit,
+            announcements: formattedAnnouncements,
             count: formattedAnnouncements.length,
-            announcements: formattedAnnouncements
+            
         })
 
     } catch (error) {

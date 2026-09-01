@@ -12,6 +12,9 @@ function Login() {
         password: ""
     });
 
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
@@ -50,7 +53,7 @@ function Login() {
             }
 
         } catch (error) {
-            alert(
+            setError(
                 error.response?.data?.message || 
                 "Login failed"
             );
@@ -83,6 +86,11 @@ function Login() {
                       value={formData.password}
                       onChange={handleChange}
                       />
+                      <div>
+                        {error && (
+                            <p className='form-error'>{error}</p>
+                        )}
+                      </div>
                  <button type='submit'>
                     {loading ? "Logging in..." : "Login"}
                  </button>

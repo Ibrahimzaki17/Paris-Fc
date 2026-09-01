@@ -14,9 +14,14 @@ function AnnouncementsManagement() {
 
   const [annToDelete, setAnnToDelete] = useState(null);
 
+  //displaying the announcements states
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  //pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   //adding ann states
   const [annForm, setAnnForm] = useState({
@@ -37,12 +42,15 @@ function AnnouncementsManagement() {
 
 
 
-  const fetchAnnouncements = async () => {
+  const fetchAnnouncements = async (page = currentPage) => {
     try {
       setLoading(true);
-      const response = await api.get('/announcements');
+      const response = await api.get(`/announcements?page=${page}&limit=5`);
 
-      setAnnouncements(response.data.announcements)
+      setAnnouncements(response.data.announcements);
+      setCurrentPage(response.data.currentPage);
+      setTotalPages(response.data.totalPages)
+
     } catch (error) {
       setError("Failed to load")
       console.error(error);
@@ -316,6 +324,18 @@ function AnnouncementsManagement() {
             </div>
           );
         })}
+
+        <div className="pagination">
+          <button onClick={() => fetchAnnouncements(currentPage - 1)} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button onClick={() => fetchAnnouncements(currentPage + 1)} disabled={currentPage === totalPages}>
+            Next
+          </button>
+        </div>
 
       </div>
     </div>
