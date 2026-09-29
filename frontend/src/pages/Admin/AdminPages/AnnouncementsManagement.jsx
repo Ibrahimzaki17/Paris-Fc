@@ -1,6 +1,7 @@
 import { useOutletContext } from "react-router";
 import api from "../../../api/axios";
 import { useState, useEffect } from "react";
+import formatMatchDate from "../../../formatDate";
 
 function AnnouncementsManagement() {
 
@@ -312,7 +313,7 @@ function AnnouncementsManagement() {
                   <p>{announcement.message}</p>
                 </div>
                 <div className="news-content-date">
-                  <p>{announcement.createdAt}</p>
+                  <p>{formatMatchDate(announcement.createdAt)}</p>
                 </div>
                 <div className="match-type">
                   <h2>{announcement.author}</h2>

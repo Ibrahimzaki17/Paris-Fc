@@ -360,8 +360,52 @@ const searchPlayers = async (req, res) => {
     }
 };
 
+//get logged in player's profile
+const getMyProfile = async (req, res) => {
+    try {
+        //find the player whose user is the currently logged in user
+        const player = await Player.findOne({
+            user: req.user._id
+        }).populate("user", "fullname email role");
+
+        if (!player) {
+            return res.status(404).json({
+                message: "Player profile not found"
+            });
+        }
+
+        const formattedPlayer = {
+            id: player._id,
+            fullname: player.user.fullname,
+            email: player.user.email,
+            role: player.user.role,
+            position: player.position,
+            age: player.age,
+            phone: player.phone,
+            jerseyNumber: player.jerseyNumber,
+            image: player.image
+                ? `${req.protocol}://${req.get("host")}/uploads/${player.image}`
+                : null,
+            nationality: player.nationality,
+            isCaptain: player.isCaptain,
+            isViceCaptain: player.isViceCaptain,
+            status: player.status
+        };
+
+        res.status(200).json({
+            message: "Player profile retrieved successfully",
+            player: formattedPlayer
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
 export {
-    createPlayer, deletePlayer, editPlayer, getAllPlayers, getPlayer, searchPlayers
+    createPlayer, deletePlayer, editPlayer, getAllPlayers, getPlayer, searchPlayers, getMyProfile
 }
 
 

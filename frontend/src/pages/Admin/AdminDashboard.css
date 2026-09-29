@@ -1,5 +1,5 @@
 .admin-dashboard {
-  padding: 100px 40px 40px;
+  padding: 10px 40px 40px;
   background: #f8fafc;
   min-height: 100vh;
 }
@@ -308,28 +308,154 @@ tr:nth-child(even) {
 /* Admin Profile */
 
 .admin-profile {
-  text-align: center;
+    width: 100%;
+    min-height: 300px;
+    margin: 40px auto;
+    padding: 35px;
+
+    display: flex;
+    align-items: center;
+    gap: 50px;
+
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.admin-profile img {
-  width: 180px;
-  height: 180px;
-
-  border-radius: 50%;
-
-  object-fit: cover;
-
-  margin-bottom: 20px;
+/* LEFT SIDE */
+.admin-image {
+    width: 220px;
+    height: 220px;
+    flex-shrink: 0;
 }
 
-.admin-profile h2 {
-  color: #0f172a;
+.admin-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
 }
 
-.admin-profile p {
-  color: #64748b;
+/* RIGHT SIDE */
+.admin-info {
+    flex: 1;
+}
 
-  margin-bottom: 20px;
+.admin-info h2 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.admin-info h2 b {
+    display: inline-block;
+    width: 85px;
+}
+
+.admin-info p {
+    margin: 0 0 25px 0;
+    font-size: 18px;
+}
+
+.admin-info p b {
+    display: inline-block;
+    width: 85px;
+}
+
+/* BUTTONS */
+.action-btns {
+    display: flex;
+    gap: 15px;
+}
+
+.action-btns button {
+    padding: 11px 20px;
+    border: none;
+    border-radius: 6px;
+
+    background: #222;
+    color: white;
+
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.action-btns button:hover {
+    background: #444;
+}
+/* =========================
+   TABLET
+========================= */
+@media (max-width: 900px) {
+    .admin-profile {
+        width: auto;
+        margin: 30px 20px;
+        padding: 30px;
+        gap: 35px;
+    }
+
+    .admin-image {
+        width: 180px;
+        height: 180px;
+    }
+
+    .admin-info h2,
+    .admin-info p {
+        font-size: 16px;
+    }
+}
+
+
+/* =========================
+   PHONE
+========================= */
+@media (max-width: 600px) {
+    .admin-profile {
+        width: auto;
+        margin: 20px 15px;
+        padding: 25px 20px;
+
+        flex-direction: column;
+        text-align: center;
+
+        gap: 25px;
+    }
+
+    .admin-image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .admin-info {
+        width: 100%;
+    }
+
+    .admin-info h2 {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+
+    .admin-info h2 b,
+    .admin-info p b {
+        width: auto;
+        margin-right: 5px;
+    }
+
+    .admin-info p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .action-btns {
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .action-btns button {
+        width: 100%;
+        padding: 12px;
+    }
 }
 
 /* Mobile */
@@ -337,7 +463,7 @@ tr:nth-child(even) {
 @media (max-width: 768px) {
 
   .admin-dashboard {
-    padding: 90px 20px 20px;
+    padding: 10px 20px 20px;
   }
 
   .admin-title {

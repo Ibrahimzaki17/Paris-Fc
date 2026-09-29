@@ -21,92 +21,101 @@ function AdminProfile() {
         setPasswordForm(false);
     }
 
-   /*********************Connecting to backend******************** */
-   const handleChangePassword = async (e) => {
-    e.preventDefault();
+    /*********************Connecting to backend******************** */
+    const handleChangePassword = async (e) => {
+        e.preventDefault();
 
-    try {
-        setLoading(true);
-        setError("");
-        setSuccess("");
+        try {
+            setLoading(true);
+            setError("");
+            setSuccess("");
 
-        const response = await api.put("/auth/change-password",{
-            currentPassword,
-            newPassword,
-            confirmPassword
-        });
+            const response = await api.put("/auth/change-password", {
+                currentPassword,
+                newPassword,
+                confirmPassword
+            });
 
-        setSuccess(response.data.message);
+            setSuccess(response.data.message);
 
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
+            setCurrentPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
 
-    } catch (error) {
-        setError(error.response?.message || "Failed to change passsword");
-    } finally {
-        setLoading(false);
+        } catch (error) {
+            setError(error.response?.message || "Failed to change passsword");
+        } finally {
+            setLoading(false);
+        }
     }
-   }
 
     return (
         <>
             {passwordForm && (
-               <div className="add-player-popup-overlay">
-                <div className="add-player">
-                    <h2>Change Password</h2>
-                    <form onSubmit={handleChangePassword}>
+                <div className="add-player-popup-overlay">
+                    <div className="add-player">
+                        <h2>Change Password</h2>
+                        <form onSubmit={handleChangePassword}>
 
-                        
 
-                        <label>Current Password</label>
-                        <input
-                            type="password"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                        />
-                        <label>New Password</label>
-                        <input
-                            type="password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
 
-                        />
-                        <label>Confirm Password</label>
-                        <input
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            <label>Current Password</label>
+                            <input
+                                type="password"
+                                value={currentPassword}
+                                onChange={(e) => setCurrentPassword(e.target.value)}
+                            />
+                            <label>New Password</label>
+                            <input
+                                type="password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
 
-                        />
-                        <div>
-                            {success && <p className="success">{success}</p>}
+                            />
+                            <label>Confirm Password</label>
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
 
-                            {error && <p className="form-error">{error}</p>}
-                        </div>
-                        <div className="action-btns">
-                            <button type="submit" disabled={loading}>
-                                {loading ? "Changing..." : "Change Password"}
-                            </button>
-                            <button type="button" onClick={closePasswordForm}>Cancel</button>
-                        </div>
-                    </form>
+                            />
+                            <div>
+                                {success && <p className="success">{success}</p>}
+
+                                {error && <p className="form-error">{error}</p>}
+                            </div>
+                            <div className="action-btns">
+                                <button type="submit" disabled={loading}>
+                                    {loading ? "Changing..." : "Change Password"}
+                                </button>
+                                <button type="button" onClick={closePasswordForm}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+
                 </div>
-
-
-            </div>
             )}
-            
+
 
             <div className="admin-profile">
-                <img src="/images/messi.jpeg" alt="admin pic" />
-                <h2>Ibrahim zaki</h2>
-                <h2>admin@parisfc.com</h2>
-                <h2>0722851097</h2>
-                <p>Administrator</p>
-                <div className="action-btns">
-                    <button onClick={openPasswordForm}>Change Password</button>
+
+                <div className="admin-image">
+                    <img src="/images/messi.jpeg" alt="admin pic" />
                 </div>
+
+                <div className="admin-info">
+                    <h2><b>Name:</b> Ibrahim zaki</h2>
+                    <h2><b>Email:</b> admin@parisfc.com</h2>
+                    <h2><b>Contact:</b> 0722851097</h2>
+                    <p><b>Role:</b> Administrator</p>
+
+                    <div className="action-btns">
+                        <button onClick={openPasswordForm}>Change Password</button>
+                        <button>Edit Profile</button>
+                    </div>
+                </div>
+
             </div>
         </>
 

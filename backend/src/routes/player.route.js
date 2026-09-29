@@ -6,7 +6,7 @@
  */
 
 import { Router } from "express";
-import { createPlayer, deletePlayer,getAllPlayers,getPlayer,editPlayer, searchPlayers } from "../controllers/player.controller.js";
+import { createPlayer, deletePlayer,getAllPlayers,getPlayer,editPlayer, searchPlayers, getMyProfile } from "../controllers/player.controller.js";
 import { protect, authorize } from "../middleware/auth.middleware.js";
 import upload from "../middleware/upload.middleware.js";
 import validateRequiredFields from "../middleware/validation.middleware.js";
@@ -126,6 +126,12 @@ router.route('/players').get(protect, getAllPlayers);
  */
 router.route('/players/search').get(protect, authorize("admin"), searchPlayers)
 
+router.route('/me').get(
+    protect,
+    authorize("player"),
+    getMyProfile
+);
+
 //get player
 /**
  * @swagger
@@ -216,9 +222,10 @@ router.route('/players/:id').put(protect, authorize("admin"),upload.single("imag
 router.route('/players/:id').delete(protect, authorize("admin"), deletePlayer);
 
 //get player
-router.route('/me').get(protect, (req, res) => {
-    res.json(req.user);
-});
+// router.route('/me').get(protect, (req, res) => {
+//     res.json(req.user);
+// });
+
 
 
 export default router

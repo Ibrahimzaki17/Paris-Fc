@@ -47,12 +47,7 @@ function AdminLayout() {
   return (
     <div className="admin-dashboard">
       
-      <div className="admin-title">
-        
-        <span>
-          <h2>ADMIN DASHBOARD</h2>
-        </span>
-      </div>
+      
       <div>
         <AdminHeader />
       </div>
