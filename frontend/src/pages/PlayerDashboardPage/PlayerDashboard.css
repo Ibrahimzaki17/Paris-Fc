@@ -31,129 +31,7 @@
 
   margin-bottom: 40px;
 }
-.player-header {
-  display: flex;
-  align-items: center;
 
-  gap: 20px;
-
-  margin-bottom: 30px;
-
-  padding-bottom: 20px;
-
-  border-bottom: 3px solid #fbbf24;
-}
-.player-header img {
-  width: 90px;
-  height: 90px;
-
-  object-fit: cover;
-
-  border-radius: 10%;
-
-  border: 3px solid #dc2626;
-}
-.player-header h2 {
-  color: #0f172a;
-  margin-bottom: 5px;
-}
-
-.player-header p {
-  color: #64748b;
-}
-.dashboard > span h2 {
-  color: #dc2626;
-
-  margin-bottom: 25px;
-}
-.upcoming-training,
-.next-match,
-.latest-announcements {
-  background: #f8fafc;
-
-  border-left: 5px solid #dc2626;
-
-  padding: 20px;
-
-  margin-bottom: 20px;
-}
-.upcoming-training h2,
-.next-match h2,
-.latest-announcements h2 {
-  color: #0f172a;
-
-  margin-bottom: 10px;
-}
-.announcements {
-  margin-bottom: 40px;
-}
-.announcement-card {
-  background: white;
-
-  padding: 20px;
-
-  margin-bottom: 15px;
-
-  border-left: 5px solid #fbbf24;
-
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-.schedule {
-  margin-bottom: 40px;
-}
-.schedule span h2 {
-  margin-bottom: 20px;
-
-  color: #0f172a;
-}
-.schedule-card {
-  background: white;
-
-  padding: 25px;
-
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-.schedule-card p {
-  padding: 12px 0;
-
-  border-bottom: 1px solid #e2e8f0;
-}
-.matches {
-  margin-bottom: 40px;
-}
-.matches span h2 {
-  margin-bottom: 20px;
-
-  color: #0f172a;
-}
-.match1-card {
-  background: white;
-
-  padding: 20px;
-
-  margin-bottom: 15px;
-
-  border-left: 5px solid #dc2626;
-
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-.profile-card {
-  background: white;
-
-  padding: 30px;
-
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-}
-.profile-card span h2 {
-  color: #0f172a;
-
-  margin-bottom: 20px;
-}
-.profile-card p {
-  margin-bottom: 12px;
-
-  font-size: 1rem;
-}
 @media (max-width: 768px) {
 
   .playerDashboard-page {
@@ -170,4 +48,946 @@
     width: 80px;
     height: 80px;
   }
+}
+/* ================================
+   DASHBOARD SECTIONS
+================================ */
+
+.dashboard-section {
+    width: 100%;
+    max-width: 1200px;
+    margin: 50px auto 0;
+    padding: 0 25px;
+}
+
+.section-heading {
+    margin-bottom: 25px;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.section-heading p {
+    margin-top: 6px;
+    color: #777;
+    font-size: 15px;
+}
+
+
+/* ================================
+   MATCHES
+================================ */
+
+.matches-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.match-card-1 {
+    background: #fff;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #eeeeee;
+    transition: 0.3s ease;
+}
+
+.match-card-1:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+}
+
+
+/* competition */
+
+.match-competition {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.match-competition span {
+    display: inline-block;
+    padding: 7px 15px;
+    border-radius: 20px;
+    background: #f1f1f1;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+}
+
+
+/* teams */
+
+.teams {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+}
+
+.team {
+    flex: 1;
+    text-align: center;
+}
+
+.team img {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.team h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+
+.vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vs span {
+    font-size: 15px;
+    font-weight: 800;
+    color: #999;
+}
+
+
+/* date */
+
+.match-date {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eeeeee;
+}
+
+.match-date span,
+.match-venue span {
+    display: block;
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+}
+
+.match-date h3 {
+    margin: 6px 0 0;
+    font-size: 17px;
+}
+
+
+/* venue */
+
+.match-venue {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.match-venue p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: #555;
+}
+/* ================================
+   ANNOUNCEMENTS
+================================ */
+
+.announcements-section {
+    margin-top: 60px;
+    margin-bottom: 50px;
+}
+
+.announcements-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.ann-display {
+    display: flex;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #eeeeee;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+    transition: 0.3s ease;
+}
+
+.ann-display:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.11);
+}
+
+
+/* announcement image */
+
+.announcement-image {
+    width: 180px;
+    min-width: 180px;
+    height: 200px;
+}
+
+.announcement-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* announcement content */
+
+.announcement-content {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.announcement-content h2 {
+    margin: 0 0 10px;
+    font-size: 20px;
+}
+
+.announcement-content p {
+    margin: 0;
+    line-height: 1.6;
+    color: #666;
+    font-size: 14px;
+}
+
+
+/* announcement metadata */
+
+.announcement-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 20px;
+    padding-top: 12px;
+    border-top: 1px solid #eeeeee;
+    font-size: 12px;
+    color: #999;
+}
+/* ================================
+   RESPONSIVENESS
+================================ */
+
+@media (max-width: 900px) {
+
+    .matches-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .announcements-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .dashboard-section {
+        padding: 0 15px;
+        margin-top: 35px;
+    }
+
+    .section-heading h2 {
+        font-size: 23px;
+    }
+
+    .section-heading p {
+        font-size: 13px;
+    }
+
+
+    /* MATCH */
+
+    .match-card-1 {
+        padding: 20px 15px;
+    }
+
+    .teams {
+        gap: 10px;
+    }
+
+    .team img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .team h3 {
+        font-size: 14px;
+    }
+
+    .vs span {
+        font-size: 13px;
+    }
+
+    .match-date h3 {
+        font-size: 15px;
+    }
+
+
+    /* ANNOUNCEMENT */
+
+    .ann-display {
+        flex-direction: column;
+    }
+
+    .announcement-image {
+        width: 100%;
+        height: 180px;
+    }
+
+    .announcement-content {
+        padding: 18px;
+    }
+
+    .announcement-content h2 {
+        font-size: 18px;
+    }
+
+    .announcement-meta {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+}
+
+/* =================================
+   PLAYER DASHBOARD
+================================= */
+
+.playerDashboard-page {
+    min-height: 100vh;
+    padding: 30px 25px 60px;
+}
+
+
+/* =================================
+   MENU BUTTON
+================================= */
+
+.player-menu-btn {
+    position: fixed;
+    top: 25px;
+    right: 30px;
+
+    width: 45px;
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+
+    cursor: pointer;
+    z-index: 1000;
+
+    transition: 0.25s ease;
+}
+
+.player-menu-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.16);
+}
+
+.burger {
+    font-size: 21px;
+}
+
+
+/* =================================
+   DASHBOARD
+================================= */
+
+.dashboard {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto 0;
+}
+
+
+/* =================================
+   WELCOME
+================================= */
+
+.welcome-message {
+    margin-bottom: 25px;
+}
+
+.welcome-message h2 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.welcome-message p {
+    margin: 7px 0 0;
+    color: #777;
+    font-size: 15px;
+}
+
+
+/* =================================
+   PROFILE CARD
+================================= */
+
+.admin-profile {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+
+    padding: 30px;
+
+    background: #ffffff;
+    border-radius: 18px;
+
+    border: 1px solid #eeeeee;
+
+    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.07);
+
+    gap: 35px;
+}
+
+
+/* =================================
+   PROFILE IMAGE
+================================= */
+
+.admin-image {
+    width: 190px;
+    min-width: 190px;
+    height: 190px;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    border: 5px solid #f1f1f1;
+
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12);
+}
+
+.admin-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+/* =================================
+   PROFILE INFORMATION
+================================= */
+
+.admin-info {
+    flex: 1;
+}
+
+.player-name {
+    margin-bottom: 22px;
+}
+
+.player-name h2 {
+    margin: 0;
+    font-size: 27px;
+}
+
+.player-name span {
+    display: inline-block;
+
+    margin-top: 5px;
+
+    font-size: 14px;
+    color: #777;
+}
+
+
+/* =================================
+   PROFILE DETAILS
+================================= */
+
+.profile-details {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 18px 30px;
+
+    margin-bottom: 25px;
+}
+
+.profile-detail span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 12px;
+    text-transform: uppercase;
+
+    letter-spacing: 0.6px;
+
+    color: #999;
+}
+
+.profile-detail p {
+    margin: 0;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    color: #333;
+
+    word-break: break-word;
+}
+
+
+/* =================================
+   PLAYER STATUS
+================================= */
+
+.player-status {
+    display: inline-block;
+
+    padding: 5px 11px;
+
+    border-radius: 20px;
+
+    font-size: 12px !important;
+}
+
+.player-status.active {
+    background: #e8f7ed;
+    color: #218838;
+}
+
+.player-status.injured {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.player-status.suspended {
+    background: #f8d7da;
+    color: #842029;
+}
+
+
+/* =================================
+   ACTION BUTTONS
+================================= */
+
+.action-btns {
+    display: flex;
+    gap: 12px;
+}
+
+.action-btns button {
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.25s ease;
+}
+
+.action-btns button:hover {
+    transform: translateY(-2px);
+}
+@media (max-width: 900px) {
+
+    .admin-profile {
+        align-items: flex-start;
+    }
+
+    .profile-details {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .playerDashboard-page {
+        padding: 20px 15px 50px;
+    }
+
+    .player-menu-btn {
+        top: 18px;
+        right: 18px;
+
+        width: 42px;
+        height: 42px;
+    }
+
+    .dashboard {
+        margin-top: 25px;
+    }
+
+    .welcome-message {
+        padding-right: 50px;
+    }
+
+    .welcome-message h2 {
+        font-size: 24px;
+    }
+
+    .welcome-message p {
+        font-size: 13px;
+    }
+
+    .admin-profile {
+        flex-direction: column;
+        align-items: center;
+
+        padding: 25px 18px;
+
+        text-align: center;
+    }
+
+    .admin-image {
+        width: 140px;
+        min-width: 140px;
+        height: 140px;
+    }
+
+    .admin-info {
+        width: 100%;
+    }
+
+    .player-name h2 {
+        font-size: 23px;
+    }
+
+    .profile-details {
+        grid-template-columns: 1fr 1fr;
+
+        text-align: left;
+
+        gap: 18px 15px;
+    }
+
+    .action-btns {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+}
+
+
+@media (max-width: 400px) {
+
+    .profile-details {
+        grid-template-columns: 1fr;
+    }
+
+    .action-btns {
+        flex-direction: column;
+    }
+
+    .action-btns button {
+        width: 100%;
+    }
+
+}
+/* =================================
+   PLAYER STATISTICS
+================================= */
+
+.player-statistics {
+    width: 100%;
+    max-width: 1200px;
+    margin: 50px auto 0;
+    padding: 0 25px;
+}
+
+.statistics-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+}
+
+.stat-card {
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    border-radius: 15px;
+    padding: 25px 15px;
+    text-align: center;
+
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+
+    transition: 0.25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 9px 22px rgba(0, 0, 0, 0.10);
+}
+
+.stat-number {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.stat-card p {
+    margin: 0;
+    color: #777;
+    font-size: 14px;
+    font-weight: 500;
+}
+@media (max-width: 900px) {
+
+    .statistics-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .player-statistics {
+        padding: 0 15px;
+        margin-top: 35px;
+    }
+
+    .statistics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 20px 10px;
+    }
+
+    .stat-number {
+        font-size: 25px;
+    }
+
+}
+
+
+@media (max-width: 350px) {
+
+    .statistics-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+/* =================================
+   TRAINING SCHEDULE
+================================= */
+
+.training-section {
+    width: 100%;
+    max-width: 1200px;
+    margin: 55px auto 0;
+    padding: 0 25px;
+}
+
+.training-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.training-card {
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    border-radius: 15px;
+
+    padding: 22px;
+
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+
+    transition: 0.25s ease;
+}
+
+.training-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 9px 22px rgba(0, 0, 0, 0.10);
+}
+
+.training-day {
+    border-bottom: 1px solid #eeeeee;
+    padding-bottom: 15px;
+    margin-bottom: 18px;
+}
+
+.training-day h3 {
+    margin: 0;
+    font-size: 19px;
+}
+
+.training-day span {
+    display: inline-block;
+    margin-top: 5px;
+
+    font-size: 12px;
+    color: #888;
+
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.training-time strong {
+    font-size: 23px;
+}
+
+.training-time p {
+    margin: 5px 0 0;
+
+    color: #777;
+    font-size: 14px;
+}
+@media (max-width: 800px) {
+
+    .training-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .training-section {
+        padding: 0 15px;
+        margin-top: 40px;
+    }
+
+    .training-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* trophy information */
+
+.trophy-info h3 {
+    margin: 0;
+
+    font-size: 19px;
+}
+
+.trophy-info p {
+    margin: 6px 0;
+
+    font-size: 14px;
+
+    color: #666;
+}
+
+.trophy-info span {
+    font-size: 13px;
+
+    color: #999;
+}
+/* =================================
+   TROPHIES
+================================= */
+
+.trophies-section {
+    width: 100%;
+    max-width: 1200px;
+
+    margin: 55px auto 60px;
+
+    padding: 0 25px;
+}
+
+.trophies-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.trophy-card {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 25px;
+
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+    border-radius: 15px;
+
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+
+    transition: 0.25s ease;
+}
+
+.trophy-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 9px 22px rgba(0, 0, 0, 0.10);
+}
+
+
+/* trophy icon */
+
+.trophy-icon {
+    width: 70px;
+    height: 70px;
+
+    min-width: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #f7f7f7;
+
+    font-size: 35px;
+}
+
+
+/* trophy information */
+
+.trophy-info h3 {
+    margin: 0;
+
+    font-size: 19px;
+}
+
+.trophy-info p {
+    margin: 6px 0;
+
+    font-size: 14px;
+
+    color: #666;
+}
+
+.trophy-info span {
+    font-size: 13px;
+
+    color: #999;
 }

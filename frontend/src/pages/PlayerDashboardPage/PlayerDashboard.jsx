@@ -3,11 +3,15 @@ import "./PlayerDashboard.css";
 import { useEffect, useState } from "react";
 import SideBar2 from "./SideBar2";
 import api from "../../api/axios";
+import formatMatchDate from "../../formatDate";
 
 function PlayerDashboard() {
   const [showSideBar2, setShowSideBar2] = useState(false);
 
   const [player, setPlayer] = useState(null);
+  const [matches, setMatch] = useState([]);
+  const [anns, setAnn] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -21,8 +25,12 @@ function PlayerDashboard() {
   const fetchPlayerProfile = async () => {
     try {
       const response = await api.get("/me");
+      const matchResponse = await api.get('/public/matches?limit=5');
+      const annResponse = await api.get('/public/announcements?limit=5');
 
       setPlayer(response.data.player);
+      setMatch(matchResponse.data.matches);
+      setAnn(annResponse.data.announcements);
 
     } catch (error) {
       setError(
@@ -140,82 +148,300 @@ function PlayerDashboard() {
         </div>
       )}
 
-      <button onClick={openSideBar2}>
+      <button className="player-menu-btn" onClick={openSideBar2}>
         <FaBars className="burger" />
       </button>
 
       <div className="dashboard" id="dashboard">
+
+        <div className="welcome-message">
+          <h2>Welcome, {player.fullname}</h2>
+          <p>Welcome to your Paris FC player dashboard.</p>
+        </div>
+
         <div className="admin-profile">
 
-        <div className="admin-image">
-          <img src={player.image} alt={player.fullname} />
-        </div>
-
-        <div className="admin-info">
-          <h2><b>Name:</b> {player.fullname}</h2>
-          <h2><b>Email:</b>{player.email} </h2>
-          <h2><b>Contact:</b> {player.phone}</h2>
-          <p><b>Role:</b> {player.role}</p>
-
-          <div className="action-btns">
-            <button onClick={openPasswordForm}>Change Password</button>
-            <button>Edit Profile</button>
+          <div className="admin-image">
+            <img src={player.image} alt={player.fullname} />
           </div>
+
+          <div className="admin-info">
+
+            <div className="player-name">
+              <h2>{player.fullname}</h2>
+              <span>{player.position}</span>
+            </div>
+
+            <div className="profile-details">
+
+              <div className="profile-detail">
+                <span>Name</span>
+                <p>{player.fullname}</p>
+              </div>
+
+              <div className="profile-detail">
+                <span>Email</span>
+                <p>{player.email}</p>
+              </div>
+
+              <div className="profile-detail">
+                <span>Contact</span>
+                <p>{player.phone || "Not provided"}</p>
+              </div>
+
+              <div className="profile-detail">
+                <span>Jersey Number</span>
+                <p>#{player.jerseyNumber}</p>
+              </div>
+
+              <div className="profile-detail">
+                <span>Nationality</span>
+                <p>{player.nationality}</p>
+              </div>
+
+              <div className="profile-detail">
+                <span>Status</span>
+                <p className={`player-status ${player.status?.toLowerCase()}`}>
+                  {player.status}
+                </p>
+              </div>
+
+            </div>
+
+            <div className="action-btns">
+              <button onClick={openPasswordForm}>
+                Change Password
+              </button>
+
+              <button>
+                Edit Profile
+              </button>
+            </div>
+
+          </div>
+
         </div>
 
       </div>
-        <span>
-          <h2>Welcome {player.fullname}</h2>
-        </span>
-        <div className="upcoming-training">
-          <h2>Upcoming training</h2>
-          <p>Monday 4:00 PM</p>
+
+      <div className="player-statistics">
+
+        <div className="section-heading">
+          <h2>Player Statistics</h2>
+          <p>Your performance with Paris FC</p>
         </div>
-        <div className="next-match">
-          <h2>Next Match</h2>
-          <p>Paris Fc vs Eagle Fc</p>
+
+        <div className="statistics-grid">
+
+          <div className="stat-card">
+            <div className="stat-number">12</div>
+            <p>Matches</p>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-number">5</div>
+            <p>Goals</p>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-number">3</div>
+            <p>Assists</p>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-number">2</div>
+            <p>Yellow Cards</p>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-number">0</div>
+            <p>Red Cards</p>
+          </div>
+
         </div>
-        <div className="latest-announcements">
-          <h2>Latest Announcements</h2>
-          <p>Team meeting on Friday</p>
-        </div>
+
       </div>
 
-      <div className="announcements" id="announcements">
-        <div className="announcement-card">
-          <p>Training starts at 4 pm</p>
-        </div>
-        <div className="announcement-card">
-          <p>Training starts at 4 pm</p>
-        </div>
-      </div>
+      <div className="training-section">
 
-      <div className="schedule" id="schedule">
-        <span>
+        <div className="section-heading">
           <h2>Training Schedule</h2>
-        </span>
-        <div className="schedule-card">
-          <p>Monday 4pm</p>
-          <p>Monday 4pm</p>
-          <p>Monday 4pm</p>
+          <p>Keep up with the team's training sessions</p>
         </div>
+
+        <div className="training-grid">
+
+          <div className="training-card">
+            <div className="training-day">
+              <h3>Monday</h3>
+              <span>Training</span>
+            </div>
+
+            <div className="training-time">
+              <strong>4:00 PM</strong>
+              <p>Football Training</p>
+            </div>
+          </div>
+
+
+          <div className="training-card">
+            <div className="training-day">
+              <h3>Wednesday</h3>
+              <span>Training</span>
+            </div>
+
+            <div className="training-time">
+              <strong>4:00 PM</strong>
+              <p>Tactical Training</p>
+            </div>
+          </div>
+
+
+          <div className="training-card">
+            <div className="training-day">
+              <h3>Sunday</h3>
+              <span>Training</span>
+            </div>
+
+            <div className="training-time">
+              <strong>6:00 AM</strong>
+              <p>Team Training</p>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
-      <div className="matches" id="matches">
-        <span>
+      <div className="dashboard-section">
+        <div className="section-heading">
           <h2>Upcoming Matches</h2>
-        </span>
-        <div className="match1-card">
-          <h2>Paris Fc vs Eagle Fc</h2>
-          <p>25 July 2026</p>
+          <p>Stay updated with our upcoming fixtures</p>
         </div>
-        <div className="match1-card">
-          <h2>Paris Fc vs Eagle Fc</h2>
-          <p>25 July 2026</p>
+
+        <div className="matches-grid">
+          {matches.map(match => {
+            return (
+              <div className="match-card-1" key={match.id}>
+
+                <div className="match-competition">
+                  <span>{match.competition}</span>
+                </div>
+
+                <div className="teams">
+
+                  <div className="team">
+                    <img src={match.homeImage} alt={match.homeTeam} />
+                    <h3>{match.homeTeam}</h3>
+                  </div>
+
+                  <div className="vs">
+                    <span>VS</span>
+                  </div>
+
+                  <div className="team">
+                    <img src={match.awayImage} alt={match.awayTeam} />
+                    <h3>{match.awayTeam}</h3>
+                  </div>
+
+                </div>
+
+                <div className="match-date">
+                  <span>Match Day</span>
+                  <h3>{formatMatchDate(match.matchDate)}</h3>
+                </div>
+
+                <div className="match-venue">
+                  <span>Venue</span>
+                  <p>{match.venue}</p>
+                </div>
+
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      
+
+      <div className="dashboard-section announcements-section">
+
+        <div className="section-heading">
+          <h2>Latest Announcements</h2>
+          <p>Latest news and updates from Paris FC</p>
+        </div>
+
+        <div className="announcements-grid">
+          {anns.map(ann => {
+            return (
+              <div className="ann-display" key={ann.id}>
+
+                {ann.image && (
+                  <div className="announcement-image">
+                    <img src={ann.image} alt={ann.title} />
+                  </div>
+                )}
+
+                <div className="announcement-content">
+                  <h2>{ann.title}</h2>
+
+                  <p>{ann.message}</p>
+
+                  <div className="announcement-meta">
+                    <span>By {ann.author}</span>
+                    <span>{new Date(ann.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+
+              </div>
+            );
+          })}
+        </div>
+
+      </div>
+
+      <div className="trophies-section">
+
+        <div className="section-heading">
+          <h2>My Trophies</h2>
+          <p>Achievements won with Paris FC</p>
+        </div>
+
+        <div className="trophies-grid">
+
+          <div className="trophy-card">
+
+            <div className="trophy-icon">
+              🏆
+            </div>
+
+            <div className="trophy-info">
+              <h3>Garissa County Cup</h3>
+              <p>Champions</p>
+              <span>2026</span>
+            </div>
+
+          </div>
+
+
+          <div className="trophy-card">
+
+            <div className="trophy-icon">
+              🏆
+            </div>
+
+            <div className="trophy-info">
+              <h3>Paris FC Youth Tournament</h3>
+              <p>Champions</p>
+              <span>2025</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
 
       {showSideBar2 && <SideBar2 closeSideBar2={closeSideBar2} />}
     </div>

@@ -354,6 +354,45 @@ const searchCoaches = async (req, res) => {
     }
 };
 
+//get logged in coach's profile
+const getCoachProfile = async (req, res) => {
+    try {
+        //find the coach who is currently logged in
+        const coach = await Coach.findOne({
+            user: req.user._id
+        }).populate("user", "fullname email role");
+
+        if(!coach) {
+            return res.status(404).json({
+                message: "Coach profile not found"
+            });
+        }
+
+        const formattedCoach = {
+            id: coach._id,
+            fullname: coach.user.fullname,
+            email: coach.user.email,
+            role: coach.user.role,
+            position: coach.position,
+            age: coach.age,
+            phone: coach.phone,
+            image: coach.image 
+                 ? `${req.protocol}://${req.get("host")}/uploads/${coach.image}`
+                 : null,
+        }
+
+        res.status(200).json({
+            message: "Coach profile retrieved succesfully",
+            coach: formattedCoach,
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+}
+
 export  {
-    createCoach, editCoach, deleteCoach, getAllCoaches, getCoach, searchCoaches
+    createCoach, editCoach, deleteCoach, getAllCoaches, getCoach, searchCoaches, getCoachProfile
 }

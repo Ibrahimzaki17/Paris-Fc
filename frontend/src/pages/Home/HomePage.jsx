@@ -4,7 +4,7 @@ import FeaturedPlayers from "./FeaturedPlayers/FeaturedPlayers";
 import Footer from "../../components/Footer/Footer";
 import HeroSection from "./HeroSection/HeroSection";
 import NewsSection from "./NewsSection/NewsSection";
-import TeamStats from "./TeamStats/TeamStats";
+// import TeamStats from "./TeamStats/TeamStats";
 import UpComingMatches from "./UpComingMatches/UpComingMatches";
 
 function HomePage() {
@@ -13,7 +13,7 @@ function HomePage() {
       <title>Paris FC</title>
       <HeroSection />
       <AboutSection />
-      <TeamStats />
+      {/* <TeamStats /> */}
       <NewsSection />
       <UpComingMatches />
       <FeaturedPlayers />
