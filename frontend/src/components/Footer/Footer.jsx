@@ -8,7 +8,7 @@ function Footer() {
       <div className="footer-column">
         <div className="club-info">
           <div className="logo-and-name">
-            <img src="images/parisfc.png" />
+            <img src="/images/parisfc.png" />
             <h2>Paris Fc</h2>
           </div>
           <div className="club-motto">

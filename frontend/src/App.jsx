@@ -19,6 +19,11 @@ import CoachManagement from './pages/Admin/AdminPages/CoachManagement';
 import MatchManagement from './pages/Admin/AdminPages/MatchManagement';
 import AnnouncementsManagement from './pages/Admin/AdminPages/AnnouncementsManagement';
 import AdminProfile from './pages/Admin/AdminPages/AdminProfile';
+import Midfielders from './pages/Players/Midfeilders';
+import Forwards from './pages/Players/Forwards';
+import Defenders from './pages/Players/Defenders';
+import GoalKeepers from './pages/Players/GoalKeepers';
+import ScrollToTop from "./components/ScrollToTop";
 
 
 function App() {
@@ -31,6 +36,7 @@ function App() {
 
   return (
     <>
+    <ScrollToTop />
       {!isDashboard && location.pathname !== "/login" && <Header />}
       <Routes>
         <Route index element={<HomePage />} />
@@ -40,6 +46,11 @@ function App() {
         <Route path='/contact' element={<Contacts />} />
         <Route path='/coach' element={<Coach />} />
         <Route path='/login' element={<Login />} />
+
+        <Route path="/players/midfielders" element={<Midfielders />} />
+        <Route path="/players/forwards" element={<Forwards />} />
+        <Route path="/players/defenders" element={<Defenders />} />
+        <Route path="/players/goalkeepers" element={<GoalKeepers />} />
 
         <Route path='/player-dashboard' element={
           <ProtectedRoute role="player">

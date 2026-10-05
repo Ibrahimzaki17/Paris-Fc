@@ -18,7 +18,7 @@ function Header() {
     <header className="header">
       <div className="leftside-section">
         <NavLink className="NavLink" to="/">
-          <img src="images/parisfc.png" className="logo" />
+          <img src="/images/parisfc.png" className="logo" />
           <h2>Paris Fc</h2>
         </NavLink>
       </div>
