@@ -39,6 +39,6 @@ app.use(
     swaggerUi.setup(swaggerSpec)
 );
 
-//http://localhost:5000/api/players
+//http://localhost:3000/api/
 
 export default app

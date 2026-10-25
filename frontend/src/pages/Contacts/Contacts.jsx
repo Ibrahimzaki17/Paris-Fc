@@ -29,7 +29,7 @@ function Contacts() {
                     <label htmlFor="name">Name</label>
                     <input type="text" id='name' placeholder='Enter your name' required/>
                     <label htmlFor="email">Email</label>
-                    <input type="text" id='email' placeholder='Enter your email' required />
+                    <input type="email" id='email' placeholder='Enter your email' required />
                     <label htmlFor="message">Message</label>
                     <textarea  id="message" placeholder='Your message' required></textarea>
                 </div>
