@@ -12,25 +12,25 @@ router.route('/announcements').get(getPublicAnnouncements);
 
 router.route('/messages').post(createMessage);
 router.route('/messages').get(
-    // protect,
-    // authorize("admin"),
+    protect,
+    authorize("admin"),
     getMessage);
 
 router.route('/messages/:id').delete(
-    // protect,
-    // authorize("admin"),
+    protect,
+    authorize("admin"),
     deleteMessage
 )   
 
 router.route('/messages').delete(
-    // protect,
-    // authorize("admin"),
+    protect,
+    authorize("admin"),
     deleteAllMessages
 )
 
 router.route('/messages/:id/read').patch(
-    // protect,
-    // authorize("admin"),
+    protect,
+    authorize("admin"),
     markMessageAsRead
 )
 

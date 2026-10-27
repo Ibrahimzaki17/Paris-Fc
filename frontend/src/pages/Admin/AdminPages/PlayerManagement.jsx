@@ -254,6 +254,11 @@ function PlayerManagement( ) {
   const handleDeletePlayer = async () => {
     try {
       const response = await api.delete(`/players/${playerToDelete.id}`);
+      setPlayers((previousPlayers) => 
+           previousPlayers.filter(
+            (player) => player.id !== playerToDelete.id
+           )
+      )
       setFormError("");
       setFormSuccess(response.data.message || "player deleted succesfully");
 
@@ -263,7 +268,7 @@ function PlayerManagement( ) {
 
         setFormSuccess("");
 
-        fetchPlayers();
+        // fetchPlayers();
         fetchDashboardData();
       }, 1500);
     } catch (error) {

@@ -41,6 +41,9 @@ function AdminHeader() {
           <NavLink className="NavLink" to="announcements">
             Announcements
           </NavLink>
+          <NavLink className="NavLink" to="messages">
+            Messages
+          </NavLink>
            <NavLink className="NavLink" to="profile">
             Profile
           </NavLink>

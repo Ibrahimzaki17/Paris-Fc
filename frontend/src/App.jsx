@@ -18,6 +18,7 @@ import PlayerManagement from './pages/Admin/AdminPages/PlayerManagement'
 import CoachManagement from './pages/Admin/AdminPages/CoachManagement';
 import MatchManagement from './pages/Admin/AdminPages/MatchManagement';
 import AnnouncementsManagement from './pages/Admin/AdminPages/AnnouncementsManagement';
+import Messages from './pages/Admin/AdminPages/Messages';
 import AdminProfile from './pages/Admin/AdminPages/AdminProfile';
 import Midfielders from './pages/Players/Midfeilders';
 import Forwards from './pages/Players/Forwards';
@@ -92,6 +93,10 @@ function App() {
           <Route
             path="profile"
             element={ <AdminProfile /> }
+          />
+          <Route
+            path="messages"
+            element={ <Messages /> }
           />
         </Route>
       </Routes>

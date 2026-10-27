@@ -32,6 +32,9 @@ function Sidebar4({closeSideBar4}) {
           <NavLink className="NavLink" to="announcements" onClick={handleNavigatin}>
             Announcements
           </NavLink>
+          <NavLink className="NavLink" to="messages" onClick={handleNavigatin}>
+              Messages
+           </NavLink>
            <NavLink className="NavLink" to="profile" onClick={handleNavigatin}>
             Profile
           </NavLink>
