@@ -17,6 +17,7 @@ import { AdminLayout } from './pages/Admin/AdminLayout';
 import PlayerManagement from './pages/Admin/AdminPages/PlayerManagement'
 import CoachManagement from './pages/Admin/AdminPages/CoachManagement';
 import MatchManagement from './pages/Admin/AdminPages/MatchManagement';
+import Dashboard from './pages/Admin/AdminPages/Dashboard';
 import AnnouncementsManagement from './pages/Admin/AdminPages/AnnouncementsManagement';
 import Messages from './pages/Admin/AdminPages/Messages';
 import AdminProfile from './pages/Admin/AdminPages/AdminProfile';
@@ -73,7 +74,10 @@ function App() {
             </ProtectedRoute>
           }
         >
-          
+          <Route
+            path="/admin-dashboard"
+            element={ <Dashboard /> }
+          />
           <Route
             path="players"
             element={ <PlayerManagement /> }

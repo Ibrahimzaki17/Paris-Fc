@@ -1,6 +1,66 @@
 import './Contacts.css'
+import api from '../../api/axios';
+import { useState } from 'react';
 
 function Contacts() {
+
+    const [message, setMessage] = useState({
+        name: "",
+        email: "",
+        message: "",
+    });
+
+    //success state
+    const [formSuccess, setFormSuccess] = useState("");
+
+    //error states
+    const [formError, setFormError] = useState("");
+    const [validationErrors, setValidationErrors] = useState([]);
+
+    //Adding players
+    const handleChange1 = (e) => {
+        setMessage({
+        ...message,
+        [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleSubmitMessage = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await api.post('/public/messages', message);
+            setFormError("");
+            setValidationErrors([]);
+            setFormSuccess(response.data.message || "Message sent successfully");
+
+            setTimeout(() => {
+                setMessage({
+                    name: "",
+                    email: "",
+                    message: ""
+                })
+                setFormError("");
+                setValidationErrors([]);
+                setFormSuccess("");
+            }, 1500);
+
+        } catch (error) {
+            const data = error.response?.data;
+
+            if (data?.errors) {
+                // Validation middleware errors
+                setFormSuccess("");
+                setValidationErrors(data.errors);
+                setFormError("");
+            } else {
+                // Other errors like "User already exists"
+                setFormSuccess("");
+                setValidationErrors([]);
+                setFormError(data?.message || "Something went wrong.");
+            }
+        }
+    }
 
     return(
       <div className='contact-section'>
@@ -24,14 +84,60 @@ function Contacts() {
              
            <div className='contact-form'>
             <h2>Contact Form</h2>
-             <form >
+             <form onSubmit={handleSubmitMessage} >
                 <div className='form1-group'>
                     <label htmlFor="name">Name</label>
-                    <input type="text" id='name' placeholder='Enter your name' required/>
-                    <label htmlFor="email">Email</label>
-                    <input type="email" id='email' placeholder='Enter your email' required />
+                    <input 
+                        type="text" 
+                        placeholder='Enter your name' 
+                        name='name'
+                        value={message.name}
+                        onChange={handleChange1}
+                        />
+                        {validationErrors.find((err) => err.field === "name") && (
+                            <p className="form-error">
+                            {
+                                validationErrors.find((err) => err.field === "name")
+                                .message
+                            }
+                            </p>
+                        )}
+                    <label htmlFor="name">Email</label>
+                    <input 
+                        type="email" 
+                        placeholder='Enter your email' 
+                        name='email'
+                        value={message.email}
+                        onChange={handleChange1}
+                        />
+                        {validationErrors.find((err) => err.field === "email") && (
+                            <p className="form-error">
+                            {
+                                validationErrors.find((err) => err.field === "email")
+                                .message
+                            }
+                            </p>
+                        )}
                     <label htmlFor="message">Message</label>
-                    <textarea  id="message" placeholder='Your message' required></textarea>
+                    <textarea  
+                        placeholder='Your message' 
+                        name='message'
+                        value={message.message} 
+                        onChange={handleChange1}
+                        ></textarea>
+                        {validationErrors.find((err) => err.field === "message") && (
+                            <p className="form-error">
+                            {
+                                validationErrors.find((err) => err.field === "message")
+                                .message
+                            }
+                            </p>
+                        )}
+
+                        {formSuccess && <p className="success">{formSuccess}</p>}
+
+                        {formError && <p className="form-error">{formError}</p>}
+
                 </div>
                 <button type='submit'>Send Message</button>
              </form>

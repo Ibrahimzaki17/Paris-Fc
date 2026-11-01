@@ -2,6 +2,7 @@ import { Router } from "express";
 import { protect, authorize } from "../middleware/auth.middleware.js";
 import { getPublicAnnouncements, getPublicCoaches, getPublicMatches, getPublicPlayers } from "../controllers/public.controller.js";
 import { createMessage, deleteAllMessages, deleteMessage, getMessage, markMessageAsRead } from "../controllers/message.controller.js";
+import validateRequiredFields from "../middleware/validation.middleware.js";
 
 const router = Router();
 
@@ -10,7 +11,15 @@ router.route('/coaches').get(getPublicCoaches);
 router.route('/matches').get(getPublicMatches);
 router.route('/announcements').get(getPublicAnnouncements);
 
-router.route('/messages').post(createMessage);
+router.route('/messages').post(
+    validateRequiredFields([
+        "name",
+        "email",
+        "message"
+    ]),
+    createMessage
+
+);
 router.route('/messages').get(
     protect,
     authorize("admin"),

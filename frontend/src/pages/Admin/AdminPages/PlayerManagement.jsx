@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router";
 
 function PlayerManagement( ) {
-  const {fetchDashboardData} = useOutletContext();
+  // const {fetchDashboardData} = useOutletContext();
 
   //add players pop up overlay
   const [addPlayer, setAddPlayer] = useState(false);
@@ -149,6 +149,7 @@ function PlayerManagement( ) {
       age: "",
       phone: "",
     });
+    setValidationErrors([])
     setSelectedImage(null);
     setImagePreview(null);
 
@@ -269,7 +270,7 @@ function PlayerManagement( ) {
         setFormSuccess("");
 
         // fetchPlayers();
-        fetchDashboardData();
+        // fetchDashboardData();
       }, 1500);
     } catch (error) {
       const data = error.response?.data;

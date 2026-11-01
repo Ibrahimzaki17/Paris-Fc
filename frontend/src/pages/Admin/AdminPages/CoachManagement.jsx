@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router";
 
 function CoachManagement() {
-  const {fetchDashboardData} = useOutletContext();
+  // const {fetchDashboardData} = useOutletContext();
 
   //add coach
   const [addCoach, setAddCoach] = useState(false);
@@ -151,6 +151,7 @@ function CoachManagement() {
           age: '',
           phone: ''
     })
+    setValidationErrors([])
     setSelectedImage(null);
     setImagePreview(null);
   };
@@ -244,6 +245,13 @@ function CoachManagement() {
   const handleDeleteCoach = async () => {
     try {
       const response = await api.delete(`/coaches/${coachToDelete.id}`);
+
+      setCoaches((previousCoaches) => 
+              previousCoaches.filter(
+                (coach) => coach.id !== coachToDelete.id
+              )    
+      )
+
       setFormError('')
       setFormSuccess(response.data.message || 'Coach deleted succesfully');
 
@@ -253,8 +261,8 @@ function CoachManagement() {
 
         setFormSuccess('');
 
-        fetchCoaches();
-        fetchDashboardData();
+        // fetchCoaches();
+        // fetchDashboardData();
       }, 1500);
     } catch (error) {
       const data = error.response?.data;

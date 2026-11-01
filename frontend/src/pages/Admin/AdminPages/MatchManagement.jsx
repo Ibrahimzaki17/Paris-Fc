@@ -4,7 +4,7 @@ import formatMatchDate from "../../../formatDate";
 import { useOutletContext } from "react-router";
 
 function MatchManagement() {
-  const {fetchDashboardData} = useOutletContext();
+  // const {fetchDashboardData} = useOutletContext();
 
   //add match
   const [addMatch, setAddMatch] = useState(false);
@@ -291,6 +291,12 @@ const handleDeleteMatch = async () => {
   try {
     const response = await api.delete(`/matches/${matchToDelete.id}`);
 
+    setMatches((previousMatches) => 
+          previousMatches.filter(
+            (match) => match.id !== matchToDelete.id
+          )
+    )
+
     setFormError("");
     setFormSuccess(
       response.data.message || "Match deleted successfully"
@@ -318,9 +324,9 @@ const handleDeleteMatch = async () => {
           ? newTotalPages
           : currentPage;
 
-      await fetchMatches(pageToFetch);
+      // await fetchMatches(pageToFetch); 
 
-      fetchDashboardData();
+      // fetchDashboardData();
 
     }, 1500);
 
@@ -333,6 +339,7 @@ const handleDeleteMatch = async () => {
   const closeDeleteMatch = () => {
     setDeleteMatch(false);
     setMatchToDelete(null);
+    setValidationErrors([])
     setFormError("");
     setFormSuccess("");
   };

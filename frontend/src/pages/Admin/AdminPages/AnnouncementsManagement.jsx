@@ -5,7 +5,7 @@ import formatMatchDate from "../../../formatDate";
 
 function AnnouncementsManagement() {
 
-  const { fetchDashboardData } = useOutletContext();
+  // const { fetchDashboardData } = useOutletContext();
 
   //add announcements
   const [addAnn, setAddAnn] = useState(false);
@@ -167,6 +167,13 @@ function AnnouncementsManagement() {
   const handleDeleteAnn = async () => {
    try {
     const response = await api.delete(`/announcements/${annToDelete.id}`);
+
+    setAnnouncements((previousAnn) => 
+          previousAnn.filter(
+            (ann) => ann.id !== annToDelete.id
+          )
+    )
+
     setFormError("");
     setFormSuccess(response.data.message || "Announcement deleted Succesfully");
 
@@ -177,8 +184,8 @@ function AnnouncementsManagement() {
       setFormError("");
       setFormSuccess("");
 
-      fetchAnnouncements();
-      fetchDashboardData();
+      // fetchAnnouncements();
+      // fetchDashboardData();
     }, 1500);
    } catch (error) {
       const data = error.response?.data;

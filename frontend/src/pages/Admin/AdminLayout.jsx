@@ -10,6 +10,7 @@ function AdminLayout() {
 
   
   /************************CONNECTING TO THE BACKEND***************************** */
+ /*
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,6 +35,7 @@ function AdminLayout() {
   useEffect(() => {
     fetchDashboardData();
   }, []);
+  
 
   if(loading) {
     return <div className="spinner">Loading...</div>
@@ -41,7 +43,7 @@ function AdminLayout() {
 
   if(error) {
     return <div className="error-message">{error}</div>
-  }
+  }*/
 
 
   return (
@@ -58,11 +60,9 @@ function AdminLayout() {
         </span>
       </div>
 
-      <Dashboard
-          dashboardData={dashboardData} 
-      />
       
-      <Outlet context={{ fetchDashboardData }} />
+      
+      <Outlet  />
       
     </div>
   );

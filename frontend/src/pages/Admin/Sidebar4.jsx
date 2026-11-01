@@ -14,6 +14,9 @@ function Sidebar4({closeSideBar4}) {
       </button>
       <div className="navigation">
         <nav  className="nav"> 
+          <NavLink className="NavLink" to="/admin-dashboard">
+             Dashboard
+          </NavLink>
           <NavLink
             className={({ isActive }) => 
               isActive ? "NavLink active" : "NavLink"

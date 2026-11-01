@@ -1,9 +1,8 @@
 import api from "../../../api/axios";
 import { useState, useEffect } from "react";
 
-function Dashboard({dashboardData}) {
+function Dashboard() {
   
-  /*
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,7 +34,7 @@ function Dashboard({dashboardData}) {
 
   if(error) {
     return <div className="error-message">{error}</div>
-  } */
+  } 
 
   return (
     <div className="admin-stats">

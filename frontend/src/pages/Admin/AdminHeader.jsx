@@ -23,6 +23,10 @@ function AdminHeader() {
       </div>
       <div className="middle-section">
         <nav>
+
+          <NavLink className="NavLink" to="/admin-dashboard">
+            Dashboard
+          </NavLink>
          
           <NavLink
             className={({ isActive }) => {
