@@ -1,9 +1,9 @@
 .news-section {
   padding: 80px 40px;
 
-  background-color: #f8fafc;
+  background-color: #0e1119;
 
-  color: #0f172a;
+ 
 }
 
 
@@ -16,7 +16,7 @@
 
 .news-title h2 {
   font-size: 2.2rem;
-  color: #0f172a;
+  color: #e2e3e3;
   letter-spacing: 2px;
 }
 
@@ -76,7 +76,7 @@
 
 
 .news-content p {
-  color: #475569;
+  color: #060709;
 
   line-height: 1.6;
 
@@ -87,7 +87,7 @@
 .news-content-date p {
   font-size: 0.9rem;
 
-  color: #64748b;
+  color: #341a02;
 }
 @media (max-width: 768px) {
 

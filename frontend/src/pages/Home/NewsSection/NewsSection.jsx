@@ -44,7 +44,7 @@ function NewsSection() {
          <div className='news-title'>
            <h2>LATEST NEWS</h2>
          </div>
-         <div className='news-container'>
+         <div className="recent-announcements">
           {news.map(new1 => {
             return(
               <div key={new1.id} className='news-card'>
@@ -53,13 +53,13 @@ function NewsSection() {
              </div>
              <div className='news-content'>
                 <div className='news-content-title'>
-                    <p>{new1.title}</p>
+                    <p><b><u>{new1.title}</u></b></p>
                 </div>
                 <div className='news-content-description'>
                     <p>{new1.message}</p>
                 </div>
                 <div className='news-content-date'>
-                    <p>{formatMatchDate(new1.createdAt) }</p>
+                    <p><b>{formatMatchDate(new1.createdAt) }</b></p>
                 </div>
              </div>
            </div>
@@ -67,38 +67,7 @@ function NewsSection() {
 })}
            
 
-           {/* <div className='news-card'>
-             <div className='news-image'>
-                <img src="images/stadium.avif"/>
-             </div>
-             <div className='news-content'>
-               <div className='news-content-title'>
-                    <p>Training Session Begins</p>
-                </div>
-                <div className='news-content-description'>
-                    <p>The team prepares for the upcoming season.</p>
-                </div>
-                <div className='news-content-date'>
-                    <p>25 June 2026</p>
-                </div>
-             </div>
-           </div>
-           <div className='news-card'>
-             <div className='news-image'>
-                <img src="images/parisfc.png"/>
-             </div>
-             <div className='news-content'>
-               <div className='news-content-title'>
-                    <p>Paris FC Wins Friendly Match</p>
-                </div>
-                <div className='news-content-description'>
-                    <p>The team starts the season with a strong performance.</p>
-                </div>
-                <div className='news-content-date'>
-                    <p>20 June 2026</p>
-                </div>
-             </div>
-           </div> */}
+
          </div>
       </div>
     );

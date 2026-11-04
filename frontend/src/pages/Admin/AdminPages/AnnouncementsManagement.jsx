@@ -46,7 +46,7 @@ function AnnouncementsManagement() {
   const fetchAnnouncements = async (page = currentPage) => {
     try {
       setLoading(true);
-      const response = await api.get(`/announcements?page=${page}&limit=5`);
+      const response = await api.get(`/announcements?page=${page}&limit=6`);
 
       setAnnouncements(response.data.announcements);
       setCurrentPage(response.data.currentPage);
@@ -117,9 +117,11 @@ function AnnouncementsManagement() {
         setImagePreview(null);
 
         setFormError("");
+        setFormSuccess("");
+        setValidationErrors([]);
 
         fetchAnnouncements();
-        fetchDashboardData();
+        // fetchDashboardData()
       }, 1500);
     } catch (error) {
       const data = error.response?.data;

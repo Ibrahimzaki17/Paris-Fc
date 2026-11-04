@@ -5,11 +5,13 @@ const matchSchema = new mongoose.Schema(
     homeTeam: {
       type: String,
       required: true,
+      trim: true,
     },
 
     awayTeam: {
       type: String,
       required: true,
+      trim: true,
     },
 
     matchDate: {
@@ -26,35 +28,39 @@ const matchSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: ["League", "Friendly", "Cup"],
-      default: "Friendly"
+      default: "Friendly",
     },
 
     status: {
       type: String,
       enum: ["upcoming", "completed", "postponed"],
-      default: "Upcoming",
+      default: "upcoming",
     },
 
     homeScore: {
       type: Number,
       default: 0,
+      min: 0,
     },
 
     awayScore: {
       type: Number,
       default: 0,
+      min: 0,
     },
 
     homeImage: {
       type: String,
     },
+
     awayImage: {
       type: String,
     },
+
     result: {
       type: String,
-      enum: ["win", "draw", "loss", "pending"],
-      default: null,
+      enum: ["home", "away", "draw", "pending"],
+      default: "pending",
     },
   },
   {

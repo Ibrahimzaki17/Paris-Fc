@@ -161,6 +161,194 @@
   background: #b91c1c;
 }
 
+/* Match */
+.upcoming-matches {
+    width: 100%;
+    padding: 15px 0;
+}
+.matches-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+    width: 100%;
+}
+.matches-card {
+    min-width: 0;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 9px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+    transition: 0.2s ease;
+}
+.matches-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.matches-card .teams {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) auto minmax(0, 1fr) 28px;
+    align-items: center;
+    justify-items: center;
+    gap: 4px;
+    text-align: center;
+}
+.matches-card .teams img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.matches-card .teams h2 {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.matches-card .teams p {
+    font-size: 10px;
+    font-weight: 700;
+    color: #888;
+    margin: 0;
+}
+
+/* MATCH INFORMATION */
+.matches-card .match-date,
+.matches-card .match-type {
+    border-top: 1px solid #eee;
+    padding-top: 7px;
+    text-align: center;
+}
+
+.matches-card .match-date h2,
+.matches-card .match-type h2 {
+    font-size: 11px;
+    font-weight: 500;
+    color: #555;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+/* CARD ACTION BUTTONS */
+.matches-card .pagination {
+    display: flex;
+    gap: 6px;
+    margin-top: auto;
+}
+
+.matches-card .pagination button {
+    flex: 1;
+    min-width: 0;
+    padding: 7px 3px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.matches-card .pagination button:first-child {
+    background: #2563eb;
+}
+
+.matches-card .pagination button:last-child {
+    background: #dc2626;
+}
+
+.matches-card .pagination button:hover {
+    opacity: 0.85;
+}
+
+/* MAIN PAGINATION */
+.upcoming-matches > .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.upcoming-matches > .pagination button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 5px;
+    background: #222;
+    color: white;
+    cursor: pointer;
+}
+
+.upcoming-matches > .pagination button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* TABLETS */
+@media (max-width: 1024px) {
+    .matches-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+    }
+}
+
+/* PHONES */
+@media (max-width: 600px) {
+    .matches-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .matches-card {
+        padding: 8px;
+        gap: 8px;
+        border-radius: 7px;
+    }
+
+    .matches-card .teams {
+        grid-template-columns: 20px minmax(0, 1fr) auto minmax(0, 1fr) 20px;
+        gap: 2px;
+    }
+
+    .matches-card .teams img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .matches-card .teams h2 {
+        font-size: 10px;
+    }
+
+    .matches-card .teams p {
+        font-size: 9px;
+    }
+
+    .matches-card .match-date h2,
+    .matches-card .match-type h2 {
+        font-size: 10px;
+    }
+
+    .matches-card .pagination {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .matches-card .pagination button {
+        padding: 6px 3px;
+        font-size: 10px;
+    }
+
+    .upcoming-matches > .pagination {
+        gap: 8px;
+        font-size: 12px;
+    }
+}
+
+
+
 /* Tables */
 
 .player-list-table,
@@ -193,38 +381,6 @@ tr:nth-child(even) {
   background: #f8fafc;
 }
 
-/* Match Card */
-
-.matches-card {
-  border-left: 5px solid #fbbf24;
-
-  padding: 20px;
-
-  background: #f8fafc;
-}
-
-.teams {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 15px;
-
-  flex-wrap: wrap;
-}
-
-.teams img {
-  width: 30px;
-  height: 30px;
-
-  object-fit: cover;
-}
-
-.match-date,
-.match-type {
-  text-align: center;
-  margin-top: 10px;
-}
 
 /* Announcement Form */
 
@@ -270,27 +426,130 @@ tr:nth-child(even) {
 
 /* Recent News */
 
+/* Announcements grid */
 .recent-announcements {
-  margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+    padding: 20px;
+    align-items: stretch;
 }
 
+/* Individual card */
 .news-cards {
-  display: flex;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-  background: #f8fafc;
+.news-cards:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13);
+}
 
-  border-left: 5px solid #fbbf24;
+/* Image at the top */
+.news-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
 }
 
 .news-image img {
-  width: 250px;
-  height: 180px;
-
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
+/* Details below image */
 .news-content {
-  padding: 20px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 12px;
+}
+
+.news-content-title h3 {
+    font-size: 18px;
+    color: #222;
+    margin: 0;
+}
+
+.news-content-description p {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+
+    /* Keep long descriptions from making cards too tall */
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.news-content-date p {
+    font-size: 13px;
+    color: #888;
+    margin: 0;
+}
+
+.news-content .match-type h2 {
+    font-size: 15px;
+    color: #333;
+    margin: 0;
+}
+
+/* Delete button */
+.news-content .action-btns {
+    margin-top: auto;
+    padding-top: 10px;
+}
+
+.news-content .action-btns button {
+    background: #c62828;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.news-content .action-btns button:hover {
+    background: #a51d1d;
+}
+
+/* Pagination occupies the full row */
+.recent-announcements > .pagination {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Phone: one card per row */
+@media (max-width: 600px) {
+    .recent-announcements {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        gap: 20px;
+    }
+
+    .news-image {
+        height: 220px;
+    }
+
+    .news-content {
+        padding: 15px;
+    }
 }
 
 /* User Accounts */

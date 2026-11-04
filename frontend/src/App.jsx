@@ -26,6 +26,8 @@ import Forwards from './pages/Players/Forwards';
 import Defenders from './pages/Players/Defenders';
 import GoalKeepers from './pages/Players/GoalKeepers';
 import ScrollToTop from "./components/ScrollToTop";
+import CompletedMatches from './pages/Admin/AdminPages/CompletedMatches';
+import PostponedMatches from './pages/Admin/AdminPages/PostponedMtahces';
 
 
 function App() {
@@ -102,6 +104,8 @@ function App() {
             path="messages"
             element={ <Messages /> }
           />
+          <Route path="completed-matches" element={<CompletedMatches />} />
+          <Route path="postponed-matches" element={<PostponedMatches />} />
         </Route>
       </Routes>
       {!isDashboard && location.pathname !== "/login" && <Footer />}

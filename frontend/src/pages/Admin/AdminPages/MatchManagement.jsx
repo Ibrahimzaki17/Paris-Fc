@@ -55,7 +55,7 @@ function MatchManagement() {
   const fetchMatches = async (page = currentPage) => {
     try {
       setLoading(true);
-      const response = await api.get(`/matches?page=${page}&limit=5`);
+      const response = await api.get(`/matches?page=${page}&limit=8`);
 
       setMatches(response.data.matches);
       setCurrentPage(response.data.currentPage);
@@ -100,6 +100,15 @@ function MatchManagement() {
   //add match function
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (matchForm.homeTeam.trim().toLowerCase() === matchForm.awayTeam.trim().toLowerCase()) {
+      setFormError("A team cannot play against itself.");
+      return;
+    }
+
+    if (matchForm.matchDate < today) {
+      setFormError("Match date cannot be in the past.");
+      return;
+    }
     //prepare multipart data for file uploads
     const formData = new FormData();
     formData.append("homeTeam", matchForm.homeTeam);
@@ -138,9 +147,11 @@ function MatchManagement() {
         setHomeImage(null);
         setAwayImage(null);
         setFormError("");
+        setFormSuccess("");
+        setValidationErrors([]);
 
         fetchMatches();
-        fetchDashboardData();
+        // fetchDashboardData();
       }, 1500);
 
 
@@ -189,6 +200,9 @@ function MatchManagement() {
       matchDate: match.matchDate.split("T")[0],
       competition: match.competition,
       venue: match.venue,
+      status: match.status,
+      homeScore: match.homeScore,
+      awayScore: match.awayScore,
     })
     //show existing images
     setHomeImage(null);
@@ -196,6 +210,9 @@ function MatchManagement() {
 
     setHomeImagePreview(match.homeImage);
     setAwayImagePreview(match.awayImage);
+
+    setFormError("");
+    setFormSuccess("");
 
     setEditMatch(true);
   };
@@ -211,6 +228,12 @@ function MatchManagement() {
     formData.append("matchDate", matchForm.matchDate);
     formData.append("competition", matchForm.competition);
     formData.append("venue", matchForm.venue);
+    formData.append("status", matchForm.status);
+
+    if (matchForm.status === "completed") {
+      formData.append("homeScore", matchForm.homeScore);
+      formData.append("awayScore", matchForm.awayScore);
+    }
 
     if (homeImage) {
       formData.append("homeImage", homeImage);
@@ -287,54 +310,54 @@ function MatchManagement() {
   };
 
   //delete match function
-const handleDeleteMatch = async () => {
-  try {
-    const response = await api.delete(`/matches/${matchToDelete.id}`);
+  const handleDeleteMatch = async () => {
+    try {
+      const response = await api.delete(`/matches/${matchToDelete.id}`);
 
-    setMatches((previousMatches) => 
-          previousMatches.filter(
-            (match) => match.id !== matchToDelete.id
-          )
-    )
-
-    setFormError("");
-    setFormSuccess(
-      response.data.message || "Match deleted successfully"
-    );
-
-    setTimeout(async () => {
-      setDeleteMatch(false);
-      setMatchToDelete(null);
+      setMatches((previousMatches) =>
+        previousMatches.filter(
+          (match) => match.id !== matchToDelete.id
+        )
+      )
 
       setFormError("");
-      setFormSuccess("");
+      setFormSuccess(
+        response.data.message || "Match deleted successfully"
+      );
 
-      // Calculate how many matches remain
-      const remainingMatches =
-        totalMatches - 1;
+      setTimeout(async () => {
+        setDeleteMatch(false);
+        setMatchToDelete(null);
 
-      // Calculate the last available page
-      const newTotalPages =
-        Math.ceil(remainingMatches / 5);
+        setFormError("");
+        setFormSuccess("");
 
-      // If current page no longer exists,
-      // move to the previous page
-      const pageToFetch =
-        currentPage > newTotalPages
-          ? newTotalPages
-          : currentPage;
+        // Calculate how many matches remain
+        const remainingMatches =
+          totalMatches - 1;
 
-      // await fetchMatches(pageToFetch); 
+        // Calculate the last available page
+        const newTotalPages =
+          Math.ceil(remainingMatches / 5);
 
-      // fetchDashboardData();
+        // If current page no longer exists,
+        // move to the previous page
+        const pageToFetch =
+          currentPage > newTotalPages
+            ? newTotalPages
+            : currentPage;
 
-    }, 1500);
+        // await fetchMatches(pageToFetch); 
 
-  } catch (error) {
-    const data = error.response?.data;
-    setFormError(data?.message || "Something went wrong.");
-  }
-};
+        // fetchDashboardData();
+
+      }, 1500);
+
+    } catch (error) {
+      const data = error.response?.data;
+      setFormError(data?.message || "Something went wrong.");
+    }
+  };
 
   const closeDeleteMatch = () => {
     setDeleteMatch(false);
@@ -343,6 +366,8 @@ const handleDeleteMatch = async () => {
     setFormError("");
     setFormSuccess("");
   };
+
+  const today = new Date().toLocaleDateString("en-CA");
 
   return (
     <div className="match-managment">
@@ -437,8 +462,10 @@ const handleDeleteMatch = async () => {
               <input
                 type="date"
                 name="matchDate"
+                min={today}
                 value={matchForm.matchDate}
                 onChange={handleMatchChange}
+                required
               />
               {validationErrors.find((err) => err.field === "matchDate") && (
                 <p className="form-error">
@@ -587,6 +614,42 @@ const handleDeleteMatch = async () => {
                 value={matchForm.venue}
                 onChange={handleMatchChange}
               />
+              <label>Match Status</label>
+              <select
+                name="status"
+                value={matchForm.status}
+                onChange={handleMatchChange}
+              >
+                <option value="upcoming">Upcoming</option>
+                <option value="completed">Completed</option>
+                <option value="postponed">Postponed</option>
+              </select>
+
+              {matchForm.status === "completed" && (
+                <>
+                  <label>Home Score</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    name="homeScore"
+                    value={matchForm.homeScore}
+                    onChange={handleMatchChange}
+                    required
+                  />
+
+                  <label>Away Score</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    name="awayScore"
+                    value={matchForm.awayScore}
+                    onChange={handleMatchChange}
+                    required
+                  />
+                </>
+              )}
               <div>
                 {formSuccess && <p className="success">{formSuccess}</p>}
 
@@ -606,8 +669,8 @@ const handleDeleteMatch = async () => {
           <div className="confirmation-message">
             <h2>Are you sure you want to delete This Match</h2>
             <p>
-        {matchToDelete.homeTeam} VS {matchToDelete.awayTeam}
-      </p>
+              {matchToDelete.homeTeam} VS {matchToDelete.awayTeam}
+            </p>
           </div>
           <div>
             {formSuccess && (
@@ -625,34 +688,36 @@ const handleDeleteMatch = async () => {
         <button onClick={openAddMatch}>Add Match</button>
       </div>
       <div className="upcoming-matches">
+        <div className="matches-grid">
+          {matches.map(match => {
+            return (
+              <div key={match.id} className="matches-card">
+                <div className="teams">
+                  <img src={`${match.homeImage}`} alt="homeimage" />
+                  <h2>{match.homeTeam}</h2>
+                  <p>VS</p>
+                  <h2>{match.awayTeam}</h2>
+                  <img src={`${match.awayImage}`} />
+                </div>
+                <div className="match-date">
+                  <h2>{formatMatchDate(match.matchDate)}</h2>
+                </div>
+                <div className="match-type">
+                  <h2>{match.competition}</h2>
+                </div>
+                <div className="match-type">
+                  <h2>{match.venue}</h2>
+                </div>
+                <div className="pagination">
+                  <button onClick={() => openEditMatch(match)}>Edit Match</button>
+                  <button onClick={() => openDeleteMatch(match)}>Delete Match</button>
+                </div>
+              </div>
 
-        {matches.map(match => {
-          return (
-            <div key={match.id} className="matches-card">
-              <div className="teams">
-                <img src={`${match.homeImage}`} alt="homeimage" />
-                <h2>{match.homeTeam}</h2>
-                <p>VS</p>
-                <h2>{match.awayTeam}</h2>
-                <img src={`${match.awayImage}`} />
-              </div>
-              <div className="match-date">
-                <h2>{formatMatchDate(match.matchDate)}</h2>
-              </div>
-              <div className="match-type">
-                <h2>{match.competition}</h2>
-              </div>
-              <div className="match-type">
-                <h2>{match.venue}</h2>
-              </div>
-              <div className="pagination">
-                <button onClick={() => openEditMatch(match)}>Edit Match</button>
-                <button onClick={() => openDeleteMatch(match)}>Delete Match</button>
-              </div>
-            </div>
+            );
+          })}
+        </div>
 
-          );
-        })}
 
         <div className="pagination">
           <button onClick={() => fetchMatches(currentPage - 1)} disabled={currentPage === 1}>

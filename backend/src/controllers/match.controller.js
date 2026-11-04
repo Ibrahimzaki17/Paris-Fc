@@ -3,52 +3,101 @@ import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
 
-//create match
+
+// Get the beginning and end of a match's calendar day
+  const getDayRange = (date) => {
+    const startDay = new Date(date);
+    startDay.setHours(0, 0, 0, 0);
+
+    const endDay = new Date(date);
+    endDay.setHours(23, 59, 59, 999);
+
+    return { startDay, endDay };
+  };
+
+  // Determine the result from the scores
+  const calculateResult = (homeScore, awayScore) => {
+    if (homeScore > awayScore) return "home";
+    if (awayScore > homeScore) return "away";
+    return "draw";
+  };
+
+  // Check whether either team already has a match that day
+  const hasTeamConflict = async (homeTeam, awayTeam, matchDate, excludeId = null) => {
+    const { startDay, endDay } = getDayRange(matchDate);
+
+    const query = {
+      matchDate: {
+        $gte: startDay,
+        $lte: endDay,
+      },
+      $or: [
+        { homeTeam: { $in: [homeTeam, awayTeam] } },
+        { awayTeam: { $in: [homeTeam, awayTeam] } },
+      ],
+    };
+
+    if (excludeId) {
+      query._id = { $ne: excludeId };
+    }
+
+    return await Match.findOne(query);
+  };
+
+
 const createMatch = async (req, res) => {
   try {
-
     const {
       homeTeam,
       awayTeam,
       matchDate,
       venue,
       competition,
-      homeScore,
-      awayScore,
-      result,
     } = req.body;
 
-    if (homeTeam === awayTeam) {
+    // Required fields
+    if (!homeTeam?.trim() || !awayTeam?.trim() || !matchDate || !venue?.trim()) {
+      return res.status(400).json({
+        message: "Please provide all required match details.",
+      });
+    }
+
+    // Teams cannot be the same
+    if (homeTeam.trim().toLowerCase() === awayTeam.trim().toLowerCase()) {
       return res.status(400).json({
         message: "A team cannot play against itself.",
       });
     }
 
-    //calculate day range
-    const matchDay = new Date(matchDate);
+    // Validate match date
+    const parsedDate = new Date(matchDate);
 
-    const startDay = new Date(matchDay);
-    startDay.setHours(0, 0, 0, 0);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return res.status(400).json({
+        message: "Please provide a valid match date.",
+      });
+    }
 
-    const endDay = new Date(matchDay);
-    endDay.setHours(23, 59, 59, 999);
+    // Upcoming matches cannot be scheduled in the past
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    //check if match exists
-    const existingMatch = await Match.findOne({
-      matchDate: {
-        $gte: startDay,
-        $lte: endDay,
-      },
-      $or: [
-        { homeTeam },
-        { awayTeam },
-        { homeTeam: awayTeam },
-        { awayTeam: homeTeam },
-      ],
-    });
+    if (parsedDate < today) {
+      return res.status(400).json({
+        message: "You cannot schedule an upcoming match in the past.",
+      });
+    }
+
+    // Check whether either team already has a match that day
+    const existingMatch = await hasTeamConflict(
+      homeTeam.trim(),
+      awayTeam.trim(),
+      parsedDate
+    );
+
     if (existingMatch) {
       return res.status(400).json({
-        message: "The Team already has a match scheduled on this date",
+        message: "One of these teams already has a match scheduled on this date.",
       });
     }
 
@@ -60,12 +109,12 @@ const createMatch = async (req, res) => {
       ? req.files.awayImage[0].filename
       : "";
 
-    //create match
+    // Create match
     const match = await Match.create({
-      homeTeam,
-      awayTeam,
-      matchDate,
-      venue,
+      homeTeam: homeTeam.trim(),
+      awayTeam: awayTeam.trim(),
+      matchDate: parsedDate,
+      venue: venue.trim(),
       competition,
       status: "upcoming",
       homeScore: 0,
@@ -75,8 +124,8 @@ const createMatch = async (req, res) => {
       result: "pending",
     });
 
-    res.status(201).json({
-      message: "Match Created Succesfully",
+    return res.status(201).json({
+      message: "Match created successfully.",
       match: {
         id: match._id,
         homeTeam: match.homeTeam,
@@ -93,11 +142,12 @@ const createMatch = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
 };
+
 
 //get all matches
 const getAllMatches = async (req, res) => {
@@ -262,81 +312,122 @@ const deleteMatch = async (req, res) => {
 };
 
 //edit match
+
 const editMatch = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { homeTeam, awayTeam, matchDate, competition, venue } = req.body;
+    const {
+      homeTeam,
+      awayTeam,
+      matchDate,
+      competition,
+      venue,
+    } = req.body;
 
-    //find the match
+    // Find the match
     const match = await Match.findById(id);
 
     if (!match) {
       return res.status(404).json({
-        message: "Match not found",
+        message: "Match not found.",
       });
     }
 
-    if (homeTeam === awayTeam) {
+    // Use existing values when fields are not supplied
+    const updatedHomeTeam = (homeTeam ?? match.homeTeam).trim();
+    const updatedAwayTeam = (awayTeam ?? match.awayTeam).trim();
+    const updatedVenue = (venue ?? match.venue).trim();
+    const updatedCompetition = competition ?? match.competition;
+    const updatedDate = new Date(matchDate ?? match.matchDate);
+
+    // Validate required values
+    if (!updatedHomeTeam || !updatedAwayTeam || !updatedVenue) {
+      return res.status(400).json({
+        message: "Please provide all required match details.",
+      });
+    }
+
+    // Teams cannot be the same
+    if (
+      updatedHomeTeam.toLowerCase() ===
+      updatedAwayTeam.toLowerCase()
+    ) {
       return res.status(400).json({
         message: "A team cannot play against itself.",
       });
     }
 
-    //calculate day range
-    const matchDay = new Date(matchDate);
+    // Validate date
+    if (Number.isNaN(updatedDate.getTime())) {
+      return res.status(400).json({
+        message: "Please provide a valid match date.",
+      });
+    }
 
-    const startDay = new Date(matchDay);
-    startDay.setHours(0, 0, 0, 0);
+    // Validate upcoming match date
+    const updatedStatus = req.body.status ?? match.status;
 
-    const endDay = new Date(matchDay);
-    endDay.setHours(23, 59, 59, 999);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    //check if match exists
-    const existingMatch = await Match.findOne({
-      _id: { $ne: id },
-      matchDate: {
-        $gte: startDay,
-        $lte: endDay,
-      },
-      $or: [
-        { homeTeam },
-        { awayTeam },
-        { homeTeam: awayTeam },
-        { awayTeam: homeTeam },
-      ],
-    });
+    if (updatedStatus === "upcoming" && updatedDate < today) {
+      return res.status(400).json({
+        message: "An upcoming match cannot have a date in the past.",
+      });
+    }
+
+    // Check whether either team already has a match that day
+    const existingMatch = await hasTeamConflict(
+      updatedHomeTeam,
+      updatedAwayTeam,
+      updatedDate,
+      id
+    );
+
     if (existingMatch) {
       return res.status(400).json({
-        message: "The Team already has a match scheduled on this date",
+        message: "One of these teams already has a match scheduled on this date.",
       });
     }
 
-    //check for duplicate matches
-    const duplicateMatch = await Match.findOne({
-      _id: { $ne: id }, //ignore the current match
+    // Update match details
+    match.homeTeam = updatedHomeTeam;
+    match.awayTeam = updatedAwayTeam;
+    match.venue = updatedVenue;
+    match.competition = updatedCompetition;
+    match.matchDate = updatedDate;
+    match.status = updatedStatus;
 
-      homeTeam,
-      awayTeam,
-      matchDate,
-      competition,
-    });
+    // Handle scores and result
+    if (updatedStatus === "completed") {
+      const homeScore = Number(req.body.homeScore);
+      const awayScore = Number(req.body.awayScore);
 
-    if (duplicateMatch) {
-      return res.status(400).json({
-        message: "A match with these details already exists",
-      });
+      if (
+        req.body.homeScore === undefined ||
+        req.body.awayScore === undefined ||
+        !Number.isInteger(homeScore) ||
+        !Number.isInteger(awayScore) ||
+        homeScore < 0 ||
+        awayScore < 0
+      ) {
+        return res.status(400).json({
+          message: "Please provide valid scores for both teams.",
+        });
+      }
+
+      match.homeScore = homeScore;
+      match.awayScore = awayScore;
+
+      match.result = calculateResult(homeScore, awayScore);
+    } else if (updatedStatus === "upcoming") {
+      match.homeScore = 0;
+      match.awayScore = 0;
+      match.result = "pending";
     }
 
-    match.homeTeam = req.body.homeTeam || match.homeTeam;
-    match.awayTeam = req.body.awayTeam || match.awayTeam;
-    match.venue = req.body.venue || match.venue;
-    match.competition = req.body.competition || match.competition;
-    match.matchDate = req.body.matchDate || match.matchDate;
-    match.homeScore = req.body.homeScore || match.homeScore;
-    match.awayScore = req.body.awayScore || match.awayScore;
-
-    //homeImage
+    // Home image
     if (req.files?.homeImage) {
       if (match.homeImage) {
         const oldHomeImage = path.join("uploads", match.homeImage);
@@ -348,7 +439,8 @@ const editMatch = async (req, res) => {
 
       match.homeImage = req.files.homeImage[0].filename;
     }
-    //awayImage
+
+    // Away image
     if (req.files?.awayImage) {
       if (match.awayImage) {
         const oldAwayImage = path.join("uploads", match.awayImage);
@@ -361,52 +453,76 @@ const editMatch = async (req, res) => {
       match.awayImage = req.files.awayImage[0].filename;
     }
 
-    match.result = req.body.result || match.result;
-
     await match.save();
 
-    res.status(200).json({
-      message: "Match updated succesfully",
+    return res.status(200).json({
+      message: "Match updated successfully.",
       match,
     });
+
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
 };
 
-export { createMatch, getAllMatches, deleteMatch, editMatch };
+const getMatchesByStatus = (status) => async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 8;
+    const skip = (page - 1) * limit;
 
-/*
-let oldHomeImage = null;
-let oldAwayImage = null;
+    const query = { status };
 
-if (req.files?.homeImage) {
-  oldHomeImage = match.homeImage;
-  match.homeImage = req.files.homeImage[0].filename;
-}
+    const totalMatches = await Match.countDocuments(query);
+    const totalPages = Math.ceil(totalMatches / limit);
 
-if (req.files?.awayImage) {
-  oldAwayImage = match.awayImage;
-  match.awayImage = req.files.awayImage[0].filename;
-}
+    const matches = await Match.find(query)
+      .sort({ matchDate: status === "completed" ? -1 : 1 })
+      .skip(skip)
+      .limit(limit);
 
-await match.save();
+    const formattedMatches = matches.map((match) => ({
+      id: match._id,
+      homeTeam: match.homeTeam,
+      awayTeam: match.awayTeam,
+      matchDate: match.matchDate,
+      venue: match.venue,
+      competition: match.competition,
+      status: match.status,
+      homeScore: match.homeScore,
+      awayScore: match.awayScore,
+      homeImage: match.homeImage
+        ? `${req.protocol}://${req.get("host")}/uploads/${match.homeImage}`
+        : null,
+      awayImage: match.awayImage
+        ? `${req.protocol}://${req.get("host")}/uploads/${match.awayImage}`
+        : null,
+      result: match.result,
+    }));
 
-if (oldHomeImage) {
-  const oldHomePath = path.join("uploads", oldHomeImage);
+    return res.status(200).json({
+      currentPage: page,
+      totalPages,
+      totalMatches,
+      matchesPerPage: limit,
+      message: `${status} matches retrieved successfully.`,
+      matches: formattedMatches,
+    });
 
-  if (fs.existsSync(oldHomePath)) {
-    fs.unlinkSync(oldHomePath);
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
   }
-}
+};
 
-if (oldAwayImage) {
-  const oldAwayPath = path.join("uploads", oldAwayImage);
+const getCompletedMatches = getMatchesByStatus("completed");
+const getPostponedMatches = getMatchesByStatus("postponed");
 
-  if (fs.existsSync(oldAwayPath)) {
-    fs.unlinkSync(oldAwayPath);
-  }
-}
-*/
+
+
+export { createMatch, getAllMatches, deleteMatch, editMatch, getCompletedMatches, getPostponedMatches };
+
+

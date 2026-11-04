@@ -117,6 +117,7 @@ function PlayerManagement( ) {
         setSelectedImage(null);
         setFormSuccess("");
         setFormError("");
+        setValidationErrors([]);
 
         fetchPlayers();
         fetchDashboardData();

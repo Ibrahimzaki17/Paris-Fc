@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { protect, authorize } from "../middleware/auth.middleware.js";
-import { createMatch, getAllMatches, deleteMatch, editMatch } from "../controllers/match.controller.js";
+import { createMatch, getAllMatches, deleteMatch, editMatch, getCompletedMatches, getPostponedMatches } from "../controllers/match.controller.js";
 import upload from "../middleware/upload.middleware.js";
 import validateRequiredFields from "../middleware/validation.middleware.js";
 
@@ -25,6 +25,27 @@ router.route('/matches').post(
 );
 //get all matches
 router.route('/matches').get(protect, authorize("admin", "coach"), getAllMatches);
+
+// Get completed matches
+router.get(
+    "/matches/completed",
+    protect,
+    authorize("admin", "coach"),
+    getCompletedMatches
+);
+// Public endpoint - completed matches
+router.get(
+    "/public/matches/completed",
+    getCompletedMatches
+);
+
+// Get postponed matches
+router.get(
+    "/matches/postponed",
+    protect,
+    authorize("admin", "coach"),
+    getPostponedMatches
+);
 //delete match
 router.route('/matches/:id').delete(protect, authorize("admin", "coach"), deleteMatch);
 //edit match
@@ -34,6 +55,7 @@ router.route('/matches/:id').put(protect, authorize("admin", "coach"),upload.fie
     ]), 
     editMatch
 );
+
 
 export default router
 

@@ -41,6 +41,13 @@ function Sidebar4({closeSideBar4}) {
            <NavLink className="NavLink" to="profile" onClick={handleNavigatin}>
             Profile
           </NavLink>
+          <Link to="/admin-dashboard/completed-matches" onClick={handleNavigatin}>
+            Completed Matches
+            </Link>
+
+            <Link to="/admin-dashboard/postponed-matches" onClick={handleNavigatin}>
+            Postponed Matches
+            </Link>
         </nav>
       </div>
       </div>

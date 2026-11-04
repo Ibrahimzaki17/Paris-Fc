@@ -119,6 +119,7 @@ function CoachManagement() {
         setSelectedImage(null);
         setFormSuccess('');
         setFormError('');
+        setValidationErrors([]);
 
         fetchCoaches();
         fetchDashboardData();
