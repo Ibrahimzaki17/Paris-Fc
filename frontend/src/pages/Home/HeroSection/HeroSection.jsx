@@ -11,8 +11,9 @@ function HeroSection() {
         <button>
          <NavLink to="/about" className="nav">Learn More</NavLink>
         </button>
-        <button>
-          Join Us
+        <button >
+          <NavLink to="/contact" className="nav">Join Us</NavLink>
+          
         </button>
        </div>
      </div>

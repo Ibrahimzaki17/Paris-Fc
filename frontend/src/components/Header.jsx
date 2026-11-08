@@ -41,6 +41,9 @@ function Header() {
           <NavLink className="NavLink" to="/contact">
             Contact
           </NavLink>
+          <NavLink className="NavLink" to="/public-matches">
+            Matches
+          </NavLink>
           <NavLink className="NavLink" to="/players">
             Players
           </NavLink>

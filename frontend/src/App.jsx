@@ -28,6 +28,8 @@ import GoalKeepers from './pages/Players/GoalKeepers';
 import ScrollToTop from "./components/ScrollToTop";
 import CompletedMatches from './pages/Admin/AdminPages/CompletedMatches';
 import PostponedMatches from './pages/Admin/AdminPages/PostponedMtahces';
+// import UpComingMatches from './pages/Home/MatchesSection/UpcomingMatches';
+import Matches from './pages/Home/MatchesSection/Matches';
 
 
 function App() {
@@ -48,6 +50,7 @@ function App() {
         <Route path='/players' element={<PlayersPage />} />
         <Route path='/trophies' element={<Trophies />} />
         <Route path='/contact' element={<Contacts />} />
+        <Route path='/public-matches' element={<Matches />} />
         <Route path='/coach' element={<Coach />} />
         <Route path='/login' element={<Login />} />
 

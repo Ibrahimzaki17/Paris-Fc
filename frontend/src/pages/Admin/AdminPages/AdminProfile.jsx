@@ -101,7 +101,7 @@ function AdminProfile() {
             <div className="admin-profile">
 
                 <div className="admin-image">
-                    <img src="/images/messi.jpeg" alt="admin pic" />
+                    <img src="" alt="admin pic" />
                 </div>
 
                 <div className="admin-info">

@@ -1,0 +1,184 @@
+.matches-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.matches-header button {
+  background: transparent;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #555;
+  border-bottom: 3px solid transparent;
+  transition: 0.3s ease;
+}
+
+.matches-header button:hover {
+  color: #000;
+}
+
+.matches-header button.active {
+  color: #000;
+  border-bottom: 3px solid #e30613;
+}
+
+@media (max-width: 600px) {
+  .matches-header {
+    gap: 10px;
+    padding: 12px 8px;
+  }
+
+  .matches-header button {
+    flex: 1;
+    padding: 12px 5px;
+    font-size: 13px;
+  }
+}
+
+
+/* MATCHES SECTION */
+.matches-section {
+  width: 100%;
+  padding: 20px 4%;
+  box-sizing: border-box;
+}
+
+.matches-section .title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.matches-section .title h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* MATCH GRID */
+.match-container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+}
+
+/* MATCH CARD */
+.match-card {
+  min-width: 0;
+  padding: 14px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* TEAMS AND SCORE - SAME LINE */
+.match-card .teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+  flex-wrap: nowrap;
+}
+
+/* TEAM IMAGES */
+.match-card .teams img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  flex: 0 0 34px;
+}
+
+/* TEAM NAMES */
+.match-card .teams h2 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  min-width: 0;
+  flex: 1 1 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* VS OR SCORE */
+.match-card .teams p {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* DATE, COMPETITION AND VENUE */
+.match-card .match-date,
+.match-card .match-type {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.match-card .match-date h2,
+.match-card .match-type h2 {
+  font-size: 12px;
+  font-weight: 500;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+  .match-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+/* PHONE */
+@media (max-width: 600px) {
+  .matches-section {
+    padding: 12px 10px;
+  }
+
+  .matches-section .title h2 {
+    font-size: 18px;
+  }
+
+  .match-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .match-card {
+    padding: 12px;
+  }
+
+  .match-card .teams {
+    gap: 8px;
+  }
+
+  .match-card .teams img {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+
+  .match-card .teams h2 {
+    font-size: 14px;
+  }
+
+  .match-card .teams p {
+    font-size: 14px;
+  }
+}

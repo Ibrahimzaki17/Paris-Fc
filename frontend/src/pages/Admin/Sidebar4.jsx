@@ -14,7 +14,7 @@ function Sidebar4({closeSideBar4}) {
       </button>
       <div className="navigation">
         <nav  className="nav"> 
-          <NavLink className="NavLink" to="/admin-dashboard">
+          <NavLink to="/admin-dashboard" onClick={handleNavigatin}>
              Dashboard
           </NavLink>
           <NavLink
@@ -41,9 +41,9 @@ function Sidebar4({closeSideBar4}) {
            <NavLink className="NavLink" to="profile" onClick={handleNavigatin}>
             Profile
           </NavLink>
-          <Link to="/admin-dashboard/completed-matches" onClick={handleNavigatin}>
+          <NavLink  to="/admin-dashboard/completed-matches" onClick={handleNavigatin}>
             Completed Matches
-            </Link>
+            </NavLink>
 
             <Link to="/admin-dashboard/postponed-matches" onClick={handleNavigatin}>
             Postponed Matches

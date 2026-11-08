@@ -1,4 +1,4 @@
-import './UpComingMatches.css';
+
 import api from '../../../api/axios';
 import formatMatchDate from '../../../formatDate';
 import { useEffect, useState } from 'react';
@@ -13,7 +13,7 @@ function UpComingMatches() {
   const fetchUpcomingMatches = async () => {
     try {
       
-      const response = await api.get('/public/matches?limit=3');
+      const response = await api.get('/public/matches?limit=8');
 
       setMatches(response.data.matches);
 

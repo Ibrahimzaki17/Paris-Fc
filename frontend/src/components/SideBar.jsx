@@ -31,6 +31,9 @@ function SideBar({ closeSideBar }) {
           <NavLink className="NavLink" to="/contact" onClick={handleNavigation}>
             Contact
           </NavLink>
+          <NavLink className="NavLink" to="/public-matches" onClick={handleNavigation}>
+            Matches
+          </NavLink>
           <NavLink to="/players" className="NavLink" onClick={handleNavigation}>
             Players
           </NavLink>

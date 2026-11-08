@@ -4,12 +4,14 @@ import { getPublicAnnouncements, getPublicCoaches, getPublicMatches, getPublicPl
 import { createMessage, deleteAllMessages, deleteMessage, getMessage, markMessageAsRead } from "../controllers/message.controller.js";
 import validateRequiredFields from "../middleware/validation.middleware.js";
 
+
 const router = Router();
 
 router.route('/players').get(getPublicPlayers);
 router.route('/coaches').get(getPublicCoaches);
 router.route('/matches').get(getPublicMatches);
 router.route('/announcements').get(getPublicAnnouncements);
+
 
 router.route('/messages').post(
     validateRequiredFields([
