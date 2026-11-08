@@ -31,7 +31,7 @@ function UpComingMatches() {
   },[]);
 
   if (loading) {
-    return <p>Loading player profile...</p>;
+    return <p>Loading Upcoming Matches...</p>;
   }
 
   if (error) {

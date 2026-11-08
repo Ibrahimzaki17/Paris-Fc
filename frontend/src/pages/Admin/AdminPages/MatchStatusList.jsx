@@ -13,6 +13,17 @@ function MatchStatusList({ status, title }) {
   const [totalPages, setTotalPages] = useState(1);
   const [totalMatches, setTotalMatches] = useState(0);
 
+  //delete match
+  const [deleteMatch, setDeleteMatch] = useState(false);
+
+  const [matchToDelete, setMatchToDelete] = useState(null);
+
+  //success state
+  const [formSuccess, setFormSuccess] = useState("");
+
+  //error states
+  const [formError, setFormError] = useState("");
+
   const fetchMatches = async (page = 1) => {
     try {
       setLoading(true);
@@ -48,8 +59,94 @@ function MatchStatusList({ status, title }) {
     return <div className="error-message">{error}</div>;
   }
 
+  /***************DELETE MATCH*********** */
+  const openDeleteMatch = (match) => {
+    setMatchToDelete(match)
+
+    setDeleteMatch(true);
+  };
+
+  //delete match function
+  const handleDeleteMatch = async () => {
+    try {
+      const response = await api.delete(`/matches/${matchToDelete.id}`);
+
+      setMatches((previousMatches) =>
+        previousMatches.filter(
+          (match) => match.id !== matchToDelete.id
+        )
+      )
+
+      setFormError("");
+      setFormSuccess(
+        response.data.message || "Match deleted successfully"
+      );
+
+      setTimeout(async () => {
+        setDeleteMatch(false);
+        setMatchToDelete(null);
+
+        setFormError("");
+        setFormSuccess("");
+
+        // Calculate how many matches remain
+        const remainingMatches =
+          totalMatches - 1;
+
+        // Calculate the last available page
+        const newTotalPages =
+          Math.ceil(remainingMatches / 5);
+
+        // If current page no longer exists,
+        // move to the previous page
+        const pageToFetch =
+          currentPage > newTotalPages
+            ? newTotalPages
+            : currentPage;
+
+        await fetchMatches(pageToFetch); 
+
+        // fetchDashboardData();
+
+      }, 1500);
+
+    } catch (error) {
+      const data = error.response?.data;
+      setFormError(data?.message || "Something went wrong.");
+    }
+  };
+
+  const closeDeleteMatch = () => {
+    setDeleteMatch(false);
+    setMatchToDelete(null);
+    setValidationErrors([])
+    setFormError("");
+    setFormSuccess("");
+  };
+
   return (
     <div className="match-management">
+
+{deleteMatch && (
+        <div className="delete-overlay">
+          <div className="confirmation-message">
+            <h2>Are you sure you want to delete This Match</h2>
+            <p>
+              {matchToDelete.homeTeam} VS {matchToDelete.awayTeam}
+            </p>
+          </div>
+          <div>
+            {formSuccess && (
+              <p className="success-delete-message">{formSuccess}</p>
+            )}
+          </div>
+          <div className="action-btns">
+            <button onClick={handleDeleteMatch}>Delete</button>
+            <button onClick={closeDeleteMatch}>Cancel</button>
+          </div>
+        </div>
+      )}
+
       <h2>{title}</h2>
 
       <p>Total Matches: {totalMatches}</p>
@@ -95,6 +192,9 @@ function MatchStatusList({ status, title }) {
                 <div className="match-type">
                   <h2>{match.venue}</h2>
                 </div>
+                <div className="pagination">
+                  <button onClick={() => openDeleteMatch(match)}>Delete</button>
+                </div>
 
                 {status === "completed" && (
                   <div className="match-result">
@@ -103,8 +203,8 @@ function MatchStatusList({ status, title }) {
                         match.result === "home"
                           ? `${match.homeTeam} Won`
                           : match.result === "away"
-                          ? `${match.awayTeam} Won`
-                          : "Draw"
+                            ? `${match.awayTeam} Won`
+                            : "Draw"
                       }
                     </p>
                   </div>

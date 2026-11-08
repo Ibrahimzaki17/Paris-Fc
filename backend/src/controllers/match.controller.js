@@ -269,6 +269,13 @@ const deleteMatch = async (req, res) => {
   try {
     const { id } = req.params;
 
+    //validate MongoDB id
+    if(!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid Match ID."
+      })
+    }
+
     //find match
     const match = await Match.findById(id);
 
@@ -298,11 +305,17 @@ const deleteMatch = async (req, res) => {
       }
     }
 
-    //delete
+    //delete match from Database
     await match.deleteOne();
 
     res.status(200).json({
       message: "Match deleted Succesfully",
+      deletedMatch: {
+        id: match._id,
+        homeTeam: match.homeTeam,
+        awayTeam: match.awayTeam,
+        status: match.status
+      }
     });
   } catch (error) {
     res.status(500).json({
