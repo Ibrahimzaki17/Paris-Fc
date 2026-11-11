@@ -1,20 +1,19 @@
 import Announcement from "../models/announcements.js";
-import mongoose from "mongoose";
-import User from "../models/user.js";
 import fs from "fs";
 import path from "path";
+import cloudinary from "../config/cloudinary.js";
 
 //create annoucement
 const createAnnoucement = async (req, res) => {
     try {
-        const {title,message} = req.body
+        const { title, message } = req.body
 
         const existingAnnouncement = await Announcement.findOne({
             title,
             message
         })
 
-        if(existingAnnouncement) {
+        if (existingAnnouncement) {
             return res.status(400).json({
                 message: "Announcement already exists"
             });
@@ -22,7 +21,15 @@ const createAnnoucement = async (req, res) => {
 
         const author = req.user._id;
 
-        const image = req.file ? req.file.filename : "" ;
+        const image = req.file
+            ? {
+                url: req.file.path,
+                publicId: req.file.filename,
+            }
+            : {
+                url: "",
+                publicId: "",
+            };
 
         const announcement = await Announcement.create({
             title,
@@ -39,7 +46,7 @@ const createAnnoucement = async (req, res) => {
                 message: announcement.message,
                 image: announcement.image,
                 author: req.user._id
-            } 
+            }
         })
 
     } catch (error) {
@@ -52,14 +59,14 @@ const createAnnoucement = async (req, res) => {
 //edit annoucement
 const editAnnouncement = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
 
-        const {title,message,image} = req.body
+        const { title, message, image } = req.body
 
         //find announcement
         const announcement = await Announcement.findById(id);
 
-        if(!announcement) {
+        if (!announcement) {
             return res.status(404).json({
                 message: "Announcement not found"
             });
@@ -67,26 +74,27 @@ const editAnnouncement = async (req, res) => {
 
         announcement.title = req.body.title || announcement.title;
         announcement.message = req.body.message || announcement.message;
-     // If a new image was uploaded
+        // Keep track of the old Cloudinary image
+        const oldImagePublicId = announcement.image?.publicId;
+
+        // If a new image was uploaded
         if (req.file) {
-
-            // Delete the old image (if there is one)
-            if (announcement.image) {
-
-                const oldImagePath = path.join("uploads", announcement.image);
-
-                if (fs.existsSync(oldImagePath)) {
-                    fs.unlinkSync(oldImagePath);
-                }
-
-            }
-
-            // Save the new image filename
-            announcement.image = req.file.filename;
+            announcement.image = {
+                url: req.file.path,
+                publicId: req.file.filename,
+            };
         }
 
-
         await announcement.save();
+
+        // Delete the old image only after the announcement is successfully saved
+        if (req.file && oldImagePublicId) {
+            try {
+                await cloudinary.uploader.destroy(oldImagePublicId);
+            } catch (error) {
+                console.error("Failed to delete old announcement image:", error);
+            }
+        }
 
         res.status(200).json({
             message: "Announcement updated succesfully",
@@ -103,24 +111,22 @@ const editAnnouncement = async (req, res) => {
 //delete annoucement
 const deleteAnnoucement = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
 
         const announcement = await Announcement.findById(id);
 
-        if(!announcement) {
+        if (!announcement) {
             return res.status(404).json({
                 message: "Annoucement not found"
             });
         };
 
-        if (announcement.image) {
-
-            const imagePath = path.join("uploads", announcement.image);
-
-            if (fs.existsSync(imagePath)) {
-
-                fs.unlinkSync(imagePath);
-
+        // Delete the announcement image from Cloudinary
+        if (announcement.image?.publicId) {
+            try {
+                await cloudinary.uploader.destroy(announcement.image.publicId);
+            } catch (error) {
+                console.error("Failed to delete announcement image:", error);
             }
         }
 
@@ -153,14 +159,14 @@ const getAllAnnouncements = async (req, res) => {
 
         const query = {};
 
-        if(search) {
+        if (search) {
             query.title = {
                 $regex: search,
                 $options: "i"
             }
         }
 
-        if(title) {
+        if (title) {
             query.title = {
                 $regex: `^${title}$`,
                 $options: "i"
@@ -172,18 +178,16 @@ const getAllAnnouncements = async (req, res) => {
         const totalPages = Math.ceil(totalAnnouncements / limit);
 
         const announcements = await Announcement.find(query)
-           .populate("author", "fullname role")
-           .sort({ createdAt: -1 })
-           .skip(skip)
-           .limit(limit)
+            .populate("author", "fullname role")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
 
         const formattedAnnouncements = announcements.map(announcement => ({
             id: announcement._id,
             title: announcement.title,
             message: announcement.message,
-            image: announcement.image
-                 ? `${req.protocol}://${req.get("host")}/uploads/${announcement.image}`
-                 : null ,
+            image: announcement.image?.url || null,
             author: announcement.author.fullname,
             role: announcement.author.role,
             createdAt: announcement.createdAt
@@ -204,7 +208,7 @@ const getAllAnnouncements = async (req, res) => {
             announcementsPerPage: limit,
             announcements: formattedAnnouncements,
             count: formattedAnnouncements.length,
-            
+
         })
 
     } catch (error) {

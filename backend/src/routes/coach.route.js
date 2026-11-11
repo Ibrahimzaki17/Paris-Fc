@@ -3,6 +3,9 @@ import { createCoach, deleteCoach,getAllCoaches,getCoach,editCoach, searchCoache
 import { protect, authorize } from "../middleware/auth.middleware.js";
 import upload from "../middleware/upload.middleware.js";
 import validateRequiredFields from "../middleware/validation.middleware.js";
+import uploadToCloudinary from "../middleware/cloudinaryUpload.middleware.js";
+import { checkExistingUser, checkingExistingJerseyNumber } from "../middleware/checkExisting.middleware.js";
+
 
 const router = Router();
 
@@ -18,6 +21,8 @@ router.route('/coaches').post(
         "age",
         "phone"
        ]),
+       checkExistingUser,
+       uploadToCloudinary,
         createCoach);
 //get Coachs
 router.route('/coaches').get(protect, getAllCoaches);
@@ -32,7 +37,12 @@ router.route('/coaches/me').get(
 //get Coach
 router.route('/coaches/:id').get(protect, getCoach);
 //edit Coach
-router.route('/coaches/:id').put(protect, authorize("admin"),upload.single("image"), editCoach);
+router.route('/coaches/:id').put(
+    protect, authorize("admin"),
+    upload.single("image"), 
+    checkingExistingJerseyNumber,
+    uploadToCloudinary,
+    editCoach);
 //delete Coachs
 router.route('/coaches/:id').delete(protect, authorize("admin"), deleteCoach);
 

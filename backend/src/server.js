@@ -5,21 +5,19 @@ import connectDB from "./config/database.js";
 dotenv.config();
 
 const startServer = async () => {
-    try {
-        await connectDB();
+  try {
+    await connectDB();
 
-        app.on("error", (error) => {
-            console.log("ERROR", error);
-            throw error;
-        });
+    const PORT = process.env.PORT || 8000;
 
-        app.listen(process.env.PORT || 8000, "0.0.0.0", () => {
-            console.log(` Server running on port: ${process.env.PORT}`);
-        })
-    } catch (error) {
-        console.log("Connection Failed");
-        
-    }
-}
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on port: ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error("Server startup failed:", error.message);
+    process.exit(1);
+  }
+};
 
 startServer();

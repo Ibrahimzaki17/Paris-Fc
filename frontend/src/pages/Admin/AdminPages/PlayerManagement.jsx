@@ -49,6 +49,8 @@ function PlayerManagement( ) {
       setLoading(true);
       const response = await api.get("/players");
 
+      // console.log("Players received:", response.data.formattedPlayers);
+
       setPlayers(response.data.formattedPlayers);
     } catch (error) {
       setError("Failed to load");
@@ -120,7 +122,7 @@ function PlayerManagement( ) {
         setValidationErrors([]);
 
         fetchPlayers();
-        fetchDashboardData();
+        // fetchDashboardData();
       }, 1500);
     } catch (error) {
       const data = error.response?.data;
@@ -206,6 +208,8 @@ function PlayerManagement( ) {
           phone: "",
         });
         setFormSuccess("");
+        setSelectedImage(null);
+        setImagePreview(null)
 
         fetchPlayers();
       }, 1500);

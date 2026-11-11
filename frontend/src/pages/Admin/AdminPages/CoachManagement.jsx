@@ -1,6 +1,6 @@
 import api from "../../../api/axios";
 import { useState, useEffect } from "react";
-import { useOutletContext } from "react-router";
+// import { useOutletContext } from "react-router";
 
 function CoachManagement() {
   // const {fetchDashboardData} = useOutletContext();
@@ -43,7 +43,7 @@ function CoachManagement() {
   //success message
   const [formSuccess, setFormSuccess] = useState("");
 
-  
+
   //displaying coach api
   const fetchCoaches = async () => {
     try {
@@ -52,7 +52,7 @@ function CoachManagement() {
 
       setCoaches(response.data.formattedCoaches)
 
-      } catch (error) {
+    } catch (error) {
       setError("Failed to load")
       console.error(error);
     } finally {
@@ -62,13 +62,13 @@ function CoachManagement() {
 
   useEffect(() => {
     fetchCoaches();
-  },[]);
+  }, []);
 
-  if(loading) {
+  if (loading) {
     return <div className="spinner">Loading...</div>
   }
 
-  if(error) {
+  if (error) {
     return <div className="error-message">{error}</div>
   }
 
@@ -78,7 +78,7 @@ function CoachManagement() {
       ...coachForm,
       [e.target.name]: e.target.value,
     });
-  }; 
+  };
 
   const openAddCoach = () => {
     setAddCoach(true);
@@ -95,10 +95,10 @@ function CoachManagement() {
     formData.append('age', coachForm.age);
     formData.append('phone', coachForm.phone)
 
-    if(selectedImage) {
+    if (selectedImage) {
       formData.append('image', selectedImage);
     }
-    
+
 
     try {
       //post request
@@ -122,23 +122,23 @@ function CoachManagement() {
         setValidationErrors([]);
 
         fetchCoaches();
-        fetchDashboardData();
+        // fetchDashboardData();
       }, 1500);
 
     } catch (error) {
-        const data = error.response?.data;
+      const data = error.response?.data;
 
-        if (data?.errors) {
-          setFormSuccess('');
-            setValidationErrors(data.errors);
-            setFormError("");
-        } else {
-          setFormSuccess('');
-            setValidationErrors([]);
-            setFormError(data?.message || "Something went wrong.");
-        }
+      if (data?.errors) {
+        setFormSuccess('');
+        setValidationErrors(data.errors);
+        setFormError("");
+      } else {
+        setFormSuccess('');
+        setValidationErrors([]);
+        setFormError(data?.message || "Something went wrong.");
+      }
     }
-    
+
   }
 
   const closeAddCoach = () => {
@@ -146,11 +146,11 @@ function CoachManagement() {
     setFormSuccess('');
     setFormError('');
     setCoachForm({
-          fullname: '',
-          position: '',
-          email: '',
-          age: '',
-          phone: ''
+      fullname: '',
+      position: '',
+      email: '',
+      age: '',
+      phone: ''
     })
     setValidationErrors([])
     setSelectedImage(null);
@@ -160,13 +160,13 @@ function CoachManagement() {
   //edit coach
   const openEditCoach = (coach) => {
     setCoachForm({
-          id: coach.id,
-          fullname: coach.fullname,
-          position: coach.position,
-          phone: coach.phone,
-        });   
+      id: coach.id,
+      fullname: coach.fullname,
+      position: coach.position,
+      phone: coach.phone,
+    });
     setSelectedImage(null);
-    setImagePreview(coach.image) 
+    setImagePreview(coach.image)
 
     setEditCoach(true);
   };
@@ -181,10 +181,10 @@ function CoachManagement() {
     formData.append('position', coachForm.position);
     formData.append('phone', coachForm.phone)
 
-    if(selectedImage) {
+    if (selectedImage) {
       formData.append("image", selectedImage);
     }
-    
+
 
     try {
       const response = await api.put(`/coaches/${coachForm.id}`, formData);
@@ -194,11 +194,13 @@ function CoachManagement() {
       setTimeout(() => {
         setEditCoach(false);
         setCoachForm({
-              fullname: '',
-              position: '',
-              phone: ''
+          fullname: '',
+          position: '',
+          phone: ''
         });
         setFormSuccess('')
+        setSelectedImage(null);
+        setImagePreview(null)
 
         fetchCoaches();
       }, 1500);
@@ -213,7 +215,7 @@ function CoachManagement() {
         setFormError(data?.message || "Something went wrong.");
       }
     }
-    
+
   }
 
   const closeEditCoach = () => {
@@ -221,9 +223,9 @@ function CoachManagement() {
     setFormSuccess('');
     setFormError('');
     setCoachForm({
-          fullname: '',
-          position: '',
-          phone: ''
+      fullname: '',
+      position: '',
+      phone: ''
     })
     setSelectedImage(null);
     setImagePreview(null)
@@ -232,12 +234,12 @@ function CoachManagement() {
   //delete coach function
   const openDeleteCoach = (coach) => {
     setCoachToDelete({
-          id: coach.id,
-          fullname: coach.fullname,
-          position: coach.position,
-          email: coach.email,
-          age: coach.age,
-          phone: coach.phone,
+      id: coach.id,
+      fullname: coach.fullname,
+      position: coach.position,
+      email: coach.email,
+      age: coach.age,
+      phone: coach.phone,
     })
     setDeleteCoach(true);
   };
@@ -247,10 +249,10 @@ function CoachManagement() {
     try {
       const response = await api.delete(`/coaches/${coachToDelete.id}`);
 
-      setCoaches((previousCoaches) => 
-              previousCoaches.filter(
-                (coach) => coach.id !== coachToDelete.id
-              )    
+      setCoaches((previousCoaches) =>
+        previousCoaches.filter(
+          (coach) => coach.id !== coachToDelete.id
+        )
       )
 
       setFormError('')
@@ -290,78 +292,78 @@ function CoachManagement() {
           <div className="add-coach">
             <form onSubmit={handleSubmit}>
               <label>Name</label>
-              <input 
-                  type="text" 
-                  placeholder="Enter coach name"
-                  name="fullname"
-                  value={coachForm.fullname}
-                  onChange={handleChange1}
-                  />
+              <input
+                type="text"
+                placeholder="Enter coach name"
+                name="fullname"
+                value={coachForm.fullname}
+                onChange={handleChange1}
+              />
 
-                {validationErrors.find(err => err.field === "fullname") && (
-                    <p className="form-error">
-                        {validationErrors.find(err => err.field === "fullname").message}
-                    </p>
-                )}
+              {validationErrors.find(err => err.field === "fullname") && (
+                <p className="form-error">
+                  {validationErrors.find(err => err.field === "fullname").message}
+                </p>
+              )}
 
               <label>Role</label>
-              <select 
-                  type="text" 
-                  placeholder="Enter role"
-                  name="position"
-                  value={coachForm.position}
-                  onChange={handleChange1}
+              <select
+                type="text"
+                placeholder="Enter role"
+                name="position"
+                value={coachForm.position}
+                onChange={handleChange1}
               >
                 <option value="Head Coach">Head Coach</option>
                 <option value="Assistant Coach">Assistant Coach</option>
               </select>
               {validationErrors.find(err => err.field === "position") && (
-                    <p className="form-error">
-                        {validationErrors.find(err => err.field === "position").message}
-                    </p>
-                )}
+                <p className="form-error">
+                  {validationErrors.find(err => err.field === "position").message}
+                </p>
+              )}
 
               <label>Age</label>
-              <input 
-                  type="text" 
-                  placeholder="Enter age"
-                  name="age"
-                  value={coachForm.age}
-                  onChange={handleChange1}
+              <input
+                type="text"
+                placeholder="Enter age"
+                name="age"
+                value={coachForm.age}
+                onChange={handleChange1}
               />
               {validationErrors.find(err => err.field === "age") && (
-                    <p className="form-error">
-                        {validationErrors.find(err => err.field === "age").message}
-                    </p>
-                )}
+                <p className="form-error">
+                  {validationErrors.find(err => err.field === "age").message}
+                </p>
+              )}
 
               <label>Email</label>
               <input
-                  type="text" 
-                  placeholder="Enter email"
-                  name="email"
-                  value={coachForm.email}
-                  onChange={handleChange1}
+                type="text"
+                placeholder="Enter email"
+                name="email"
+                value={coachForm.email}
+                onChange={handleChange1}
               />
               {validationErrors.find(err => err.field === "email") && (
-                    <p className="form-error">
-                        {validationErrors.find(err => err.field === "email").message}
-                    </p>
-                )}
+                <p className="form-error">
+                  {validationErrors.find(err => err.field === "email").message}
+                </p>
+              )}
 
               <label>Contact</label>
               <input
-                  type="text" 
-                  placeholder="Enter phone number"
-                  name="phone"
-                  value={coachForm.phone}
-                  onChange={handleChange1}
-                  />
-                {validationErrors.find(err => err.field === "phone") && (
-                    <p className="form-error">
-                        {validationErrors.find(err => err.field === "phone").message}
-                    </p>
-                )}
+                type="text"
+                placeholder="Enter phone number"
+                name="phone"
+                value={coachForm.phone}
+                onChange={handleChange1}
+              />
+              {validationErrors.find(err => err.field === "phone") && (
+                <p className="form-error">
+                  {validationErrors.find(err => err.field === "phone").message}
+                </p>
+              )}
 
               <label>Image</label>
               <div className="image-preview">
@@ -369,31 +371,27 @@ function CoachManagement() {
                   <img src={imagePreview} alt="coach image" />
                 )}
               </div>
-              <input 
-                  type="file" 
-                  accept="images/*" 
-                  name="image"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
+              <input
+                type="file"
+                accept="images/*"
+                name="image"
+                onChange={(e) => {
+                  const file = e.target.files[0];
 
-                    if(file) {
-                      setSelectedImage(file);
-                      setImagePreview(URL.createObjectURL(file));
-                    }
-                  }}
-                  />
+                  if (file) {
+                    setSelectedImage(file);
+                    setImagePreview(URL.createObjectURL(file));
+                  }
+                }}
+              />
 
-                  <div>
-                     {formError && (
-                <p className="form-error">
-                  {formError}
-                </p>
-              )}
+              <div>
+                {formError && (<p className="form-error">{formError}</p>)}
 
-              {formSuccess && (<p className="success">{formSuccess}</p>)}
-                  </div>
+                {formSuccess && (<p className="success">{formSuccess}</p>)}
+              </div>
 
-              
+
 
               <div className="action-btns">
                 <button type="submit">Add New Coach</button>
@@ -419,14 +417,14 @@ function CoachManagement() {
                 value={coachForm.fullname}
                 onChange={handleChange1}
               />
-              
+
               <label>Role</label>
-              <select 
-                  type="text" 
-                  placeholder="Enter role"
-                  name="position"
-                  value={coachForm.position}
-                  onChange={handleChange1}
+              <select
+                type="text"
+                placeholder="Enter role"
+                name="position"
+                value={coachForm.position}
+                onChange={handleChange1}
               >
                 <option value="Head Coach">Head Coach</option>
                 <option value="Assistant Coach">Assitant Coach</option>
@@ -446,26 +444,28 @@ function CoachManagement() {
                   <img src={imagePreview} alt="coach image" />
                 )}
               </div>
-              <input 
-                  type="file" 
-                  accept="images/*" 
-                  name="image"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
+              <input
+                type="file"
+                accept="images/*"
+                name="image"
+                onChange={(e) => {
+                  const file = e.target.files[0];
 
-                    if(file) {
-                      setSelectedImage(file);
-                      setImagePreview(URL.createObjectURL(file));
-                    }
-                  }}
-                  />
+                  if (file) {
+                    setSelectedImage(file);
+                    setImagePreview(URL.createObjectURL(file));
+                  }
+                }}
+              />
 
-              <div className="action-btns">
-
+              <div>
                 {formSuccess && <p className="success">{formSuccess}</p>}
 
                 {formError && <p className="form-error">{formError}</p>}
+              </div>
 
+
+              <div className="action-btns">
                 <button type="submit">Save Changes</button>
 
                 <button type="button" onClick={closeEditCoach}>
@@ -507,7 +507,7 @@ function CoachManagement() {
             </tr>
 
             {coaches.map(coach => {
-              return(
+              return (
                 <tr key={coach.id}>
                   <td>{coach.fullname}</td>
                   <td>{coach.position}</td>
@@ -515,7 +515,7 @@ function CoachManagement() {
                   <td>{coach.phone}</td>
                   <td>
                     <div className="action-btns">
-                      <button onClick={() =>  openEditCoach(coach)}>Edit Coach</button>
+                      <button onClick={() => openEditCoach(coach)}>Edit Coach</button>
                       <button onClick={() => openDeleteCoach(coach)}>Delete Coach</button>
                     </div>
                   </td>

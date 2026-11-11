@@ -2,142 +2,154 @@ import User from "../models/user.js";
 import Coach from "../models/coach.js";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
-import Player from "../models/player.js";
-import fs from "fs";
-import path from "path";
+import cloudinary from "../config/cloudinary.js";
 
 //create coach = Add coach button
 const createCoach = async (req, res) => {
-  try {
+    let session;
+    let uploadedImagePublicId = null;
+    try {
+        const {
+            fullname,
+            email,
+            position,
+            age,
+            phone,
+        } = req.body;
 
-    const {
-      fullname,
-      email,
-      position,
-      age,
-      phone,
-    } = req.body;
+        const image = req.file
+            ? {
+                url: req.file.path,
+                publicId: req.file.filename,
+            }
+            : {
+                url: "",
+                publicId: "",
+            };
 
-    const image = req.file ? req.file.filename : "";
-    /*
-    // Validation
-    if (
-      !fullname ||
-      !email ||
-      !position ||
-      !age ||
-      !phone 
-    ) {
-      await session.abortTransaction();
-      session.endSession();
+        if (req.file) {
+            uploadedImagePublicId = req.file.filename;
+        }
 
-      return res.status(400).json({
-        message: "All fields must be filled",
-      });
+        session = await mongoose.startSession();
+        session.startTransaction();
+
+        // Check if user already exists
+        const existing = await User.findOne({
+            email: email.toLowerCase(),
+        }).session(session);
+
+        if (existing) {
+            await session.abortTransaction();
+            session.endSession();
+
+            return res.status(400).json({
+                message: "User already exists",
+            });
+        }
+
+        // Temporary password
+        const defaultPassword = "paris12345";
+
+        const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+
+        // Create User
+        const user = await User.create(
+            [
+                {
+                    fullname,
+                    email: email.toLowerCase(),
+                    password: hashedPassword,
+                    role: "coach",
+                },
+            ],
+            { session }
+        );
+
+        const positionOrderMap = {
+            "head-coach": 1,
+            "assistant-coach": 2
+        };
+
+        const positionOrder = positionOrderMap[position];
+
+        // Create coach
+        const coach = await Coach.create(
+            [
+                {
+                    user: user[0]._id,
+                    position,
+                    positionOrder,
+                    age,
+                    phone,
+                    image,
+                },
+            ],
+            { session }
+        );
+
+        // Everything succeeded
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(201).json({
+            message: "Coach created successfully",
+
+            temporaryPassword: defaultPassword,
+
+            user: {
+                id: user[0]._id,
+                fullname: user[0].fullname,
+                email: user[0].email,
+                role: user[0].role,
+            },
+
+            coach: {
+                id: coach[0]._id,
+                position: coach[0].position,
+                age: coach[0].age,
+                phone: coach[0].phone,
+                image: coach[0].image,
+            },
+        });
+    } catch (error) {
+    if (session?.inTransaction()) {
+        await session.abortTransaction();
     }
-      */
 
-    let session = await mongoose.startSession();
-    session.startTransaction();
-
-    // Check if user already exists
-    const existing = await User.findOne({
-      email: email.toLowerCase(),
-    }).session(session);
-
-    if (existing) {
-      await session.abortTransaction();
-      session.endSession();
-
-      return res.status(400).json({
-        message: "User already exists",
-      });
+    if (session) {
+        await session.endSession();
     }
 
-    // Temporary password
-    const defaultPassword = "paris12345";
+    // Remove uploaded image if coach creation fails
+    if (uploadedImagePublicId) {
+        try {
+            await cloudinary.uploader.destroy(uploadedImagePublicId);
+            console.log("Failed coach image cleaned up from Cloudinary");
+        } catch (cloudinaryError) {
+            console.error(
+                "Failed to clean up Cloudinary image:",
+                cloudinaryError.message
+            );
+        }
+    }
 
-    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
-
-    // Create User
-    const user = await User.create(
-      [
-        {
-          fullname,
-          email: email.toLowerCase(),
-          password: hashedPassword,
-          role: "coach",
-        },
-      ],
-      { session }
-    );
-
-    const positionOrderMap = {
-        "head-coach": 1,
-        "assistant-coach": 2
-    };
-
-    const positionOrder = positionOrderMap[position];
-
-    // Create coach
-    const coach = await Coach.create(
-      [
-        {
-          user: user[0]._id,
-          position,
-          positionOrder,
-          age,
-          phone,
-          image,
-        },
-      ],
-      { session }
-    );
-
-    // Everything succeeded
-    await session.commitTransaction();
-    session.endSession();
-
-    res.status(201).json({
-      message: "Coach created successfully",
-
-      temporaryPassword: defaultPassword,
-
-      user: {
-        id: user[0]._id,
-        fullname: user[0].fullname,
-        email: user[0].email,
-        role: user[0].role,
-      },
-
-      coach: {
-        id: coach[0]._id,
-        position: coach[0].position,
-        age: coach[0].age,
-        phone: coach[0].phone,
-        image: coach[0].image,
-      },
+    return res.status(500).json({
+        message: error.message,
     });
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-
-    res.status(500).json({
-      message: error.message,
-    });
-  }
+}
 };
 
 //update coach = edit coach button
 const editCoach = async (req, res) => {
     try {
         //get the id
-        const {id} = req.params;
+        const { id } = req.params;
 
         //find the coach
         const coach = await Coach.findById(id);
 
-        if(!coach) {
+        if (!coach) {
             return res.status(404).json({
                 message: "coach not found"
             })
@@ -146,11 +158,11 @@ const editCoach = async (req, res) => {
         const user = await User.findById(coach.user);
 
         if (!user) {
-             return res.status(404).json({
-                 message: "User not found"
-             });
-        
-        
+            return res.status(404).json({
+                message: "User not found"
+            });
+
+
         }
 
         user.fullname = req.body.fullname || user.fullname;
@@ -161,25 +173,28 @@ const editCoach = async (req, res) => {
         coach.position = req.body.position || coach.position;
         // coach.age = req.body.age || coach.age;
         coach.phone = req.body.phone || coach.phone;
-     // If a new image was uploaded
+
+        // Keep track of the old Cloudinary image
+        const oldImagePublicId = coach.image?.publicId;
+
+        // If a new image was uploaded
         if (req.file) {
-
-            // Delete the old image (if there is one)
-            if (coach.image) {
-
-                const oldImagePath = path.join("uploads", coach.image);
-
-                if (fs.existsSync(oldImagePath)) {
-                    fs.unlinkSync(oldImagePath);
-                }
-
-            }
-
-            // Save the new image filename
-            coach.image = req.file.filename;
+            coach.image = {
+                url: req.file.path,
+                publicId: req.file.filename,
+            };
         }
 
         await coach.save();
+
+        // Delete the old image only after the coach is successfully saved
+        if (req.file && oldImagePublicId) {
+            try {
+                await cloudinary.uploader.destroy(oldImagePublicId);
+            } catch (error) {
+                console.error("Failed to delete old coach image:", error);
+            }
+        }
 
         res.status(200).json({
             message: "coach updated successfully",
@@ -197,25 +212,23 @@ const editCoach = async (req, res) => {
 //delete coach = delete coach button
 const deleteCoach = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
 
         //find coach
         const coach = await Coach.findById(id);
-        
-        if(!coach) {
+
+        if (!coach) {
             return res.status(404).json({
                 message: "coach not found"
             })
         }
 
-        if (coach.image) {
-
-            const imagePath = path.join("uploads", coach.image);
-
-            if (fs.existsSync(imagePath)) {
-
-                fs.unlinkSync(imagePath);
-
+        // Delete the coach image from Cloudinary
+        if (coach.image?.publicId) {
+            try {
+                await cloudinary.uploader.destroy(coach.image.publicId);
+            } catch (error) {
+                console.error("Failed to delete coach image:", error);
             }
         }
 
@@ -241,7 +254,7 @@ const getAllCoaches = async (req, res) => {
     try {
         //find all coachs & populate
         const coaches = await Coach.find()
-          .populate("user", "fullname email role")
+            .populate("user", "fullname email role")
 
         //formatted
         const formattedCoaches = coaches.map(coach => ({
@@ -252,15 +265,13 @@ const getAllCoaches = async (req, res) => {
             position: coach.position,
             age: coach.age,
             phone: coach.phone,
-            image: coach.image 
-                  ? `${req.protocol}://${req.get("host")}/uploads/${coach.image}`
-                  : null
+            image: coach.image?.url || null,
         }))
 
-        if(coaches.length === 0) {
+        if (coaches.length === 0) {
             res.status(200).json({
                 message: "All coaches retrieved succesfully",
-                coachs: []            
+                coachs: []
             })
         }
 
@@ -281,13 +292,13 @@ const getAllCoaches = async (req, res) => {
 const getCoach = async (req, res) => {
     try {
         //get id
-        const {id} = req.params
+        const { id } = req.params
 
         //find coach
         const coach = await Coach.findById(id)
-          .populate("user", "fullname email");
+            .populate("user", "fullname email");
 
-        if(!coach) {
+        if (!coach) {
             return res.status(404).json({
                 message: "coach not found"
             })
@@ -302,7 +313,7 @@ const getCoach = async (req, res) => {
             position: coach.position,
             age: coach.age,
             phone: coach.phone,
-            image: coach.image
+            image: coach.image?.url || null,
         };
 
         // Return coach
@@ -362,7 +373,7 @@ const getCoachProfile = async (req, res) => {
             user: req.user._id
         }).populate("user", "fullname email role");
 
-        if(!coach) {
+        if (!coach) {
             return res.status(404).json({
                 message: "Coach profile not found"
             });
@@ -376,9 +387,7 @@ const getCoachProfile = async (req, res) => {
             position: coach.position,
             age: coach.age,
             phone: coach.phone,
-            image: coach.image 
-                 ? `${req.protocol}://${req.get("host")}/uploads/${coach.image}`
-                 : null,
+            image: coach.image?.url || null,
         }
 
         res.status(200).json({
@@ -393,6 +402,6 @@ const getCoachProfile = async (req, res) => {
     }
 }
 
-export  {
+export {
     createCoach, editCoach, deleteCoach, getAllCoaches, getCoach, searchCoaches, getCoachProfile
 }

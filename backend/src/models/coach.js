@@ -26,7 +26,14 @@ const coachSchema = new mongoose.Schema(
             type: String
         },
         image: {
-            type: String
+            url: {
+                type: String,
+                default: "",
+            },
+            publicId: {
+                type: String,
+                default: "",
+            },
         },
         nationality: {
             type: String,
@@ -34,7 +41,7 @@ const coachSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["Active","Suspended"],
+            enum: ["Active", "Suspended"],
             default: "Active"
         }
     },

@@ -3,6 +3,8 @@ import { protect, authorize } from "../middleware/auth.middleware.js";
 import { createMatch, getAllMatches, deleteMatch, editMatch, getCompletedMatches, getPostponedMatches } from "../controllers/match.controller.js";
 import upload from "../middleware/upload.middleware.js";
 import validateRequiredFields from "../middleware/validation.middleware.js";
+import uploadToCloudinary from "../middleware/cloudinaryUpload.middleware.js";
+import validateMatch from "../middleware/ValidateMatch.middleware.js";
 
 const router = Router();
 
@@ -21,6 +23,8 @@ router.route('/matches').post(
         "venue",
         "competition"
     ]),
+    validateMatch,
+    uploadToCloudinary,
     createMatch
 );
 //get all matches
@@ -49,10 +53,15 @@ router.get(
 //delete match
 router.route('/matches/:id').delete(protect, authorize("admin", "coach"), deleteMatch);
 //edit match
-router.route('/matches/:id').put(protect, authorize("admin", "coach"),upload.fields([
+router.route('/matches/:id').put(
+    protect, 
+    authorize("admin", "coach"),
+    upload.fields([
         { name:"homeImage", maxCount:1 },
         { name:"awayImage", maxCount:1 }
     ]), 
+    validateMatch,
+    uploadToCloudinary,
     editMatch
 );
 

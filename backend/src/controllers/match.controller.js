@@ -1,48 +1,26 @@
 import Match from "../models/match.js";
 import mongoose from "mongoose";
-import fs from "fs";
-import path from "path";
+import cloudinary from "../config/cloudinary.js";
+import { hasTeamConflict } from "../utils/match.utils.js";
 
 
 // Get the beginning and end of a match's calendar day
-  const getDayRange = (date) => {
-    const startDay = new Date(date);
-    startDay.setHours(0, 0, 0, 0);
+const getDayRange = (date) => {
+  const startDay = new Date(date);
+  startDay.setHours(0, 0, 0, 0);
 
-    const endDay = new Date(date);
-    endDay.setHours(23, 59, 59, 999);
+  const endDay = new Date(date);
+  endDay.setHours(23, 59, 59, 999);
 
-    return { startDay, endDay };
-  };
+  return { startDay, endDay };
+};
 
-  // Determine the result from the scores
-  const calculateResult = (homeScore, awayScore) => {
-    if (homeScore > awayScore) return "home";
-    if (awayScore > homeScore) return "away";
-    return "draw";
-  };
-
-  // Check whether either team already has a match that day
-  const hasTeamConflict = async (homeTeam, awayTeam, matchDate, excludeId = null) => {
-    const { startDay, endDay } = getDayRange(matchDate);
-
-    const query = {
-      matchDate: {
-        $gte: startDay,
-        $lte: endDay,
-      },
-      $or: [
-        { homeTeam: { $in: [homeTeam, awayTeam] } },
-        { awayTeam: { $in: [homeTeam, awayTeam] } },
-      ],
-    };
-
-    if (excludeId) {
-      query._id = { $ne: excludeId };
-    }
-
-    return await Match.findOne(query);
-  };
+// Determine the result from the scores
+const calculateResult = (homeScore, awayScore) => {
+  if (homeScore > awayScore) return "home";
+  if (awayScore > homeScore) return "away";
+  return "draw";
+};
 
 
 const createMatch = async (req, res) => {
@@ -50,69 +28,36 @@ const createMatch = async (req, res) => {
     const {
       homeTeam,
       awayTeam,
-      matchDate,
       venue,
       competition,
     } = req.body;
 
-    // Required fields
-    if (!homeTeam?.trim() || !awayTeam?.trim() || !matchDate || !venue?.trim()) {
-      return res.status(400).json({
-        message: "Please provide all required match details.",
-      });
-    }
+    // Use the date already validated by validateMatch middleware
+    const parsedDate = req.matchDate;
 
-    // Teams cannot be the same
-    if (homeTeam.trim().toLowerCase() === awayTeam.trim().toLowerCase()) {
-      return res.status(400).json({
-        message: "A team cannot play against itself.",
-      });
-    }
+    // Get uploaded image files
+    const homeFile = req.files?.homeImage?.[0];
+    const awayFile = req.files?.awayImage?.[0];
 
-    // Validate match date
-    const parsedDate = new Date(matchDate);
+    // Store Cloudinary URL and public ID
+    const homeImage = homeFile
+      ? {
+          url: homeFile.path,
+          publicId: homeFile.filename,
+        }
+      : { url: "", publicId: "" };
 
-    if (Number.isNaN(parsedDate.getTime())) {
-      return res.status(400).json({
-        message: "Please provide a valid match date.",
-      });
-    }
-
-    // Upcoming matches cannot be scheduled in the past
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (parsedDate < today) {
-      return res.status(400).json({
-        message: "You cannot schedule an upcoming match in the past.",
-      });
-    }
-
-    // Check whether either team already has a match that day
-    const existingMatch = await hasTeamConflict(
-      homeTeam.trim(),
-      awayTeam.trim(),
-      parsedDate
-    );
-
-    if (existingMatch) {
-      return res.status(400).json({
-        message: "One of these teams already has a match scheduled on this date.",
-      });
-    }
-
-    const homeImage = req.files?.homeImage
-      ? req.files.homeImage[0].filename
-      : "";
-
-    const awayImage = req.files?.awayImage
-      ? req.files.awayImage[0].filename
-      : "";
+    const awayImage = awayFile
+      ? {
+          url: awayFile.path,
+          publicId: awayFile.filename,
+        }
+      : { url: "", publicId: "" };
 
     // Create match
     const match = await Match.create({
-      homeTeam: homeTeam.trim(),
-      awayTeam: awayTeam.trim(),
+      homeTeam,
+      awayTeam,
       matchDate: parsedDate,
       venue: venue.trim(),
       competition,
@@ -141,12 +86,36 @@ const createMatch = async (req, res) => {
         result: match.result,
       },
     });
+
   } catch (error) {
+
+    // Collect uploaded Cloudinary image public IDs
+    const uploadedImages = [
+      req.files?.homeImage?.[0]?.filename,
+      req.files?.awayImage?.[0]?.filename,
+    ].filter(Boolean);
+
+    // Remove uploaded images if match creation fails
+    for (const publicId of uploadedImages) {
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cleanupError) {
+        console.error(
+          `Failed to clean up Cloudinary image ${publicId}:`,
+          cleanupError.message
+        );
+      }
+    }
+
+    console.error("Create match error:", error);
+
     return res.status(500).json({
-      message: error.message,
+      message: "Failed to create match.",
+      error: error.message,
     });
   }
 };
+
 
 
 //get all matches
@@ -232,12 +201,8 @@ const getAllMatches = async (req, res) => {
       status: match.status,
       homeScore: match.homeScore,
       awayScore: match.awayScore,
-      homeImage: match.homeImage
-        ? `${req.protocol}://${req.get("host")}/uploads/${match.homeImage}`
-        : null,
-      awayImage: match.awayImage
-        ? `${req.protocol}://${req.get("host")}/uploads/${match.awayImage}`
-        : null,
+      homeImage: match.homeImage?.url || null,
+      awayImage: match.awayImage?.url || null,
       result: match.result,
     }));
 
@@ -270,7 +235,7 @@ const deleteMatch = async (req, res) => {
     const { id } = req.params;
 
     //validate MongoDB id
-    if(!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         message: "Invalid Match ID."
       })
@@ -285,23 +250,20 @@ const deleteMatch = async (req, res) => {
       });
     }
 
-    // Delete home image
-    if (match.homeImage) {
+    // Delete the match from the database
+    await match.deleteOne();
 
-      const homeImagePath = path.join("uploads", match.homeImage);
+    // Delete its images from Cloudinary
+    const imagePublicIds = [
+      match.homeImage?.publicId,
+      match.awayImage?.publicId,
+    ].filter(Boolean);
 
-      if (fs.existsSync(homeImagePath)) {
-        fs.unlinkSync(homeImagePath);
-      }
-    }
-
-    // Delete away image
-    if (match.awayImage) {
-
-      const awayImagePath = path.join("uploads", match.awayImage);
-
-      if (fs.existsSync(awayImagePath)) {
-        fs.unlinkSync(awayImagePath);
+    for (const publicId of imagePublicIds) {
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (error) {
+        console.error(`Failed to delete Cloudinary image ${publicId}:`, error);
       }
     }
 
@@ -325,7 +287,6 @@ const deleteMatch = async (req, res) => {
 };
 
 //edit match
-
 const editMatch = async (req, res) => {
   try {
     const { id } = req.params;
@@ -441,32 +402,47 @@ const editMatch = async (req, res) => {
     }
 
     // Home image
-    if (req.files?.homeImage) {
-      if (match.homeImage) {
-        const oldHomeImage = path.join("uploads", match.homeImage);
+    // Keep track of old Cloudinary images
+    const oldImagePublicIds = [];
 
-        if (fs.existsSync(oldHomeImage)) {
-          fs.unlinkSync(oldHomeImage);
-        }
+    // Replace home team image
+    if (req.files?.homeImage) {
+      if (match.homeImage?.publicId) {
+        oldImagePublicIds.push(match.homeImage.publicId);
       }
 
-      match.homeImage = req.files.homeImage[0].filename;
+      const homeFile = req.files.homeImage[0];
+
+      match.homeImage = {
+        url: homeFile.path,
+        publicId: homeFile.filename,
+      };
     }
 
-    // Away image
+    // Replace away team image
     if (req.files?.awayImage) {
-      if (match.awayImage) {
-        const oldAwayImage = path.join("uploads", match.awayImage);
-
-        if (fs.existsSync(oldAwayImage)) {
-          fs.unlinkSync(oldAwayImage);
-        }
+      if (match.awayImage?.publicId) {
+        oldImagePublicIds.push(match.awayImage.publicId);
       }
 
-      match.awayImage = req.files.awayImage[0].filename;
+      const awayFile = req.files.awayImage[0];
+
+      match.awayImage = {
+        url: awayFile.path,
+        publicId: awayFile.filename,
+      };
     }
 
     await match.save();
+
+    // Delete old images from Cloudinary after saving the match
+    for (const publicId of oldImagePublicIds) {
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (error) {
+        console.error(`Failed to delete old Cloudinary image ${publicId}:`, error);
+      }
+    }
 
     return res.status(200).json({
       message: "Match updated successfully.",
@@ -506,12 +482,8 @@ const getMatchesByStatus = (status) => async (req, res) => {
       status: match.status,
       homeScore: match.homeScore,
       awayScore: match.awayScore,
-      homeImage: match.homeImage
-        ? `${req.protocol}://${req.get("host")}/uploads/${match.homeImage}`
-        : null,
-      awayImage: match.awayImage
-        ? `${req.protocol}://${req.get("host")}/uploads/${match.awayImage}`
-        : null,
+      homeImage: match.homeImage?.url || null,
+      awayImage: match.awayImage?.url || null,
       result: match.result,
     }));
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './FeaturedPlayers.css';
 import api from '../../../api/axios';
+import { NavLink } from 'react-router';
 
 function FeaturedPlayers() {
 
@@ -68,7 +69,10 @@ function FeaturedPlayers() {
         
       </div>
       <div className='view-all-players-btn'>
-        <button>View All Players</button>
+        <NavLink to="/players">
+           <button>View All Players</button>
+        </NavLink>
+        
       </div>
     </div>
   );

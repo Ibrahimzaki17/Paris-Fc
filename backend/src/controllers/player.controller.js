@@ -2,145 +2,151 @@ import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import Player from "../models/player.js";
 import mongoose from "mongoose";
-import fs from "fs";
-import path from "path";
+import cloudinary from "../config/cloudinary.js";
 
 //create player = Add player button
 const createPlayer = async (req, res) => {
-  let session;  
-  try {
+    let session;
+    let uploadedImagePublicId = null;
+    try {
 
-    const {
-      fullname,
-      email,
-      position,
-      age,
-      phone,
-      jerseyNumber,
-    } = req.body;
+        const {
+            fullname,
+            email,
+            position,
+            age,
+            phone,
+            jerseyNumber,
+        } = req.body;
 
-    const image = req.file
-        ? req.file.filename
-        : "";
-        
-    // Validation
-    /*
-    if (
-      !fullname ||
-      !email ||
-      !position ||
-      !age ||
-      !phone ||
-      !jerseyNumber
-    ) {
-      await session.abortTransaction();
-      session.endSession();
+        const image = req.file
+            ? {
+                url: req.file.path,
+                publicId: req.file.filename,
+            }
+            : {
+                url: "",
+                publicId: "",
+            };
 
-      return res.status(400).json({
-        message: "All fields must be filled",
-      });
+        if (req.file) {
+            uploadedImagePublicId = req.file.filename;
+        }
+
+        //start transaction
+        session = await mongoose.startSession();
+        session.startTransaction();
+
+        // Check if user already exists
+        const existing = await User.findOne({
+            email: email.toLowerCase(),
+        }).session(session);
+
+        if (existing) {
+            await session.abortTransaction();
+            session.endSession();
+
+            return res.status(400).json({
+                message: "User already exists",
+            });
+        }
+
+        // Temporary password
+        const defaultPassword = "paris12345";
+
+        const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+
+        // Create User
+        const user = await User.create(
+            [
+                {
+                    fullname,
+                    email: email.toLowerCase(),
+                    password: hashedPassword,
+                    role: "player",
+                },
+            ],
+            { session }
+        );
+
+        // Create Player
+        const player = await Player.create(
+            [
+                {
+                    user: user[0]._id,
+                    position,
+                    age,
+                    phone,
+                    jerseyNumber,
+                    image,
+                },
+            ],
+            { session }
+        );
+
+        // Everything succeeded
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(201).json({
+            message: "Player created successfully",
+
+            temporaryPassword: defaultPassword,
+
+            user: {
+                id: user[0]._id,
+                fullname: user[0].fullname,
+                email: user[0].email,
+                role: user[0].role,
+            },
+
+            player: {
+                id: player[0]._id,
+                position: player[0].position,
+                age: player[0].age,
+                phone: player[0].phone,
+                jerseyNumber: player[0].jerseyNumber,
+                image: player[0].image,
+            },
+        });
+    } catch (error) {
+        if (session?.inTransaction()) {
+            await session.abortTransaction();
+        }
+
+        if (session) {
+            await session.endSession();
+        }
+
+        // Remove uploaded image if coach creation fails
+        if (uploadedImagePublicId) {
+            try {
+                await cloudinary.uploader.destroy(uploadedImagePublicId);
+                console.log("Failed coach image cleaned up from Cloudinary");
+            } catch (cloudinaryError) {
+                console.error(
+                    "Failed to clean up Cloudinary image:",
+                    cloudinaryError.message
+                );
+            }
+        }
+
+        return res.status(500).json({
+            message: error.message,
+        });
     }
-      */
-
-    //start transaction
-    session = await mongoose.startSession();
-    session.startTransaction();
-
-    // Check if user already exists
-    const existing = await User.findOne({
-      email: email.toLowerCase(),
-    }).session(session);
-
-    if (existing) {
-      await session.abortTransaction();
-      session.endSession();
-
-      return res.status(400).json({
-        message: "User already exists",
-      });
-    }
-
-    // Temporary password
-    const defaultPassword = "paris12345";
-
-    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
-
-    // Create User
-    const user = await User.create(
-      [
-        {
-          fullname,
-          email: email.toLowerCase(),
-          password: hashedPassword,
-          role: "player",
-        },
-      ],
-      { session }
-    );
-
-    // Create Player
-    const player = await Player.create(
-      [
-        {
-          user: user[0]._id,
-          position,
-          age,
-          phone,
-          jerseyNumber,
-          image,
-        },
-      ],
-      { session }
-    );
-
-    // Everything succeeded
-    await session.commitTransaction();
-    session.endSession();
-
-    res.status(201).json({
-      message: "Player created successfully",
-
-      temporaryPassword: defaultPassword,
-
-      user: {
-        id: user[0]._id,
-        fullname: user[0].fullname,
-        email: user[0].email,
-        role: user[0].role,
-      },
-
-      player: {
-        id: player[0]._id,
-        position: player[0].position,
-        age: player[0].age,
-        phone: player[0].phone,
-        jerseyNumber: player[0].jerseyNumber,
-        image: player[0].image,
-      },
-    });
-  } catch (error) {
-    if(session) {
-       await session.abortTransaction();
-       session.endSession(); 
-    }
-    
-
-    res.status(500).json({
-      message: error.message,
-    });
-  }
 };
 
 //update player = edit player button
 const editPlayer = async (req, res) => {
     try {
         //get the id
-        const {id} = req.params;
+        const { id } = req.params;
 
         //find the player
         const player = await Player.findById(id);
 
-        if(!player) {
+        if (!player) {
             return res.status(404).json({
                 message: "Player not found"
             })
@@ -149,11 +155,11 @@ const editPlayer = async (req, res) => {
         const user = await User.findById(player.user);
 
         if (!user) {
-             return res.status(404).json({
-                 message: "User not found"
-             });
-        
-        
+            return res.status(404).json({
+                message: "User not found"
+            });
+
+
         }
 
         user.fullname = req.body.fullname || user.fullname;
@@ -165,25 +171,28 @@ const editPlayer = async (req, res) => {
         player.age = req.body.age || player.age;
         player.phone = req.body.phone || player.phone;
         player.jerseyNumber = req.body.jerseyNumber || player.jerseyNumber;
-     // If a new image was uploaded
+
+        // Keep track of the old Cloudinary image
+        const oldImagePublicId = player.image?.publicId;
+
+        // If a new image was uploaded
         if (req.file) {
-
-            // Delete the old image (if there is one)
-            if (player.image) {
-
-                const oldImagePath = path.join("uploads", player.image);
-
-                if (fs.existsSync(oldImagePath)) {
-                    fs.unlinkSync(oldImagePath);
-                }
-
-            }
-
-            // Save the new image filename
-            player.image = req.file.filename;
+            player.image = {
+                url: req.file.path,
+                publicId: req.file.filename,
+            };
         }
 
         await player.save();
+
+        // Delete the old image only after the player is successfully saved
+        if (req.file && oldImagePublicId) {
+            try {
+                await cloudinary.uploader.destroy(oldImagePublicId);
+            } catch (error) {
+                console.error("Failed to delete old player image:", error);
+            }
+        }
 
         res.status(200).json({
             message: "Player updated successfully",
@@ -201,25 +210,23 @@ const editPlayer = async (req, res) => {
 //delete player = delete player button
 const deletePlayer = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
 
         //find player
         const player = await Player.findById(id);
-        
-        if(!player) {
+
+        if (!player) {
             return res.status(404).json({
                 message: "Player not found"
             })
         }
 
-        if (player.image) {
-
-            const imagePath = path.join("uploads", player.image);
-
-            if (fs.existsSync(imagePath)) {
-
-                fs.unlinkSync(imagePath);
-
+        // Delete the player image from Cloudinary
+        if (player.image?.publicId) {
+            try {
+                await cloudinary.uploader.destroy(player.image.publicId);
+            } catch (error) {
+                console.error("Failed to delete player image:", error);
             }
         }
 
@@ -245,7 +252,7 @@ const getAllPlayers = async (req, res) => {
     try {
         //find all players & populate
         const players = await Player.find()
-          .populate("user", "fullname email role")
+            .populate("user", "fullname email role")
 
         //formatted
         const formattedPlayers = players.map(player => ({
@@ -257,15 +264,13 @@ const getAllPlayers = async (req, res) => {
             age: player.age,
             phone: player.phone,
             jerseyNumber: player.jerseyNumber,
-            image: player.image 
-                   ? `${req.protocol}://${req.get("host")}/uploads/${player.image}`
-                   : null
+            image: player.image?.url || null,
         }))
 
-        if(players.length === 0) {
+        if (players.length === 0) {
             res.status(200).json({
                 message: "All players retrieved succesfully",
-                players: []            
+                players: []
             })
         }
 
@@ -286,13 +291,13 @@ const getAllPlayers = async (req, res) => {
 const getPlayer = async (req, res) => {
     try {
         //get id
-        const {id} = req.params
+        const { id } = req.params
 
         //find player
         const player = await Player.findById(id)
-          .populate("user", "fullname email");
+            .populate("user", "fullname email");
 
-        if(!player) {
+        if (!player) {
             return res.status(404).json({
                 message: "Player not found"
             })
@@ -308,7 +313,7 @@ const getPlayer = async (req, res) => {
             age: player.age,
             phone: player.phone,
             jerseyNumber: player.jerseyNumber,
-            image: player.image
+            image: player.image?.url || null,
         };
 
         // Return player
@@ -383,9 +388,7 @@ const getMyProfile = async (req, res) => {
             age: player.age,
             phone: player.phone,
             jerseyNumber: player.jerseyNumber,
-            image: player.image
-                ? `${req.protocol}://${req.get("host")}/uploads/${player.image}`
-                : null,
+            image: player.image?.url || null,
             nationality: player.nationality,
             isCaptain: player.isCaptain,
             isViceCaptain: player.isViceCaptain,

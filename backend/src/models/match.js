@@ -50,11 +50,25 @@ const matchSchema = new mongoose.Schema(
     },
 
     homeImage: {
-      type: String,
+      url: {
+        type: String,
+        default: "",
+      },
+      publicId: {
+        type: String,
+        default: "",
+      },
     },
 
     awayImage: {
-      type: String,
+      url: {
+        type: String,
+        default: "",
+      },
+      publicId: {
+        type: String,
+        default: "",
+      },
     },
 
     result: {

@@ -312,7 +312,7 @@ function AnnouncementsManagement() {
           return (
             <div key={announcement.id} className="news-cards">
               <div className="news-image">
-                <img src={`http://localhost:3000/uploads/${announcement.image}`} />
+                <img src={announcement.image} />
               </div>
               <div className="news-content">
                 <div className="news-content-title">

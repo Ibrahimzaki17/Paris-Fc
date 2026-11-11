@@ -3,6 +3,7 @@ import { createAnnoucement, editAnnouncement, deleteAnnoucement, getAllAnnouncem
 import { protect, authorize } from "../middleware/auth.middleware.js";
 import upload from "../middleware/upload.middleware.js";
 import validateRequiredFields from "../middleware/validation.middleware.js";
+import uploadToCloudinary from "../middleware/cloudinaryUpload.middleware.js";
 
 const router = Router();
 
@@ -15,9 +16,15 @@ router.route('/announcements').post(
         "title",
         "message"
     ]),
+    uploadToCloudinary,
     createAnnoucement);
 //edit announcements
-router.route('/announcements/:id').put(protect, authorize("admin", "coach"),upload.single("image"), editAnnouncement);
+router.route('/announcements/:id').put(
+    protect, 
+    authorize("admin", "coach"),
+    upload.single("image"),
+    uploadToCloudinary,
+    editAnnouncement);
 //delete announcements
 router.route('/announcements/:id').delete(protect, authorize("admin", "coach"), deleteAnnoucement);
 //get all announcements

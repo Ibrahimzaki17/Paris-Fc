@@ -53,9 +53,7 @@ const getPublicPlayers = async (req, res) => {
             position: player.position,
             jerseyNumber: player.jerseyNumber,
             email: player.user.email,
-            image: player.image 
-                  ? `${req.protocol}://${req.get("host")}/uploads/${player.image}`
-                  : null 
+            image: player.image?.url || null,
         }));
         
         res.status(200).json({
@@ -119,9 +117,7 @@ const getPublicCoaches = async (req, res) => {
             fullname: coach.user.fullname,
             position: coach.position,
             email: coach.user.email,
-            image: coach.image
-                 ? `${req.protocol}://${req.get("host")}/uploads/${coach.image}`
-                 : null 
+            image: coach.image?.url || null,
         }));
         
         res.status(200).json({
@@ -221,12 +217,8 @@ const getPublicMatches = async (req, res) => {
             venue: match.venue,
             competition: match.competition,
             status: match.status,
-            homeImage: match.homeImage
-                  ? `${req.protocol}://${req.get("host")}/uploads/${match.homeImage}`
-                  : null ,
-            awayImage: match.awayImage
-                  ? `${req.protocol}://${req.get("host")}/uploads/${match.awayImage}`
-                  : null ,
+            homeImage: match.homeImage?.url || null,
+            awayImage: match.awayImage?.url || null,
         }));
 
         res.status(200).json({
@@ -286,9 +278,7 @@ const getPublicAnnouncements = async (req, res) => {
             id: announcement._id,
             title: announcement.title,
             message: announcement.message,
-            image: announcement.image
-                 ? `${req.protocol}://${req.get("host")}/uploads/${announcement.image}`
-                 : null ,
+            image: announcement.image?.url || null,
             author: announcement.author.fullname,
             role: announcement.author.role,
             createdAt: announcement.createdAt
