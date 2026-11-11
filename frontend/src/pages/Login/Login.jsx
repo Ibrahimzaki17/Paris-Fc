@@ -1,7 +1,7 @@
 import './Login.css';
-import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import api from '../../api/axios';
 
 function Login() {
 
@@ -30,10 +30,7 @@ function Login() {
         try {
             setLoading(true);
 
-            const response = await axios.post(
-                "http://localhost:3000/api/auth/login",
-                formData
-            );
+            const response = await api.post('/auth/login', formData)
 
             const { token, user } = response.data;
 
