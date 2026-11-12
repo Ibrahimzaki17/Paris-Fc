@@ -56,10 +56,10 @@ const getPublicPlayers = async (req, res) => {
         }));
         
         res.status(200).json({
-            currentPage: page,
-            totalPages,
+            // currentPage: page,
+            // totalPages,
             totalPlayers,
-            playersPerPage: limit,
+            // playersPerPage: limit,
             players: formattedPlayers
         })
 
@@ -119,10 +119,10 @@ const getPublicCoaches = async (req, res) => {
         }));
         
         res.status(200).json({
-            currentPage: page,
-            totalPages,
+            // currentPage: page,
+            // totalPages,
             totalCoaches,
-            coachesPerPage: limit,
+            // coachesPerPage: limit,
             coaches: formattedCoaches
         })
 
