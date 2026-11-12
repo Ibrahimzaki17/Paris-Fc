@@ -193,13 +193,6 @@ const getAllAnnouncements = async (req, res) => {
             createdAt: announcement.createdAt
         }));
 
-        // if(announcements.length === 0) {
-        //     return res.status(200).json({
-        //         message: "All annoucements retrieved succesfully",
-        //         announcements: []
-        //     })
-        // }
-
         res.status(200).json({
             message: "All Annoucements",
             currentPage: page,

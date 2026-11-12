@@ -51,7 +51,7 @@ function PlayerManagement( ) {
 
       // console.log("Players received:", response.data.formattedPlayers);
 
-      setPlayers(response.data.formattedPlayers);
+      setPlayers(response.data.formattedPlayers || []);
     } catch (error) {
       setError("Failed to load");
       console.error(error);

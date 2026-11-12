@@ -50,7 +50,7 @@ function CoachManagement() {
       setLoading(true);
       const response = await api.get('/coaches');
 
-      setCoaches(response.data.formattedCoaches)
+      setCoaches(response.data.formattedCoaches || [])
 
     } catch (error) {
       setError("Failed to load")

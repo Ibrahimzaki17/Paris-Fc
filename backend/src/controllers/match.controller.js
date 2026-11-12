@@ -206,13 +206,6 @@ const getAllMatches = async (req, res) => {
       result: match.result,
     }));
 
-    // if (matches.length === 0) {
-    //   res.status(200).json({
-    //     message: "All Matches retrieved succesfully",
-    //     matches,
-    //   });
-    // }
-
     res.status(200).json({
       currentPage: page,
       totalPages,

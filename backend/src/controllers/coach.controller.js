@@ -268,14 +268,7 @@ const getAllCoaches = async (req, res) => {
             image: coach.image?.url || null,
         }))
 
-        if (coaches.length === 0) {
-            res.status(200).json({
-                message: "All coaches retrieved succesfully",
-                coachs: []
-            })
-        }
-
-        res.status(200).json({
+        return res.status(200).json({
             message: "All the coaches",
             count: formattedCoaches.length,
             formattedCoaches

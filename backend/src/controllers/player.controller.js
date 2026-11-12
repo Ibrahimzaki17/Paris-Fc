@@ -267,14 +267,7 @@ const getAllPlayers = async (req, res) => {
             image: player.image?.url || null,
         }))
 
-        if (players.length === 0) {
-            res.status(200).json({
-                message: "All players retrieved succesfully",
-                players: []
-            })
-        }
-
-        res.status(200).json({
+        return res.status(200).json({
             message: "All the players",
             count: formattedPlayers.length,
             formattedPlayers
