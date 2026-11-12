@@ -11,7 +11,7 @@ function FeaturedPlayers() {
 
   const fetchFeaturedPlayers = async () => {
     try {
-      const response = await api.get('/public/players?limit=3');
+      const response = await api.get('/public/players');
 
       setPlayers(response.data.players)
 
@@ -48,7 +48,7 @@ function FeaturedPlayers() {
       </div>
 
       <div className='players-container'>
-        {players.map(player => {
+        {players.slice(0, 3).map(player => {
           return (
             
             <div key={player.id} className='player-card'>
