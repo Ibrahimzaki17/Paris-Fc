@@ -37,7 +37,7 @@ const getPublicPlayers = async (req, res) => {
         const totalPlayers = await Player.countDocuments(query);
 
         //calculate total pages
-        const totalPages = Math.ceil(totalPlayers / limit);
+        // const totalPages = Math.ceil(totalPlayers / limit);
         
         //get all players
         const players = await Player.find(query)
@@ -101,7 +101,7 @@ const getPublicCoaches = async (req, res) => {
 
         const totalCoaches = await Coach.countDocuments(query);
 
-        const totalPages = Math.ceil(totalCoaches / limit);
+        // const totalPages = Math.ceil(totalCoaches / limit);
         
         //get all coaches
         const coaches = await Coach.find(query)
