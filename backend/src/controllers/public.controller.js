@@ -7,9 +7,9 @@ const getPublicPlayers = async (req, res) => {
     try {
 
         //pagination
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 10;
-        const skip = (page - 1) * limit;
+        // const page = Number(req.query.page) || 1;
+        // const limit = Number(req.query.limit) || 10;
+        // const skip = (page - 1) * limit;
 
         //search and filter
         const search = req.query.search || "";
@@ -43,8 +43,7 @@ const getPublicPlayers = async (req, res) => {
         const players = await Player.find(query)
           .populate("user", "fullname email")
           .sort({ jerseyNumber: 1 })
-          .skip(skip)
-          .limit(limit);
+          
 
          
         const formattedPlayers = players.map(player => ({
@@ -75,10 +74,10 @@ const getPublicPlayers = async (req, res) => {
 const getPublicCoaches = async (req, res) => {
     try {
 
-        //pagination
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 10;
-        const skip = (page - 1) * limit;
+        // //pagination
+        // const page = Number(req.query.page) || 1;
+        // const limit = Number(req.query.limit) || 10;
+        // const skip = (page - 1) * limit;
 
         const search = req.query.search || "";
         const position = req.query.position || "";
@@ -108,8 +107,7 @@ const getPublicCoaches = async (req, res) => {
         const coaches = await Coach.find(query)
           .populate("user", "fullname email")
           .sort({ positionOrder: 1 })
-          .skip(skip)
-          .limit(limit)
+          
 
         //format players
         const formattedCoaches = coaches.map(coach => ({
